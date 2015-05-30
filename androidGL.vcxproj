@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{83E97581-D4CC-4E84-A649-CC2F9854B6B0}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"
+adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeIncludeSearchPath>$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include;$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include\android;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include-fixed;$(ANDROID_NDK_ROOT)\sources\cxx-stl\stlport\stlport;D:\develop\androidGL\code;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+    <NMakeOutput>
+    </NMakeOutput>
+    <IntDir>$(SolutionDir)obj\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeIncludeSearchPath>D:\develop\android\android-ndk-r10\platforms\android-9\arch-mips\usr\include;D:\develop\android\android-ndk-r10\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include;D:\develop\android\android-ndk-r10\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include-fixed;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Release.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Release;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+    <NMakeOutput>$(ProjectDir)androidGL-Release.vgdbsettings</NMakeOutput>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Xml Include="AndroidManifest.xml" />
+    <Xml Include="build.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shader.glsl" />
+    <None Include="jni\Android.mk" />
+    <None Include="jni\Application.mk" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\android\AuroraGL.h" />
+    <ClInclude Include="code\AurMath.h" />
+    <ClInclude Include="code\Color.h" />
+    <ClInclude Include="code\glUtil.h" />
+    <ClInclude Include="code\MathFunction.h" />
+    <ClInclude Include="code\Matrix.h" />
+    <ClInclude Include="code\Model.h" />
+    <ClInclude Include="code\MyLog.h" />
+    <ClInclude Include="code\Platfrom.h" />
+    <ClInclude Include="code\Quaternion.h" />
+    <ClInclude Include="code\ShaderManager.h" />
+    <ClInclude Include="code\Vector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\android\TrackDropping.cpp" />
+    <ClCompile Include="code\android\draw.cpp" />
+    <ClCompile Include="code\android\main.cpp" />
+    <ClCompile Include="code\android\MyLog.cpp" />
+    <ClCompile Include="code\android\PlatfromAndroid.cpp" />
+    <ClCompile Include="code\glUtil.cpp" />
+    <ClCompile Include="code\MathObject.cpp" />
+    <ClCompile Include="code\Model.cpp" />
+    <ClCompile Include="code\ShaderManager.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

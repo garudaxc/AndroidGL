@@ -1,0 +1,7 @@
+*.sdf
+*.user
+*.suo
+bin/*
+obj/*
+libs/*
+!libs/win32

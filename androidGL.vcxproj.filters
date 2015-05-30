@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{d0e2d5aa-d79f-4c8f-8ed8-933c064b0069}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{ae9afa60-c754-47c5-948d-5b127b93b7e5}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Source files\android">
+      <UniqueIdentifier>{4a29086f-2231-4d23-a42d-3ad051007188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{2495b612-16d1-4b49-8314-819ccbb5ac9f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shader.glsl">
+      <Filter>Resource files</Filter>
+    </None>
+    <None Include="jni\Android.mk">
+      <Filter>config</Filter>
+    </None>
+    <None Include="jni\Application.mk">
+      <Filter>config</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\android\AuroraGL.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Platfrom.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\MyLog.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Model.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\glUtil.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\AurMath.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Color.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\MathFunction.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Matrix.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Quaternion.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Vector.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\ShaderManager.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\Model.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\glUtil.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\MathObject.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\ShaderManager.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\main.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\MyLog.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\PlatfromAndroid.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\draw.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\TrackDropping.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="AndroidManifest.xml">
+      <Filter>config</Filter>
+    </Xml>
+    <Xml Include="build.xml">
+      <Filter>config</Filter>
+    </Xml>
+  </ItemGroup>
+</Project>
