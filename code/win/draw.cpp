@@ -105,7 +105,7 @@ void InitTexture() {
 
 void LoadResource() {
 
-	GShaderManager.LoadFromFile("shader.glsl");
+	GShaderManager.LoadFromFile("../../assets/shader330.glsl");
 
 	model.Load(NULL);
 
