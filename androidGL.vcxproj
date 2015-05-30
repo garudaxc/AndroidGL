@@ -48,7 +48,7 @@ adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildComm
     <NMakeOutput>
     </NMakeOutput>
     <IntDir>$(SolutionDir)obj\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)bin\android</OutDir>
+    <OutDir>$(SolutionDir)bin</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
