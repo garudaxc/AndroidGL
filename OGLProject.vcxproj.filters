@@ -12,24 +12,18 @@
     <Filter Include="源文件\shader">
       <UniqueIdentifier>{ac9c66d2-df69-4a9d-b1d7-3ec7e5b1bc28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\win">
+      <UniqueIdentifier>{c74d9064-eccb-4608-aa50-93b9302d0bbd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\win\AuroraGL.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="code\win\glew.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="code\win\glxew.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="code\win\Resource.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="code\win\stdafx.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="code\win\wglew.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="code\MyLog.h">
@@ -62,17 +56,20 @@
     <ClInclude Include="code\ShaderManager.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="code\win\glew.h">
+      <Filter>源文件\win</Filter>
+    </ClInclude>
+    <ClInclude Include="code\win\glxew.h">
+      <Filter>源文件\win</Filter>
+    </ClInclude>
+    <ClInclude Include="code\win\wglew.h">
+      <Filter>源文件\win</Filter>
+    </ClInclude>
+    <ClInclude Include="code\FileSystem.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="code\win\draw.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\win\GLInit.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\win\main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="code\win\MyLog.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -88,7 +85,19 @@
     <ClCompile Include="code\ShaderManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="code\win\draw.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\GLInit.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\main.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
     <ClCompile Include="code\win\PlatformWin.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\FileSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,13 +110,13 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\win\shader.glsl">
-      <Filter>源文件\shader</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="code\win\OGLProject.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shader330.glsl">
+      <Filter>源文件\shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\Color.h" />
+    <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\glUtil.h" />
     <ClInclude Include="code\MathFunction.h" />
     <ClInclude Include="code\Matrix.h" />
@@ -29,6 +30,7 @@
     <ClInclude Include="code\win\wglew.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\glUtil.cpp" />
     <ClCompile Include="code\MathObject.cpp" />
     <ClCompile Include="code\Model.cpp" />
@@ -47,7 +49,7 @@
     <ResourceCompile Include="code\win\OGLProject.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\win\shader.glsl" />
+    <None Include="assets\shader330.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{27D13C93-5F89-4977-A339-0AE47D16475A}</ProjectGuid>

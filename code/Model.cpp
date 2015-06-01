@@ -1,10 +1,11 @@
 #include "Model.h"
 //#include "glUtil.h"
 #include "MyLog.h"
+#include "FileSystem.h"
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 
-struct MyVertex
+struct DrawVertex
 {
 	float pos[3];
 	float normal[3];
@@ -51,7 +52,26 @@ bool Model::Load(const char* filename)
 	glBindVertexArray(vao_);
 #endif
 
-	MyVertex vertices[] =
+	File file;
+	if (!file.Open(filename)){
+		GLog.LogError("Model::Load failed! %s", filename);
+		return false;
+	}
+	
+	unsigned int magic = 0;
+	file.Read(magic);
+	if (magic != MAGIC_STR("MESH")){
+		GLog.LogError("file %s is not a mesh file!", filename);
+		return false;
+	}
+
+	int numVertex, numIndex;
+	file.Read(numVertex);
+	file.Read(numIndex);
+
+
+
+	DrawVertex vertices[] =
 	{
 		{ { -0.90f, 0.f, -0.90f }, { 0.0f, -1.0f, 0.0f }, { 1.f, 0.f, 0.f, 1.f }, { 0.f, 1.f } },
 		{ { 0.90f, 0.f, -0.90f }, { 0.0f, -1.0f, 0.0f }, { 0.f, 1.f, 0.f, 1.f }, { 1.f, 1.f } },

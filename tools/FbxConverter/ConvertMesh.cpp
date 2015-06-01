@@ -2,9 +2,90 @@
 #include "FbxConverter.h"
 #include <vector>
 #include <assert.h>
-#include <set>
+#include <map>
+
 
 using namespace std;
+
+
+struct MeshData
+{
+	vector<float>		position_;
+	vector<float>		normal_;
+	vector<float>		uv0_;
+	vector<float>		blendWeight_;
+	vector<unsigned char>		blendIndex_;
+
+	vector<int>			index_;
+
+	int		vertexCount_;
+
+	void	Alloc(int vertexCount, int indexCount);
+	bool	SaveToFile(const char* fileName);
+};
+
+
+void MeshData::Alloc(int vertexCount, int indexCount)
+{
+	vertexCount_	= vertexCount;
+
+	position_.resize(vertexCount * 3);
+	normal_.resize(vertexCount * 3);
+	uv0_.resize(vertexCount * 2);
+
+	index_.resize(indexCount);
+}
+
+
+#define MAGIC(a, b, c, d) (a << 24 | b << 16 | c << 8 | d)
+#define MAGIC_STR(str) (str[0] << 24 | str[1] << 16 | str[2] << 8 | str[3])
+
+FILE* OutFile = NULL;
+inline void WriteMagic(unsigned int magic)
+{
+	fwrite(&magic, sizeof(unsigned int), 1, OutFile);
+}
+
+inline void WriteInt(int n)
+{
+	fwrite(&n, sizeof(int), 1, OutFile);
+}
+
+inline void WriteFloatArray(const float* array, int numFloats)
+{
+	fwrite(array, sizeof(float), numFloats, OutFile);
+}
+
+bool MeshData::SaveToFile(const char* fileName)
+{
+	FILE* pf = fopen(fileName, "wb");
+	if (pf == NULL) {
+		printf("write to file %s failed\n", fileName);
+		return false;
+	}
+	OutFile = pf;
+
+	WriteMagic(MAGIC_STR("MESH"));
+	WriteInt(vertexCount_);
+	WriteInt(index_.size());
+
+	WriteMagic(MAGIC_STR("POSI"));
+	WriteFloatArray(&position_[0], position_.size());
+	WriteMagic(MAGIC_STR("NORM"));
+	WriteFloatArray(&normal_[0], normal_.size());
+	WriteMagic(MAGIC_STR("TEX0"));
+	WriteFloatArray(&uv0_[0], uv0_.size());
+
+	WriteMagic(MAGIC_STR("INDX"));
+	fwrite(&index_[0], sizeof(int), index_.size(), OutFile);
+
+	fclose(OutFile);
+	OutFile = NULL;
+
+	return true;
+}
+
+
 
 
 void DisplayPolygons(FbxMesh* pMesh)
@@ -24,6 +105,35 @@ void DisplayPolygons(FbxMesh* pMesh)
 
 	int ElementPolygonGroupCount = pMesh->GetElementPolygonGroupCount();
 	DisplayInt("ElementPolygonGroupCount ", ElementPolygonGroupCount);
+
+	int textureUVCount = pMesh->GetTextureUVCount();
+	int uvLayerCount = pMesh->GetUVLayerCount();
+	DisplayInt("textureUVCount ", textureUVCount);
+	DisplayInt("uvLayerCount ", uvLayerCount);
+
+	FbxLayerElementArrayTemplate< FbxVector2 >* 	pLockableArray = NULL;
+	b = pMesh->GetTextureUV(&pLockableArray);
+	DisplayBool("GetTextureUV ", b);
+	DisplayInt("pLockableArray ", (int)pLockableArray);
+	DisplayInt("size of pLockableArray ", pLockableArray->GetCount());
+
+	for (int i = 0; i < pLockableArray->GetCount(); i++)
+	{
+		FbxVector2 uv = pLockableArray->GetAt(i);
+		printf("%.2f %.2f\n", uv[0], uv[1]);
+	}
+
+	for (int i = 0; i < lPolygonCount; i++)
+	{
+		int uv[3] = { 0 };
+
+		int lPolygonSize = pMesh->GetPolygonSize(i);
+		for (int j = 0; j < lPolygonSize; j++)
+		{
+			uv[j] = pMesh->GetTextureUVIndex(i, j);
+		}
+		printf("uv index %d : %d %d %d\n", i, uv[0], uv[1], uv[2]);
+	}
 
 
 	int vertexId = 0;
@@ -240,6 +350,7 @@ void DisplayPolygons(FbxMesh* pMesh)
 	} // for polygonCount
 
 
+	return;
 	//check visibility for the edges of the mesh
 	for (int l = 0; l < pMesh->GetElementVisibilityCount(); ++l)
 	{
@@ -267,10 +378,6 @@ void DisplayPolygons(FbxMesh* pMesh)
 
 
 
-
-
-
-
 static void SetData(const float* pData, std::vector<float>& buffer, int numFloats)
 {
 	buffer.resize(numFloats);
@@ -280,20 +387,14 @@ static void SetData(const float* pData, std::vector<float>& buffer, int numFloat
 
 
 
-
-
-
 int CompareFloats2(const float* p0, const float* p1)
 {
-	for (int i = 0; i < 2; i++)
-	{
-		if (p0[i] < p1[i])
-		{
+	for (int i = 0; i < 2; i++){
+		if (p0[i] < p1[i]){
 			return -1;
 		}
 
-		if (p0[i] > p1[i])
-		{
+		if (p0[i] > p1[i]){
 			return 1;
 		}
 	}
@@ -308,15 +409,12 @@ int CompareFloats(void* context, const void* elem0, const void* elem1)
 	const float* p0 = (const float*)elem0;
 	const float* p1 = (const float*)elem1;
 
-	for (int i = 0; i < numFloat; i++)
-	{
-		if (p0[i] < p1[i])
-		{
+	for (int i = 0; i < numFloat; i++){
+		if (p0[i] < p1[i]){
 			return -1;
 		}
 
-		if (p0[i] > p1[i])
-		{
+		if (p0[i] > p1[i]){
 			return 1;
 		}
 	}
@@ -330,15 +428,12 @@ int ShrinkData(float* pData, int stride, int dataCount)
 	float* p1 = pData + stride;
 	float* pEnd = pData + stride * dataCount;
 
-	while (p1 < pEnd)
-	{
-		while (CompareFloats(&stride, p0, p1) == 0 && p1 < pEnd)
-		{
+	while (p1 < pEnd){
+		while (CompareFloats(&stride, p0, p1) == 0 && p1 < pEnd){
 			p1 += stride;
 		}
 
-		if (p1 != pEnd)
-		{
+		if (p1 != pEnd)	{
 			p0 += stride;
 			memcpy(p0, p1, sizeof(float)* stride);
 		}
@@ -361,14 +456,11 @@ int EliminateData(float* pData, int stride, int dataCount, std::vector<int>& dat
 	int uniqueCount = ShrinkData(pData, stride, dataCount);
 
 	dataMapper.resize(dataCount);
-	for (int i = 0; i < dataCount; i++)
-	{
-		for (int j = 0; j < uniqueCount;)
-		{
+	for (int i = 0; i < dataCount; i++)	{
+		for (int j = 0; j < uniqueCount;){
 			const float* p0 = &tempData[i * stride];
 			const float* p1 = pData + j * stride;
-			if (CompareFloats(&stride, p0, p1) == 0)
-			{
+			if (CompareFloats(&stride, p0, p1) == 0){
 				dataMapper[i] = j;
 				break;
 			}
@@ -384,8 +476,7 @@ int EliminateData(float* pData, int stride, int dataCount, std::vector<int>& dat
 
 void RemapIndex(int* index, int indexCount, int* mapper)
 {
-	for (int i = 0; i < indexCount; i++)
-	{
+	for (int i = 0; i < indexCount; i++){
 		int indexMapTo = mapper[index[i]];
 		index[i] = indexMapTo;
 	}
@@ -406,9 +497,7 @@ void ProcessBufferIndex(std::vector<float>& buffer, std::vector<int>& index, int
 struct VertInfo
 {
 	std::vector<int>	indeics;
-	int			vertIdx;
 };
-
 
 struct VertInfoComp : public std::binary_function<VertInfo, VertInfo, bool>
 {	// functor for operator<
@@ -418,14 +507,15 @@ struct VertInfoComp : public std::binary_function<VertInfo, VertInfo, bool>
 	}
 };
 
-void CopyVertexBuffer(float* pBuffer, int desStride, const float* srcBuffer,
-	int srcStride, int elemIdx, std::set<VertInfo, VertInfoComp>& vertexMap)
-{
-	for (std::set<VertInfo, VertInfoComp>::iterator it = vertexMap.begin(); it != vertexMap.end(); ++it)
-	{
-		int srcIndex = it->indeics[elemIdx];
+typedef std::map<VertInfo, int, VertInfoComp> VertexInfoMap;
 
-		memcpy((void*)(pBuffer + it->vertIdx * desStride), srcBuffer + srcIndex * srcStride, sizeof(float)* desStride);
+void CopyVertexBuffer(float* pBuffer, int desStride, const float* srcBuffer,
+						int srcStride, int elemIdx, const VertexInfoMap& vertexMap)
+{
+	for (auto it = vertexMap.begin(); it != vertexMap.end(); ++it){
+		int srcIndex = it->first.indeics[elemIdx];
+		memcpy((void*)(pBuffer + it->second * desStride), 
+			srcBuffer + srcIndex * srcStride, sizeof(float)* desStride);
 	}
 }
 
@@ -433,8 +523,7 @@ void CopyVertexBuffer(float* pBuffer, int desStride, const float* srcBuffer,
 void ConvertCoordinateSystem(float* pVectors, int numVectors)
 {
 	float* p = pVectors;
-	for (int i = 0; i < numVectors; i++)
-	{
+	for (int i = 0; i < numVectors; i++){
 		float origY = p[1];
 		float origZ = p[2];
 		p[1] = origZ;
@@ -447,85 +536,150 @@ void ConvertCoordinateSystem(float* pVectors, int numVectors)
 void FlipTexcoordV(float* pUV, int stride, int numVert)
 {
 	float* p = pUV;
-	for (int i = 0; i < numVert; i++)
-	{
+	for (int i = 0; i < numVert; i++){
 		p[1] = 1.f - p[1];
 		p += stride;
 	}
 }
 
 
-
-
-
-
-
+void SetFloatArray(std::vector<float>& des, const FbxVector4* src, int numVec, int numPerVec)
+{
+	des.resize(numVec * numPerVec);
+	int index = 0;
+	for (int i = 0; i < numVec; i++) {
+		for (int j = 0; j < numPerVec; j++)	{
+			des[index++] = (float)src[i][j];
+		}
+	}
+}
 
 
 void ConvertMesh(FbxMesh* mesh)
 {
+	bool convertAxis		= false;
+	bool flipTexcoordV		= false;
+
 	DisplayPolygons(mesh);
 
 	if (!mesh->IsTriangleMesh()) {
 		FBXSDK_printf("Error ! mesh %s is not triangle mesh\n", mesh->GetNode()->GetName());
 		return;
 	}
-
+	
 	int polygonCount = mesh->GetPolygonCount();
-	int controlPointCount = mesh->GetControlPointsCount();
-	FbxVector4* lControlPoints = mesh->GetControlPoints();
-
-
-
-	std::vector<float> m_PositionData;
-	std::vector<float> m_NormalData;
-	std::vector<float> m_TexcoordData;
-	std::vector<int> m_PositionIndex;
-	std::vector<int> m_NormalIndex;
-	std::vector<int> m_TexcoordIndex;
+	
+	std::vector<float> positionData;
+	std::vector<float> normalData;
+	std::vector<float> texcoordData;
+	std::vector<int> positionIndex;
+	std::vector<int> normalIndex;
+	std::vector<int> texcoordIndex;
 	std::vector<int> m_MeshIndex;
-	int m_nMeshFaceCount;
+	int m_nMeshFaceCount = mesh->GetPolygonCount();
 
 
-	ProcessBufferIndex(m_PositionData, m_PositionIndex, 3);
-	ProcessBufferIndex(m_NormalData, m_NormalIndex, 3);
-	ProcessBufferIndex(m_TexcoordData, m_TexcoordIndex, 2);
+	positionIndex.resize(polygonCount * 3);
+	normalIndex.resize(polygonCount * 3);
+	texcoordIndex.resize(polygonCount * 3);
+
+	// position
+	int controlPointCount = mesh->GetControlPointsCount();
+	FbxVector4* controlPoints = mesh->GetControlPoints();
+	SetFloatArray(positionData, controlPoints, controlPointCount, 3);
+	for (int i = 0; i < polygonCount; i++){
+		assert(mesh->GetPolygonSize(i) == 3);
+		for (int j = 0; j < 3; j++){
+			positionIndex[i * 3 + j] = mesh->GetPolygonVertex(i, j);
+		}
+	}
+
+	// normal
+	FbxArray<FbxVector4> normals;
+	bool bRes = mesh->GetPolygonVertexNormals(normals);
+	if (!bRes){
+		FBXSDK_printf("Error! GetPolygonVertexNormals failed\n");
+		return;
+	}
+	SetFloatArray(normalData, normals.GetArray(), normals.Size(), 3);
+	assert(normals.Size() == polygonCount * 3);
+	for (int i = 0; i < polygonCount * 3; i++){
+		normalIndex[i] = i;
+	}
+
+	// UV
+	int textureUVCount = mesh->GetTextureUVCount();
+	//int uvLayerCount = mesh->GetUVLayerCount();
+	//DisplayInt("textureUVCount ", textureUVCount);
+	//DisplayInt("uvLayerCount ", uvLayerCount);
+	FbxLayerElementArrayTemplate< FbxVector2 >* pLockableArray = NULL;
+	bRes = mesh->GetTextureUV(&pLockableArray);
+	if (!bRes){
+		FBXSDK_printf("Error! GetTextureUV failed\n");
+		return;
+	}
+	texcoordData.resize(textureUVCount * 2);
+	for (int i = 0; i < pLockableArray->GetCount(); i++)
+	{
+		FbxVector2 uv = pLockableArray->GetAt(i);
+		texcoordData[i * 2 + 0] = (float)uv[0];
+		texcoordData[i * 2 + 1] = (float)uv[1];
+	}
+	for (int i = 0; i < polygonCount; i++){
+		for (int j = 0; j < 3; j++){
+			texcoordIndex[i * 3 + j] = mesh->GetTextureUVIndex(i, j);
+		}
+	}
+
+	ProcessBufferIndex(positionData, positionIndex, 3);
+	ProcessBufferIndex(normalData, normalIndex, 3);
+	ProcessBufferIndex(texcoordData, texcoordIndex, 2);
 
 	m_MeshIndex.resize(m_nMeshFaceCount * 3);
-
-	std::set<VertInfo, VertInfoComp> vertexMap;
-
+	
+	std::map<VertInfo, int, VertInfoComp> vertexMap;
 	int expVertIdx = 0;
 	for (size_t i = 0; i < m_MeshIndex.size(); i++)
 	{
 		VertInfo info;
-		info.indeics.push_back(m_PositionIndex[i]);
-		info.indeics.push_back(m_NormalIndex[i]);
-		info.indeics.push_back(m_TexcoordIndex[i]);
+		info.indeics.push_back(positionIndex[i]);
+		info.indeics.push_back(normalIndex[i]);
+		info.indeics.push_back(texcoordIndex[i]);
 
-		std::pair<std::set<VertInfo, VertInfoComp>::iterator, bool> res = vertexMap.insert(info);
-
-		if (res.second)
-		{
-			res.first->vertIdx = expVertIdx++;
+		auto iter = vertexMap.find(info);
+		if (iter == vertexMap.end()){
+			vertexMap[info] = expVertIdx;
+			m_MeshIndex[i] = expVertIdx;
+			expVertIdx++;
+		} else {
+			m_MeshIndex[i] = iter->second;
 		}
-
-		m_MeshIndex[i] = res.first->vertIdx;
 	}
+
 	int nNumMeshVert = expVertIdx;
-
-	//////////////////////////////////////////////////////////////////////////
-
+	printf("final vertex count %d\n", nNumMeshVert);
 
 
-	for (int p = 0; p < polygonCount; p++) {
-		int polySize = mesh->GetPolygonSize(p);
-		if (polySize != 3) {
-			FBXSDK_printf("Error ! polygon %d has %d vertexes, only support mesh\n", p, polySize);
-			return;
-		}
+	MeshData meshData;
+	meshData.Alloc(nNumMeshVert, polygonCount * 3);
+	
+	CopyVertexBuffer(&meshData.position_[0], 3, &positionData[0], 3, 0, vertexMap);
+	CopyVertexBuffer(&meshData.normal_[0], 3, &normalData[0], 3, 1, vertexMap);
+	CopyVertexBuffer(&meshData.uv0_[0], 2, &texcoordData[0], 3, 2, vertexMap);
 
+	if (convertAxis)
+	{
+		ConvertCoordinateSystem(&meshData.position_[0], nNumMeshVert);
+		ConvertCoordinateSystem(&meshData.normal_[0], nNumMeshVert);
 	}
 
+	// diff between 3dsmax and dx
+	if (flipTexcoordV)
+	{
+		FlipTexcoordV(&meshData.uv0_[0], 2, nNumMeshVert);
+	}
+
+	meshData.SaveToFile("a.mesh");
+	
 
 }
