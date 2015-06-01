@@ -2,6 +2,7 @@
 //#include "glUtil.h"
 #include "MyLog.h"
 #include "FileSystem.h"
+#include "assert.h"
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 
@@ -9,7 +10,6 @@ struct DrawVertex
 {
 	float pos[3];
 	float normal[3];
-	float color[4];
 	float uv[2];
 };
 
@@ -44,6 +44,15 @@ void Model::Clear()
 #endif
 }
 
+void CopyVertexData(void * des, int desStride, void * src, int srcStride, int count)
+{
+	for (int i = 0; i < count; i++) {
+		memcpy(des, src, srcStride);
+		des = (char*)des + desStride;
+		src = (char*)src + srcStride;
+	}
+}
+
 
 bool Model::Load(const char* filename)
 {
@@ -69,43 +78,58 @@ bool Model::Load(const char* filename)
 	file.Read(numVertex);
 	file.Read(numIndex);
 
+	vector<float> pos(numVertex * 3);
+	vector<float> normal(numVertex * 3);
+	vector<float> uv0(numVertex * 2);
 
+	file.Read(magic);
+	assert(magic == MAGIC_STR("POSI"));
+	file.ReadArray(&pos[0], pos.size());
 
-	DrawVertex vertices[] =
-	{
-		{ { -0.90f, 0.f, -0.90f }, { 0.0f, -1.0f, 0.0f }, { 1.f, 0.f, 0.f, 1.f }, { 0.f, 1.f } },
-		{ { 0.90f, 0.f, -0.90f }, { 0.0f, -1.0f, 0.0f }, { 0.f, 1.f, 0.f, 1.f }, { 1.f, 1.f } },
-		{ { -0.90f, 0.f, 0.90f }, { 0.0f, -1.0f, 0.0f }, { 0.f, 0.f, 1.f, 1.f }, { 0.f, 0.f } },
-		{ { 0.90f, 0.f, 0.90f }, { 0.0f, -1.0f, 0.0f }, { 1.f, 0.f, 1.f, 1.f }, { 1.f, 0.f } },
-	};
+	file.Read(magic);
+	assert(magic == MAGIC_STR("NORM"));
+	file.ReadArray(&normal[0], normal.size());
 
+	file.Read(magic);
+	assert(magic == MAGIC_STR("TEX0"));
+	file.ReadArray(&uv0[0], uv0.size());
+
+	vector<DrawVertex> vertexes(numVertex);
+	CopyVertexData(vertexes[0].pos, sizeof(DrawVertex), &pos[0], sizeof(float)* 3, numVertex);
+	CopyVertexData(vertexes[0].normal, sizeof(DrawVertex), &normal[0], sizeof(float)* 3, numVertex);
+	CopyVertexData(vertexes[0].uv, sizeof(DrawVertex), &uv0[0], sizeof(float)* 2, numVertex);
+
+	vector<int> indexData(numIndex);
+	file.Read(magic);
+	assert(magic == MAGIC_STR("INDX"));
+	file.ReadArray(&indexData[0], indexData.size());
+	vector<unsigned short> index(numIndex);
+	for (int i = 0; i < numIndex; i++) {
+		index[i] = (unsigned short)indexData[i];
+	}
+
+	file.Close();
+
+	
 	glGenBuffers(1, &vbo_);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(DrawVertex) * numVertex, &vertexes[0], GL_STATIC_DRAW);
 
 #ifdef GL_ARB_vertex_array_object
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(0));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(0));
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(12));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(12));
 
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(24));
-
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(40));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(24));
 
 #endif
 
-	unsigned short indexdata[] =
-	{
-		0, 1, 2, 2, 1, 3
-	};
-
 	glGenBuffers(1, &ibo_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexdata), indexdata, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index[0]) * index.size(), &index[0], GL_STATIC_DRAW);
 
 #ifdef GL_ARB_vertex_array_object
 	glBindVertexArray(0);
@@ -115,8 +139,8 @@ bool Model::Load(const char* filename)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	ModelElement elem;
-	elem.faceCount = 2;
-	elem.faceOffest = 0;
+	elem.indexCount = numIndex;
+	elem.indexOffset = 0;
 	elem.vertexOffset = 0;
 	elements_.push_back(elem);
 
@@ -142,16 +166,13 @@ void Model::Bind()
 #else
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(0));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(0));
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(12));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(12));
 
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(24));
-
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(40));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(24));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
 #endif

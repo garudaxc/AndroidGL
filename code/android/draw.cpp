@@ -33,7 +33,7 @@ int setupGraphics(int w, int h) {
 
 	LogGLInfo();
 
-	model.Load(NULL);
+	model.Load("/sdcard/MyTest/OilTank001.mesh");
 	checkGlError("model.load");
 	
 	GShaderManager.LoadFromFile("/sdcard/MyTest/shader.glsl");
@@ -68,7 +68,9 @@ void renderFrame() {
 	glClearDepthf(1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_CULL_FACE);
+	//glDisable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 
 	model.Bind();
 	checkGlError("model.Bind");
@@ -96,8 +98,8 @@ void renderFrame() {
 	for (int i = 0; i < model.GetElementCount(); i++) {
 		const ModelElement* e = model.GetElement(i);
 			
-		void* index = (void*)(e->faceOffest * 3 * sizeof(unsigned short));
-		glDrawElements(GL_TRIANGLES, e->faceCount * 3, GL_UNSIGNED_SHORT, index);
+		void* index = (void*)(e->indexOffset * sizeof(unsigned short));
+		glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
 		checkGlError("glDrawElements");
 	}
 

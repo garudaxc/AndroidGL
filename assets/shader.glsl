@@ -6,7 +6,6 @@ uniform mat4 mProj;
 
 attribute vec4 vPosition;
 attribute vec3 vNormal;
-attribute vec4 vColor;
 attribute vec2 vUV;
 varying vec3 v_diffuse;
 varying vec2 v_texcoord;
@@ -16,7 +15,7 @@ void main() {
 	vec4 viewPos = mView * worldPos;
 	gl_Position = mProj * viewPos;
 
-	v_diffuse = vColor.rgb; 
+	v_diffuse = mat3(mWorld) * vNormal; 
 	v_texcoord = vUV;
 }
 

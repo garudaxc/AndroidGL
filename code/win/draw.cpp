@@ -107,8 +107,7 @@ void LoadResource() {
 
 	GShaderManager.LoadFromFile("../../assets/shader330.glsl");
 
-	model.Load(NULL);
-
+	model.Load("OilTank001.mesh");
 
 	InitTexture();
 }
@@ -120,8 +119,9 @@ void DrawFrame() {
 	glClearDepthf(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glDisable(GL_CULL_FACE);
-	//glEnable(GL_CULL_FACE);
+	//glDisable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 
 
 	////float scale = (sinf(timer.GetTime()) + 1.f) * 0.5f;
@@ -174,9 +174,9 @@ void DrawFrame() {
 	for (int i = 0; i < model.GetElementCount(); i++) {
 		const ModelElement* e = model.GetElement(i);
 
-		void* index = (void*)(e->faceOffest * 3 * sizeof(unsigned short));
+		void* index = (void*)(e->indexOffset * sizeof(unsigned short));
 		//glDrawElements(GL_TRIANGLES, e->faceCount * 3, GL_UNSIGNED_INT, index);
-		glDrawElementsBaseVertex(GL_TRIANGLES, e->faceCount * 3, GL_UNSIGNED_SHORT, index, e->vertexOffset);
+		glDrawElementsBaseVertex(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index, e->vertexOffset);
 	}
 	
 	glBindVertexArray(0);

@@ -7,8 +7,8 @@ using namespace std;
 struct ModelElement
 {
 	int		vertexOffset;
-	int		faceCount;
-	int		faceOffest;
+	int		indexCount;
+	int		indexOffset;
 };
 
 

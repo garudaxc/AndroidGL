@@ -35,7 +35,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)"
 adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
@@ -77,6 +77,7 @@ adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildComm
     <ClInclude Include="code\android\AuroraGL.h" />
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\Color.h" />
+    <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\glUtil.h" />
     <ClInclude Include="code\MathFunction.h" />
     <ClInclude Include="code\Matrix.h" />
@@ -93,6 +94,7 @@ adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildComm
     <ClCompile Include="code\android\main.cpp" />
     <ClCompile Include="code\android\MyLog.cpp" />
     <ClCompile Include="code\android\PlatfromAndroid.cpp" />
+    <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\glUtil.cpp" />
     <ClCompile Include="code\MathObject.cpp" />
     <ClCompile Include="code\Model.cpp" />

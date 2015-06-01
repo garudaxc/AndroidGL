@@ -6,9 +6,9 @@ uniform mat4 mProj;
 
 layout (location = 0) in vec4 vPosition;
 layout (location = 1) in vec3 vNormal;
-layout (location = 2) in vec4 vColor;
-layout (location = 3) in vec2 vUV;
-out vec3 v_diffuse;
+layout (location = 2) in vec2 vUV;
+
+out vec3 v_normal;
 out vec2 v_texcoord;
 void main() {
 
@@ -16,11 +16,9 @@ void main() {
 	vec4 viewPos = mView * worldPos;
 	gl_Position = mProj * viewPos;
 
-	v_diffuse = vColor.rgb; 
+	v_normal = mat3(mWorld) * vNormal;
 	v_texcoord = vUV;
 }
-
-
 
 
 #endif
@@ -28,7 +26,10 @@ void main() {
 
 #ifdef FRAGMENT_SHADER
 
-in vec3 v_diffuse;
+uniform vec3 vLightDir = vec3(1, 1, 1);
+uniform vec3 vLightColor = vec3(1, 1, 1);
+
+in vec3 v_normal;
 in vec2 v_texcoord;
 
 uniform sampler2D texDiffuse;
@@ -37,7 +38,13 @@ uniform sampler2D texNormal;
 layout (location = 0) out vec4 color;
 
 void main() {
-	color = texture(texDiffuse, v_texcoord) * texture(texNormal, v_texcoord);
+	
+	vec3 l = normalize(vLightDir);
+
+	float diffuse = max(dot(l, v_normal), 0);
+	vec3 tex = texture(texDiffuse, v_texcoord).rgb * texture(texNormal, v_texcoord).rgb;
+	
+	color = vec4(tex * vLightColor * diffuse, 1);
 }
 
 

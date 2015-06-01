@@ -557,10 +557,7 @@ void SetFloatArray(std::vector<float>& des, const FbxVector4* src, int numVec, i
 
 void ConvertMesh(FbxMesh* mesh)
 {
-	bool convertAxis		= false;
-	bool flipTexcoordV		= false;
-
-	DisplayPolygons(mesh);
+	//DisplayPolygons(mesh);
 
 	if (!mesh->IsTriangleMesh()) {
 		FBXSDK_printf("Error ! mesh %s is not triangle mesh\n", mesh->GetNode()->GetName());
@@ -575,9 +572,7 @@ void ConvertMesh(FbxMesh* mesh)
 	std::vector<int> positionIndex;
 	std::vector<int> normalIndex;
 	std::vector<int> texcoordIndex;
-	std::vector<int> m_MeshIndex;
-	int m_nMeshFaceCount = mesh->GetPolygonCount();
-
+	std::vector<int> meshIndex;
 
 	positionIndex.resize(polygonCount * 3);
 	normalIndex.resize(polygonCount * 3);
@@ -619,8 +614,7 @@ void ConvertMesh(FbxMesh* mesh)
 		return;
 	}
 	texcoordData.resize(textureUVCount * 2);
-	for (int i = 0; i < pLockableArray->GetCount(); i++)
-	{
+	for (int i = 0; i < pLockableArray->GetCount(); i++){
 		FbxVector2 uv = pLockableArray->GetAt(i);
 		texcoordData[i * 2 + 0] = (float)uv[0];
 		texcoordData[i * 2 + 1] = (float)uv[1];
@@ -635,12 +629,11 @@ void ConvertMesh(FbxMesh* mesh)
 	ProcessBufferIndex(normalData, normalIndex, 3);
 	ProcessBufferIndex(texcoordData, texcoordIndex, 2);
 
-	m_MeshIndex.resize(m_nMeshFaceCount * 3);
+	meshIndex.resize(polygonCount * 3);
 	
 	std::map<VertInfo, int, VertInfoComp> vertexMap;
 	int expVertIdx = 0;
-	for (size_t i = 0; i < m_MeshIndex.size(); i++)
-	{
+	for (size_t i = 0; i < meshIndex.size(); i++){
 		VertInfo info;
 		info.indeics.push_back(positionIndex[i]);
 		info.indeics.push_back(normalIndex[i]);
@@ -649,37 +642,43 @@ void ConvertMesh(FbxMesh* mesh)
 		auto iter = vertexMap.find(info);
 		if (iter == vertexMap.end()){
 			vertexMap[info] = expVertIdx;
-			m_MeshIndex[i] = expVertIdx;
+			meshIndex[i] = expVertIdx;
 			expVertIdx++;
 		} else {
-			m_MeshIndex[i] = iter->second;
+			meshIndex[i] = iter->second;
 		}
 	}
 
 	int nNumMeshVert = expVertIdx;
 	printf("final vertex count %d\n", nNumMeshVert);
 
-
 	MeshData meshData;
 	meshData.Alloc(nNumMeshVert, polygonCount * 3);
 	
 	CopyVertexBuffer(&meshData.position_[0], 3, &positionData[0], 3, 0, vertexMap);
 	CopyVertexBuffer(&meshData.normal_[0], 3, &normalData[0], 3, 1, vertexMap);
-	CopyVertexBuffer(&meshData.uv0_[0], 2, &texcoordData[0], 3, 2, vertexMap);
+	CopyVertexBuffer(&meshData.uv0_[0], 2, &texcoordData[0], 2, 2, vertexMap);
 
-	if (convertAxis)
-	{
+	meshData.index_ = meshIndex;
+
+	if (Args.convertAxis){
 		ConvertCoordinateSystem(&meshData.position_[0], nNumMeshVert);
 		ConvertCoordinateSystem(&meshData.normal_[0], nNumMeshVert);
 	}
 
 	// diff between 3dsmax and dx
-	if (flipTexcoordV)
-	{
+	if (Args.flipTexcoordV){
 		FlipTexcoordV(&meshData.uv0_[0], 2, nNumMeshVert);
 	}
 
-	meshData.SaveToFile("a.mesh");
+	char outFile[256];
+	sprintf_s(outFile, sizeof(outFile), "%s%s.mesh", Args.outputPath.c_str(), mesh->GetNode()->GetName());
+	bRes = meshData.SaveToFile(outFile);
+	if (!bRes) {
+		printf("save file %s failed\n", outFile);
+		return;
+	}
 	
+	printf("save %s succeeded!\n", outFile);
 
 }

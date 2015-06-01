@@ -64,6 +64,9 @@
     <ClInclude Include="code\ShaderManager.h">
       <Filter>Source files</Filter>
     </ClInclude>
+    <ClInclude Include="code\FileSystem.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -92,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="code\android\TrackDropping.cpp">
       <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\FileSystem.cpp">
+      <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

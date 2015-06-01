@@ -245,6 +245,39 @@ void ListSceneNode(FbxNode* node)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	if (argc <= 1) {
+		const char* helpInfo = \
+			"usage :\n"
+			"FbxConverter [-v] [-c] [-o path] file\n"
+			"file : input fbx file\n"
+			"-v : flip texcoord v\n"
+			"-c : change coordinage system\n"
+			"-o : custom ouput path\n";
+
+		FBXSDK_printf(helpInfo);
+		return 0;
+	}
+
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-c") == 0) {
+			Args.convertAxis = true;
+
+		} else if (strcmp(argv[i], "-v") == 0) {
+			Args.flipTexcoordV = true;
+
+		} else if (strcmp(argv[i], "-o") == 0) {
+			Args.outputPath = argv[i + 1];
+			if (Args.outputPath.back() != '\\' &&
+				Args.outputPath.back() != '/') {
+				Args.outputPath += '\\';
+			}
+
+			i++;
+		} else {
+			Args.inputFile = argv[i];
+		}
+	}
+
 
 	FbxManager* lSdkManager = NULL;
 	FbxScene* lScene = NULL;
@@ -284,7 +317,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		FBXSDK_printf("convert mesh %d %s\n", i, Meshes_[i]->GetNode()->GetName());
 		ConvertMesh(Meshes_[i]);
 	}
-
 
 
 	// Destroy all objects created by the FBX SDK.

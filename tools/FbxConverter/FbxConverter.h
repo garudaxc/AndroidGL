@@ -29,12 +29,16 @@ void Display4DVector(const char* pHeader, FbxVector4 pValue, const char* pSuffix
 
 struct Argument
 {
-	string	inputFile;
-	string	outputPath;
+	string		inputFile;
+	string		outputPath;
+	bool		convertAxis;
+	bool		flipTexcoordV;
+
 	
 	Argument()
 	{
-
+		convertAxis = false;
+		flipTexcoordV = false;
 	}
 };
 
