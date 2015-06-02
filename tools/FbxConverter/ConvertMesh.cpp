@@ -3,6 +3,8 @@
 #include <vector>
 #include <assert.h>
 #include <map>
+#include <DirectXMath.h>
+#include "DirectXMesh/DirectXMesh.h"
 
 
 using namespace std;
@@ -21,7 +23,7 @@ struct MeshData
 	int		vertexCount_;
 
 	void	Alloc(int vertexCount, int indexCount);
-	bool	SaveToFile(const char* fileName);
+	virtual bool	SaveToFile(const char* fileName);
 };
 
 
@@ -385,8 +387,6 @@ static void SetData(const float* pData, std::vector<float>& buffer, int numFloat
 	memcpy_s(&buffer[0], byteToCopy, pData, byteToCopy);
 }
 
-
-
 int CompareFloats2(const float* p0, const float* p1)
 {
 	for (int i = 0; i < 2; i++){
@@ -473,7 +473,6 @@ int EliminateData(float* pData, int stride, int dataCount, std::vector<int>& dat
 	return uniqueCount;
 }
 
-
 void RemapIndex(int* index, int indexCount, int* mapper)
 {
 	for (int i = 0; i < indexCount; i++){
@@ -481,7 +480,6 @@ void RemapIndex(int* index, int indexCount, int* mapper)
 		index[i] = indexMapTo;
 	}
 }
-
 
 void ProcessBufferIndex(std::vector<float>& buffer, std::vector<int>& index, int stride)
 {
@@ -491,7 +489,6 @@ void ProcessBufferIndex(std::vector<float>& buffer, std::vector<int>& index, int
 	buffer.resize(uniqueCount * stride);
 	RemapIndex(&index[0], index.size(), &dataMapper[0]);
 }
-
 
 
 struct VertInfo
@@ -519,7 +516,6 @@ void CopyVertexBuffer(float* pBuffer, int desStride, const float* srcBuffer,
 	}
 }
 
-
 void ConvertCoordinateSystem(float* pVectors, int numVectors)
 {
 	float* p = pVectors;
@@ -541,7 +537,6 @@ void FlipTexcoordV(float* pUV, int stride, int numVert)
 		p += stride;
 	}
 }
-
 
 void SetFloatArray(std::vector<float>& des, const FbxVector4* src, int numVec, int numPerVec)
 {
@@ -669,6 +664,58 @@ void ConvertMesh(FbxMesh* mesh)
 	// diff between 3dsmax and dx
 	if (Args.flipTexcoordV){
 		FlipTexcoordV(&meshData.uv0_[0], 2, nNumMeshVert);
+	}
+
+	if (Args.optimise){
+		
+		vector<uint32_t> adj(polygonCount * 3);
+
+		if (FAILED(DirectX::GenerateAdjacencyAndPointReps(
+			(unsigned int*)&meshData.index_[0], polygonCount,
+			(const DirectX::XMFLOAT3*)&meshData.position_[0],
+			nNumMeshVert, 0.f, NULL, &adj[0]))){
+			printf("GenerateAdjacencyAndPointReps failed\n");
+			return;
+		}
+
+		vector<uint32_t> faceRemap(polygonCount);
+		if (FAILED(DirectX::OptimizeFaces((unsigned int*)&meshData.index_[0], polygonCount, &adj[0], &faceRemap[0]))){
+			printf("OptimizeFaces failed\n");
+			return;
+		}
+
+		if (FAILED(DirectX::ReorderIB((unsigned int*)&meshData.index_[0], polygonCount, &faceRemap[0]))){
+			printf("ReorderIB failed\n");
+			return;
+		}
+
+		vector<uint32_t> vertexRemap(nNumMeshVert);
+		if (FAILED(DirectX::OptimizeVertices((unsigned int*)&meshData.index_[0], polygonCount, nNumMeshVert, &vertexRemap[0]))){
+			printf("OptimizeVertices failed\n");
+			return;
+		}
+
+		if (FAILED(DirectX::FinalizeIB((unsigned int*)&meshData.index_[0], polygonCount, &vertexRemap[0], nNumMeshVert)))	{
+			printf("FinalizeIB failed\n");
+			return;
+		}
+		
+		if (FAILED(DirectX::FinalizeVB(&meshData.position_[0], sizeof(float)* 3, nNumMeshVert, &vertexRemap[0]))){
+			printf("FinalizeVB failed\n");
+			return;
+		}
+
+		if (FAILED(DirectX::FinalizeVB(&meshData.normal_[0], sizeof(float)* 3, nNumMeshVert, &vertexRemap[0]))){
+			printf("FinalizeVB failed\n");
+			return;
+		}
+
+		if (FAILED(DirectX::FinalizeVB(&meshData.uv0_[0], sizeof(float)* 2, nNumMeshVert, &vertexRemap[0]))){
+			printf("FinalizeVB failed\n");
+			return;
+		}
+
+		printf("cache optimise done!\n");
 	}
 
 	char outFile[256];

@@ -33,12 +33,13 @@ struct Argument
 	string		outputPath;
 	bool		convertAxis;
 	bool		flipTexcoordV;
-
+	bool		optimise;
 	
 	Argument()
 	{
 		convertAxis = false;
 		flipTexcoordV = false;
+		optimise = true;
 	}
 };
 

@@ -9,6 +9,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="DirectXMesh">
+      <UniqueIdentifier>{1dad98c9-41b8-4336-a3d6-4e40214ea1b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FbxConverter.cpp">
@@ -20,10 +23,51 @@
     <ClCompile Include="Util.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshAdjacency.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshClean.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshGSAdjacency.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshNormals.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshOptimize.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshRemap.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshTangentFrame.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshUtil.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMesh\DirectXMeshValidate.cpp">
+      <Filter>DirectXMesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FbxConverter.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="DirectXMesh\DirectXMesh.h">
+      <Filter>DirectXMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXMesh\DirectXMeshP.h">
+      <Filter>DirectXMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXMesh\scoped.h">
+      <Filter>DirectXMesh</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DirectXMesh\DirectXMesh.inl">
+      <Filter>DirectXMesh</Filter>
+    </None>
   </ItemGroup>
 </Project>

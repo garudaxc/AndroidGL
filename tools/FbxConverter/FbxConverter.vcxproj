@@ -83,11 +83,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConvertMesh.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshAdjacency.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshClean.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshGSAdjacency.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshNormals.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshOptimize.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshRemap.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshTangentFrame.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshUtil.cpp" />
+    <ClCompile Include="DirectXMesh\DirectXMeshValidate.cpp" />
     <ClCompile Include="FbxConverter.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXMesh\DirectXMesh.h" />
+    <ClInclude Include="DirectXMesh\DirectXMeshP.h" />
+    <ClInclude Include="DirectXMesh\scoped.h" />
     <ClInclude Include="FbxConverter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DirectXMesh\DirectXMesh.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

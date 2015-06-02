@@ -35,9 +35,6 @@ vector<FbxMesh*>	Meshes_;
 
 
 
-
-
-
 void InitializeSdkObjects(FbxManager*& pManager, FbxScene*& pScene)
 {
 	//The first thing to do is to create the FBX Manager which is the object allocator for almost all the classes in the SDK
@@ -248,10 +245,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	if (argc <= 1) {
 		const char* helpInfo = \
 			"usage :\n"
-			"FbxConverter [-v] [-c] [-o path] file\n"
+			"FbxConverter [-v] [-c] [-no] [-o path] file\n"
 			"file : input fbx file\n"
 			"-v : flip texcoord v\n"
 			"-c : change coordinage system\n"
+			"-no : do not apply cache optimise\n"
 			"-o : custom ouput path\n";
 
 		FBXSDK_printf(helpInfo);
@@ -264,6 +262,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		} else if (strcmp(argv[i], "-v") == 0) {
 			Args.flipTexcoordV = true;
+		}
+		else if (strcmp(argv[i], "-no") == 0) {
+			Args.optimise = false;
 
 		} else if (strcmp(argv[i], "-o") == 0) {
 			Args.outputPath = argv[i + 1];
@@ -317,7 +318,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		FBXSDK_printf("convert mesh %d %s\n", i, Meshes_[i]->GetNode()->GetName());
 		ConvertMesh(Meshes_[i]);
 	}
-
 
 	// Destroy all objects created by the FBX SDK.
 	DestroySdkObjects(lSdkManager, lResult);
