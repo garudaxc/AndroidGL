@@ -15,6 +15,9 @@
     <Filter Include="源文件\win">
       <UniqueIdentifier>{c74d9064-eccb-4608-aa50-93b9302d0bbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\thirdParty">
+      <UniqueIdentifier>{060b1128-630c-4ae8-8bc7-a6ccb0746ec4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\win\AuroraGL.h">
@@ -68,6 +71,12 @@
     <ClInclude Include="code\FileSystem.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="code\thirdParty\stb\stb_image.h">
+      <Filter>源文件\thirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Texture.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\win\MyLog.cpp">
@@ -98,6 +107,12 @@
       <Filter>源文件\win</Filter>
     </ClCompile>
     <ClCompile Include="code\FileSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\stb\stb_image.c">
+      <Filter>源文件\thirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Texture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

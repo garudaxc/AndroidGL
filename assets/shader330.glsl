@@ -26,7 +26,7 @@ void main() {
 
 #ifdef FRAGMENT_SHADER
 
-uniform vec3 vLightDir = vec3(1, 1, 1);
+uniform vec3 vLightDir = vec3(1, -1, 1);
 uniform vec3 vLightColor = vec3(1, 1, 1);
 
 in vec3 v_normal;
@@ -42,7 +42,10 @@ void main() {
 	vec3 l = normalize(vLightDir);
 
 	float diffuse = max(dot(l, v_normal), 0);
-	vec3 tex = texture(texDiffuse, v_texcoord).rgb * texture(texNormal, v_texcoord).rgb;
+	vec3 tex0 = texture(texDiffuse, v_texcoord).rgb;
+	vec3 tex1 = texture(texNormal, v_texcoord).rgb;
+
+	vec3 tex = tex0 * tex1;
 	
 	color = vec4(tex * vLightColor * diffuse, 1);
 }

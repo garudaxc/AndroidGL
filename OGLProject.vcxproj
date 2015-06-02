@@ -21,6 +21,8 @@
     <ClInclude Include="code\MyLog.h" />
     <ClInclude Include="code\Quaternion.h" />
     <ClInclude Include="code\ShaderManager.h" />
+    <ClInclude Include="code\Texture.h" />
+    <ClInclude Include="code\thirdParty\stb\stb_image.h" />
     <ClInclude Include="code\Vector.h" />
     <ClInclude Include="code\win\AuroraGL.h" />
     <ClInclude Include="code\win\glew.h" />
@@ -35,6 +37,8 @@
     <ClCompile Include="code\MathObject.cpp" />
     <ClCompile Include="code\Model.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
+    <ClCompile Include="code\Texture.cpp" />
+    <ClCompile Include="code\thirdParty\stb\stb_image.c" />
     <ClCompile Include="code\win\draw.cpp" />
     <ClCompile Include="code\win\GLInit.cpp" />
     <ClCompile Include="code\win\MyLog.cpp" />

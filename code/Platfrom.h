@@ -5,6 +5,8 @@
 
 typedef unsigned long long uint64;
 
+typedef unsigned int uint32_t;
+
 #else
 #include <EGL/egl.h>
 #include <EGL/eglext.h>

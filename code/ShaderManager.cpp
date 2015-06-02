@@ -172,6 +172,8 @@ void ShaderManager::SetUnifrom(ShaderUniform u, const float* value)
 void ShaderManager::SetUnifrom(ShaderUniform u, int value)
 {
 	if (u == SU_TEX_DIFFUSE || u == SU_TEX_NORMAL) {
-		glUniform1i(uniform_[u], value);
+		if (uniform_[u] != -1) {
+			glUniform1i(uniform_[u], value);
+		}
 	}
 }

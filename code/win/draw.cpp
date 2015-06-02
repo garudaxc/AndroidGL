@@ -10,106 +10,33 @@
 #include "Matrix.h"
 #include "Model.h"
 #include "ShaderManager.h"
+#include "Texture.h"
+#include "glUtil.h"
 
 using namespace std;
 using namespace Aurora;
 
 
-GLuint texture;
-GLuint texture2;
-
 Model model;
+
+Texture tex;
+Texture tex2;
 
 
 #define COLOR(r, g, b, a) (a << 24 | b << 16 | g << 8 | r)
 
 
-void InitTexture() {
-
-	// The following is an 8x8 checkerboard pattern using
-	// GL_RED, GL_UNSIGNED_BYTE data.
-	static const GLubyte tex_checkerboard_data[] =
-	{
-		0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-		0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
-		0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-		0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
-		0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-		0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
-		0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-		0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF
-	};
-	// The following data represents a 2x2 texture with red,
-	// green, blue, and yellow texels represented as GL_RGBA,
-	// GL_FLOAT data.
-	static const GLfloat tex_color_data[] =
-	{
-		// Red texel Green texel
-		1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-		// Blue texel Yellow texel
-		0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f
-	};
-
-	const GLuint texcolor[] = {
-		COLOR(0, 0, 0, 255), COLOR(0, 255, 0, 255), COLOR(0, 0, 255, 255), COLOR(255, 0, 0, 255),
-		COLOR(255, 0, 0, 255), COLOR(0, 255, 0, 255), COLOR(0, 0, 255, 255), COLOR(128, 128, 128, 255),
-		COLOR(255, 0, 0, 255), COLOR(0, 255, 0, 255), COLOR(0, 0, 255, 255), COLOR(255, 0, 0, 255),
-		COLOR(255, 255, 255, 255), COLOR(0, 255, 0, 255), COLOR(0, 0, 255, 255), COLOR(255, 0, 0, 255),
-	};
-
-
-	glGenTextures(1, &texture);
-
-	//glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, texcolor);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	glTexStorage2D(GL_TEXTURE_2D, 4, GL_RGBA8, 8, 8);
-
-	glTexSubImage2D(GL_TEXTURE_2D,
-		0,
-		0, 0,
-		8, 8,
-		GL_RED, GL_UNSIGNED_BYTE,
-		tex_checkerboard_data);
-
-	static const GLint swizzles[] = { GL_RED, GL_RED, GL_RED, GL_ONE };
-	glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzles);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
-
 void LoadResource() {
 
 	GShaderManager.LoadFromFile("../../assets/shader330.glsl");
+	checkGlError("GShaderManager.LoadFromFile");
+
+	tex.Load("2.png");
+	tex2.Load("1.png");
 
 	model.Load("OilTank001.mesh");
 
-	InitTexture();
+	//InitTexture();
 }
 
 void DrawFrame() {
@@ -154,12 +81,11 @@ void DrawFrame() {
 	GShaderManager.SetUnifrom(SU_TEX_DIFFUSE, 0);
 	GShaderManager.SetUnifrom(SU_TEX_NORMAL, 1);
 
-
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	tex.Bind();
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
+	tex2.Bind();
 
 	//if (keyDown % 2)
 	//{
