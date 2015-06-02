@@ -86,6 +86,8 @@ adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildComm
     <ClInclude Include="code\Platfrom.h" />
     <ClInclude Include="code\Quaternion.h" />
     <ClInclude Include="code\ShaderManager.h" />
+    <ClInclude Include="code\Texture.h" />
+    <ClInclude Include="code\thirdParty\stb\stb_image.h" />
     <ClInclude Include="code\Vector.h" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +101,8 @@ adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildComm
     <ClCompile Include="code\MathObject.cpp" />
     <ClCompile Include="code\Model.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
+    <ClCompile Include="code\Texture.cpp" />
+    <ClCompile Include="code\thirdParty\stb\stb_image.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -41,9 +41,9 @@ void main() {
 	
 	vec3 l = normalize(vLightDir);
 
-	float diffuse = max(dot(l, v_normal), 0);
-	vec3 tex0 = texture(texDiffuse, v_texcoord).rgb;
-	vec3 tex1 = texture(texNormal, v_texcoord).rgb;
+	float diffuse = max(dot(l, v_normal), 0.0);
+	vec3 tex0 = texture2D(texDiffuse, v_texcoord).rgb;
+	vec3 tex1 = texture2D(texNormal, v_texcoord).rgb;
 
 	vec3 tex = tex0 * tex1;
 	

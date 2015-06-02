@@ -285,7 +285,6 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
  * android_native_app_glue.  It runs in its own thread, with its own
  * event loop for receiving input events and doing other things.
  */
-void TrackDropping(const ASensorEvent& event);
 
 void android_main(struct android_app* state) {
     struct engine engine;
@@ -338,7 +337,7 @@ void android_main(struct android_app* state) {
 				if (engine.accelerometerSensor != NULL) {
 					ASensorEvent event;
 					while (ASensorEventQueue_getEvents(engine.sensorEventQueue, &event, 1) > 0) {
-						TrackDropping(event);
+						//TrackDropping(event);
 						//Vector3f v(event.acceleration.x, event.acceleration.y, event.acceleration.z);
 						//float length = v.Length();
 

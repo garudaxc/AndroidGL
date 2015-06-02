@@ -7,15 +7,15 @@ uniform mat4 mProj;
 attribute vec4 vPosition;
 attribute vec3 vNormal;
 attribute vec2 vUV;
-varying vec3 v_diffuse;
+varying vec3 v_normal;
 varying vec2 v_texcoord;
 void main() {
-
+	
 	vec4 worldPos = mWorld * vPosition;
 	vec4 viewPos = mView * worldPos;
 	gl_Position = mProj * viewPos;
-
-	v_diffuse = mat3(mWorld) * vNormal; 
+	
+	v_normal = mat3(mWorld) * vNormal; 
 	v_texcoord = vUV;
 }
 
@@ -25,10 +25,22 @@ void main() {
 #ifdef FRAGMENT_SHADER
 
 precision mediump float;
-varying vec3 v_diffuse;
+
+vec3 vLightDir = vec3(1, -1, 1);
+vec3 vLightColor = vec3(1, 1, 1);
+
+uniform sampler2D texDiffuse;
+
+varying vec3 v_normal;
 varying vec2 v_texcoord;
 void main() {
-  gl_FragColor = vec4(v_diffuse, 1.0);
+
+	vec3 l = normalize(vLightDir);
+	float dnl = max(dot(l, v_normal), 0.0);
+
+	vec3 tex0 = texture2D(texDiffuse, v_texcoord).rgb;
+
+	gl_FragColor = vec4(tex0 * vLightColor * dnl, 1.0);
 }
 
 #endif

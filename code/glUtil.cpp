@@ -19,9 +19,15 @@ const char * GL_ErrorForEnum(const GLenum e){
 	}
 }
 
-void printGLString(const char *name, GLenum s) {
+void PrintGLString(const char *name, GLenum s) {
 	const char *v = (const char *)glGetString(s);
 	GLog.LogInfo("GL %s = %s", name, v);
+}
+
+void PrintGLInteger(const char* name, GLenum id) {
+	GLint value = 0;
+	glGetIntegerv(id, &value);
+	GLog.LogInfo("%s %d", name, value);
 }
 
 void checkGlError(const char* op) {
@@ -31,10 +37,14 @@ void checkGlError(const char* op) {
 }
 
 void LogGLInfo() {
-	printGLString("Version", GL_VERSION);
-	printGLString("Vendor", GL_VENDOR);
-	printGLString("Renderer", GL_RENDERER);
+	PrintGLString("Version", GL_VERSION);
+	PrintGLString("Vendor", GL_VENDOR);
+	PrintGLString("Renderer", GL_RENDERER);
 	//printGLString("Extensions", GL_EXTENSIONS);
+
+	PrintGLInteger("GL_MAX_VARYING_VECTORS", GL_MAX_VARYING_VECTORS);
+	PrintGLInteger("GL_MAX_VERTEX_UNIFORM_VECTORS", GL_MAX_VERTEX_UNIFORM_VECTORS);
+	PrintGLInteger("GL_MAX_FRAGMENT_UNIFORM_VECTORS", GL_MAX_FRAGMENT_UNIFORM_VECTORS);
 
 	GLog.LogInfo("GL extensions : ");
 	const char *v = (const char *)glGetString(GL_EXTENSIONS);

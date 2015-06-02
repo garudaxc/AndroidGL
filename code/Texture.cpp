@@ -26,6 +26,7 @@ bool Texture::Load(const char* fileName)
 		GLog.LogError("Load texture %s failed! : %s", fileName, stbi_failure_reason());
 		return false;
 	}
+	GLog.LogInfo("texture %s info, w %d h %d component %d", fileName, w, h, comp);
 
 	if (comp < 3){
 		GLog.LogError("texture %s format not support!", fileName);

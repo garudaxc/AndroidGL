@@ -15,6 +15,9 @@
     <Filter Include="config">
       <UniqueIdentifier>{2495b612-16d1-4b49-8314-819ccbb5ac9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\thirdParty">
+      <UniqueIdentifier>{4a31e3fa-e66a-4ae3-9858-b0a18ad41406}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shader.glsl">
@@ -67,6 +70,12 @@
     <ClInclude Include="code\FileSystem.h">
       <Filter>Source files</Filter>
     </ClInclude>
+    <ClInclude Include="code\Texture.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\stb\stb_image.h">
+      <Filter>Source files\thirdParty</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -98,6 +107,12 @@
     </ClCompile>
     <ClCompile Include="code\FileSystem.cpp">
       <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Texture.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\stb\stb_image.c">
+      <Filter>Source files\thirdParty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

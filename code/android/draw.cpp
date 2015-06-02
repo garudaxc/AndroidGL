@@ -14,6 +14,7 @@
 #include "Matrix.h"
 #include "Vector.h"
 #include "MathFunction.h"
+#include "Texture.h"
 
 using namespace std;
 using namespace Aurora;
@@ -22,8 +23,7 @@ struct glState_t glState;
 
 Model model;
 
-GLuint texture;
-GLuint texture2;
+Texture texDiffuse;
 
 GLint unifromScale;
 GLint unifromTransfrom;
@@ -38,33 +38,17 @@ int setupGraphics(int w, int h) {
 	
 	GShaderManager.LoadFromFile("/sdcard/MyTest/shader.glsl");
 
+	texDiffuse.Load("/sdcard/MyTest/1.png");
+	checkGlError("texDiffuse.Load");
+
 	glViewport(0, 0, w, h);
 	checkGlError("glViewport");
 	return 1;
 }
 
-#include "Color.h"
-
-extern int state;
-
 void renderFrame() {
 
-	static float grey;
-	grey += 0.01f;
-	if (grey > 1.0f) {
-		grey = 0.0f;
-	}
-
-
-	if (state == 1) {
-		glClearColor(1.0f, 0, 0, 1.0f);		
-	} else if (state == 2) {
-		glClearColor(0.0f, 1.0f, 0, 1.0f);
-	} else {
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-
-	//glClearColor(grey, grey, grey, 1.0f);
+	glClearColor(0, 0, 0, 0);
 	glClearDepthf(1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -94,6 +78,11 @@ void renderFrame() {
 	GShaderManager.SetUnifrom(SU_VIEW, mView.Ptr());
 	GShaderManager.SetUnifrom(SU_PROJECTION, mProj.Ptr());
 	checkGlError("GShaderManager.SetUnifrom");
+
+	GShaderManager.SetUnifrom(SU_TEX_DIFFUSE, 0);
+	glActiveTexture(GL_TEXTURE0);
+	texDiffuse.Bind();
+	checkGlError("texDiffuse.Bind()");
 
 	for (int i = 0; i < model.GetElementCount(); i++) {
 		const ModelElement* e = model.GetElement(i);

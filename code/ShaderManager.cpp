@@ -99,8 +99,8 @@ bool ShaderManager::LoadFromFile(const char* fileName)
 	program_ = glCreateProgram();
 	glBindAttribLocation(program_, 0, "vPosition");
 	glBindAttribLocation(program_, 1, "vNormal");
-	glBindAttribLocation(program_, 2, "vColor");
-	glBindAttribLocation(program_, 3, "vUV");
+	//glBindAttribLocation(program_, 2, "vColor");
+	glBindAttribLocation(program_, 2, "vUV");
 
 	glAttachShader(program_, vs);
 	glAttachShader(program_, ps);
