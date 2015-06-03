@@ -182,17 +182,15 @@ static int engine_init_display(struct engine* engine) {
 /**
  * Just the current frame in the display.
  */
+void _UpdateTimer();
+
 static void engine_draw_frame(struct engine* engine) {
     if (engine->display == NULL) {
         // No display.
         return;
     }
 
-    // Just fill the screen with a color.
-    //glClearColor(((float)engine->state.x)/engine->width, engine->state.angle,
-    //        ((float)engine->state.y)/engine->height, 1);
-    //glClear(GL_COLOR_BUFFER_BIT);
-
+	_UpdateTimer();
 	renderFrame();
 
     eglSwapBuffers(engine->display, engine->surface);
@@ -297,6 +295,7 @@ void android_main(struct android_app* state) {
     state->onAppCmd = engine_handle_cmd;
     state->onInputEvent = engine_handle_input;
     engine.app = state;
+	PlatfromInit();
 
     // Prepare to monitor accelerometer
     engine.sensorManager = ASensorManager_getInstance();
@@ -351,6 +350,7 @@ void android_main(struct android_app* state) {
             // Check if we are exiting.
             if (state->destroyRequested != 0) {
                 engine_term_display(&engine);
+				PlatfromShutDown();
                 return;
             }
         }

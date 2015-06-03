@@ -13,7 +13,9 @@
   <ItemGroup>
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\Color.h" />
+    <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
+    <ClInclude Include="code\GlobalVar.h" />
     <ClInclude Include="code\glUtil.h" />
     <ClInclude Include="code\MathFunction.h" />
     <ClInclude Include="code\Matrix.h" />
@@ -23,6 +25,7 @@
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
+    <ClInclude Include="code\Timer.h" />
     <ClInclude Include="code\Vector.h" />
     <ClInclude Include="code\win\AuroraGL.h" />
     <ClInclude Include="code\win\glew.h" />
@@ -32,13 +35,16 @@
     <ClInclude Include="code\win\wglew.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\CommandSystem.cpp" />
     <ClCompile Include="code\FileSystem.cpp" />
+    <ClCompile Include="code\GlobalVar.cpp" />
     <ClCompile Include="code\glUtil.cpp" />
     <ClCompile Include="code\MathObject.cpp" />
     <ClCompile Include="code\Model.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
     <ClCompile Include="code\Texture.cpp" />
     <ClCompile Include="code\thirdParty\stb\stb_image.c" />
+    <ClCompile Include="code\Timer.cpp" />
     <ClCompile Include="code\win\draw.cpp" />
     <ClCompile Include="code\win\GLInit.cpp" />
     <ClCompile Include="code\win\MyLog.cpp" />
@@ -107,6 +113,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\libs\win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

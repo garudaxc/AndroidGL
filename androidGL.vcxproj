@@ -77,7 +77,9 @@ adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildComm
     <ClInclude Include="code\android\AuroraGL.h" />
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\Color.h" />
+    <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
+    <ClInclude Include="code\GlobalVar.h" />
     <ClInclude Include="code\glUtil.h" />
     <ClInclude Include="code\MathFunction.h" />
     <ClInclude Include="code\Matrix.h" />
@@ -88,6 +90,7 @@ adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildComm
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
+    <ClInclude Include="code\Timer.h" />
     <ClInclude Include="code\Vector.h" />
   </ItemGroup>
   <ItemGroup>
@@ -96,13 +99,16 @@ adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildComm
     <ClCompile Include="code\android\main.cpp" />
     <ClCompile Include="code\android\MyLog.cpp" />
     <ClCompile Include="code\android\PlatfromAndroid.cpp" />
+    <ClCompile Include="code\CommandSystem.cpp" />
     <ClCompile Include="code\FileSystem.cpp" />
+    <ClCompile Include="code\GlobalVar.cpp" />
     <ClCompile Include="code\glUtil.cpp" />
     <ClCompile Include="code\MathObject.cpp" />
     <ClCompile Include="code\Model.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
     <ClCompile Include="code\Texture.cpp" />
     <ClCompile Include="code\thirdParty\stb\stb_image.c" />
+    <ClCompile Include="code\Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,8 +3,7 @@
 #ifdef WIN32
 #include "win/glew.h"
 
-typedef unsigned long long uint64;
-
+typedef unsigned long long uint64_t;
 typedef unsigned int uint32_t;
 
 #else
@@ -13,17 +12,23 @@ typedef unsigned int uint32_t;
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-typedef uint64_t uint64;
 
 #endif // WIN32
+
+extern const char* vsInclude;
+extern const char* psInclude;
+
+void PlatfromInit();
+void PlatfromShutDown();
 
 
 void EnumGLConfig();
 
 void LogSencorInfo();
 
-uint64 GetTicksNanos();
+uint64_t GetTicksNanos();
+uint32_t	GetTicksMS();
 
 
-extern const char* vsInclude;
-extern const char* psInclude;
+
+

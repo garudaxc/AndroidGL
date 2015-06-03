@@ -142,7 +142,7 @@ void LogAccData(){
 }
 
 
-uint64 GetTicksNanos()
+uint64_t GetTicksNanos()
 {
 	// Do NOT change because this should be the same as Java's system.nanoTime(),
 	// which is what the Choreographer vsync timestamp is based on.
@@ -153,6 +153,22 @@ uint64 GetTicksNanos()
 	{
 		//OVR_DEBUG_LOG(("clock_gettime status=%i", status));
 	}
-	const uint64 result = (uint64)tp.tv_sec * (uint64_t)(1000 * 1000 * 1000) + uint64(tp.tv_nsec);
+	const uint64_t result = (uint64_t)tp.tv_sec * (uint64_t)(1000 * 1000 * 1000) + uint64_t(tp.tv_nsec);
 	return result;
+}
+
+
+
+uint32_t	GetTicksMS()
+{
+	return GetTicksNanos() / 1000000;
+}
+
+
+void PlatfromInit()
+{
+}
+
+void PlatfromShutDown()
+{
 }

@@ -188,12 +188,16 @@ bool InitOpenGL(HINSTANCE hInstance, HWND hWnd)
 		return false;
 	}
 
+	wglSwapIntervalEXT(0);
+
 	glState.hdc = hDC;
 
 	RECT rect = { 0 };
 	::GetClientRect(hWnd, &rect);
 	glState.width	= rect.right - rect.left;
 	glState.height	= rect.bottom - rect.top;
+
+	GLog.LogInfo("OpenGL initialized. window size %d x %d", glState.width, glState.height);
 
 	LogGLInfo();
 
