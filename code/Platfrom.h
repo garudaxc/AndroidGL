@@ -15,6 +15,8 @@ typedef unsigned long long uint64_t;
 #include <GLES2/gl2ext.h>
 
 
+typedef unsigned char ubyte_t;
+
 #endif // WIN32
 
 extern const char* vsInclude;

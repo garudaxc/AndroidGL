@@ -24,7 +24,7 @@ using namespace Aurora;
 struct glState_t glState;
 
 
-GlobalVar EyeDistance("EyeDistance", "0.065f", GVFLAG_FLOAT, "");
+GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
 
 class ModelInstance
 {
@@ -60,18 +60,14 @@ int setupGraphics(int w, int h) {
 	GShaderManager.LoadFromFile("/sdcard/MyTest/shader.glsl");
 
 	ModelInstance* model = NULL;
-	model = CreateModel("/sdcard/MyTest/OilTank001.mesh", "/sdcard/MyTest/1.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.5f, 3.0f, 0.0f));
+	model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 
-	model = CreateModel("/sdcard/MyTest/OilTank001.mesh", "/sdcard/MyTest/1.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+	model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
 	Models.push_back(model);
-
-	model = CreateModel("/sdcard/MyTest/OilTank001.mesh", "/sdcard/MyTest/1.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 3.0f, 0.0f));
-	Models.push_back(model);
-
+	
 	checkGlError("CreateModel");
 	return 1;
 }
@@ -89,7 +85,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
 
 		Matrix4f mView, mEyeOffset, mProj;
-		MatrixLookAtRH(mView, Vector3f(0.f, -5.0f, 0.0f), Vector3f::ZERO, Vector3f::UNIT_Z);
+		MatrixLookAtRH(mView, Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
 		MatrixTranslation(mEyeOffset, Vector3f(eyeOffset, 0.f, 0.f));
 		MatrixMultiply(mView, mView, mEyeOffset);
 

@@ -36,7 +36,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)"
-adb push D:\develop\androidGL\assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine>
+adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
     <NMakeIncludeSearchPath>$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include;$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include\android;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include-fixed;$(ANDROID_NDK_ROOT)\sources\cxx-stl\stlport\stlport;D:\develop\androidGL\code;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>

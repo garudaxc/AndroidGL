@@ -25,6 +25,7 @@
 #include <android/sensor.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
+#include <android/window.h>
 #include "AuroraGL.h"
 #include "MyLog.h"
 #include "Platfrom.h"
@@ -306,6 +307,9 @@ void android_main(struct android_app* state) {
 
 	int setRate = ASensorEventQueue_setEventRate(engine.sensorEventQueue, engine.accelerometerSensor, 1);
 	GLog.LogInfo("ASensorEventQueue_setEventRate : %d", setRate);
+
+
+	ANativeActivity_setWindowFlags(state->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
 
     if (state->savedState != NULL) {
         // We are starting with a previous saved state; restore from it.

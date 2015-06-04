@@ -57,16 +57,12 @@ void LoadResource() {
 	checkGlError("GShaderManager.LoadFromFile");
 
 	ModelInstance* model = NULL;
-	model = CreateModel("OilTank001.mesh", "1.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.5f, 3.0f, 0.0f));
+	model = CreateModel("build_tower003.mesh", "other_stone001_d.TGA");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 
-	model = CreateModel("Teapot001.mesh", "1.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
-	Models.push_back(model);
-
-	model = CreateModel("Torus Knot001.mesh", "1.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 3.0f, 0.0f));
+	model = CreateModel("build_house008.mesh", "other_stone001_d.TGA");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
 	Models.push_back(model);
 }
 
@@ -83,7 +79,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
 
 		Matrix4f mView, mEyeOffset, mProj;
-		MatrixLookAtRH(mView, Vector3f(0.f, -5.0f, 0.0f), Vector3f::ZERO, Vector3f::UNIT_Z);
+		MatrixLookAtRH(mView, Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
 		MatrixTranslation(mEyeOffset, Vector3f(eyeOffset, 0.f, 0.f));
 		MatrixMultiply(mView, mView, mEyeOffset);
 

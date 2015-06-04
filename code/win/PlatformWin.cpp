@@ -1,5 +1,6 @@
 #include "Platfrom.h"
-#include "windows.h"
+#include <Windows.h>
+#include <Mmsystem.h>
 
 const char* vsInclude = \
 "#version 330 core\n"
