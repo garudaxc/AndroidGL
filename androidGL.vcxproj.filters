@@ -76,6 +76,15 @@
     <ClInclude Include="code\thirdParty\stb\stb_image.h">
       <Filter>Source files\thirdParty</Filter>
     </ClInclude>
+    <ClInclude Include="code\Timer.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\CommandSystem.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\GlobalVar.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -113,6 +122,15 @@
     </ClCompile>
     <ClCompile Include="code\thirdParty\stb\stb_image.c">
       <Filter>Source files\thirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Timer.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\CommandSystem.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\GlobalVar.cpp">
+      <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -12,32 +12,115 @@
 #include "ShaderManager.h"
 #include "Texture.h"
 #include "glUtil.h"
+#include "Timer.h"
+#include "GlobalVar.h"
 
 using namespace std;
 using namespace Aurora;
 
 
-Model model;
 
-Texture tex;
-Texture tex2;
-
+GlobalVar EyeDistance("EyeDistance", "0.065f", GVFLAG_FLOAT, "");
 
 #define COLOR(r, g, b, a) (a << 24 | b << 16 | g << 8 | r)
 
+class ModelInstance
+{
+public:
+	Model		mesh_;
+	Texture		texture_;
+	Matrix4f	transform_;
+
+private:
+
+};
+
+
+vector<ModelInstance*>		Models;
+
+ModelInstance*	CreateModel(const char* mesh, const char* texture)
+{
+	ModelInstance* model = new ModelInstance;
+	model->mesh_.Load(mesh);
+	model->texture_.Load(texture);
+
+	model->transform_ = Matrix4f::IDENTITY;
+
+	return model;
+}
+
 
 void LoadResource() {
+	GGlobalVarManager->Init();
 
 	GShaderManager.LoadFromFile("../../assets/shader330.glsl");
 	checkGlError("GShaderManager.LoadFromFile");
 
-	tex.Load("2.png");
-	tex2.Load("1.png");
+	ModelInstance* model = NULL;
+	model = CreateModel("OilTank001.mesh", "1.png");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.5f, 3.0f, 0.0f));
+	Models.push_back(model);
 
-	model.Load("OilTank001.mesh");
+	model = CreateModel("Teapot001.mesh", "1.png");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+	Models.push_back(model);
 
-	//InitTexture();
+	model = CreateModel("Torus Knot001.mesh", "1.png");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 3.0f, 0.0f));
+	Models.push_back(model);
 }
+
+
+void DrawView(int x, int y, int w, int h, float eyeOffset)
+{
+	glViewport(x, y, w, h);
+	
+	for (auto it = Models.begin(); it != Models.end(); ++it) {
+
+		Matrix4f mWorld;
+		MatrixRotationAxis(mWorld, Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
+		
+		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
+
+		Matrix4f mView, mEyeOffset, mProj;
+		MatrixLookAtRH(mView, Vector3f(0.f, -5.0f, 0.0f), Vector3f::ZERO, Vector3f::UNIT_Z);
+		MatrixTranslation(mEyeOffset, Vector3f(eyeOffset, 0.f, 0.f));
+		MatrixMultiply(mView, mView, mEyeOffset);
+
+		MatrixPerspectiveFovRH(mProj, Mathf::PI / 3.0f, w / (float)h, 0.1f);
+		mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
+		mProj._43 = mProj._43 * 2.f;
+
+		GShaderManager.Bind();
+		GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());
+		GShaderManager.SetUnifrom(SU_VIEW, mView.Ptr());
+		GShaderManager.SetUnifrom(SU_PROJECTION, mProj.Ptr());
+		GShaderManager.SetUnifrom(SU_TEX_DIFFUSE, 0);
+		GShaderManager.SetUnifrom(SU_TEX_NORMAL, 1);
+
+		glActiveTexture(GL_TEXTURE0);
+		(*it)->texture_.Bind();
+
+		glActiveTexture(GL_TEXTURE1);
+		(*it)->texture_.Bind();
+		
+		Model& mesh = (*it)->mesh_;
+		mesh.Bind();
+		for (int i = 0; i < mesh.GetElementCount(); i++) {
+			const ModelElement* e = mesh.GetElement(i);
+
+			void* index = (void*)(e->indexOffset * sizeof(unsigned short));
+			//glDrawElements(GL_TRIANGLES, e->faceCount * 3, GL_UNSIGNED_INT, index);
+			glDrawElementsBaseVertex(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index, e->vertexOffset);
+		}
+	}
+
+	glBindVertexArray(0);
+
+}
+
+
+float time = 0.f;
 
 void DrawFrame() {
 
@@ -46,66 +129,21 @@ void DrawFrame() {
 	glClearDepthf(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glViewport(0, 0, glState.width / 2, glState.height);
+
 	//glDisable(GL_CULL_FACE);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
+	float eyeDistance = EyeDistance.GetFloat();
 
-	////float scale = (sinf(timer.GetTime()) + 1.f) * 0.5f;
-	//float scale = sinf(timer.GetTime() * 0.5f);
+	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
 
-	//Matrix4f matRot = Matrix4f::IDENTITY;
-	////matRot._41 = scale;
-
-	//MatrixRotationAxis(matRot, Vector3f::UNIT_Y, scale);
-
-	//static unsigned int oldTime = GetTickCount();
-	unsigned int time = GetTickCount();
-	static float angle = 0.f;
-
-	Matrix4f mWorld;
-	MatrixRotationAxis(mWorld, Vector3f::UNIT_Z, angle);
-
-	angle += 0.01f;	
-	
-	Matrix4f mView, mProj;
-	MatrixLookAtRH(mView, Vector3f(0.f, -3.0f, 0.0f), Vector3f::ZERO, Vector3f::UNIT_Z);
-	MatrixPerspectiveFovRH(mProj, Mathf::PI / 4.0f, glState.width / (float)glState.height, 0.1f);
-	mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
-	mProj._43 = mProj._43 * 2.f;
-
-	GShaderManager.Bind();
-	GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());
-	GShaderManager.SetUnifrom(SU_VIEW, mView.Ptr());
-	GShaderManager.SetUnifrom(SU_PROJECTION, mProj.Ptr());
-	GShaderManager.SetUnifrom(SU_TEX_DIFFUSE, 0);
-	GShaderManager.SetUnifrom(SU_TEX_NORMAL, 1);
-
-	glActiveTexture(GL_TEXTURE0);
-	tex.Bind();
-
-	glActiveTexture(GL_TEXTURE1);
-	tex2.Bind();
-
-	//if (keyDown % 2)
-	//{
-	//}
-	//else
-	//{
-	//	glBindTexture(GL_TEXTURE_2D, texture2);
-	//}
-
-
-	model.Bind();
-	for (int i = 0; i < model.GetElementCount(); i++) {
-		const ModelElement* e = model.GetElement(i);
-
-		void* index = (void*)(e->indexOffset * sizeof(unsigned short));
-		//glDrawElements(GL_TRIANGLES, e->faceCount * 3, GL_UNSIGNED_INT, index);
-		glDrawElementsBaseVertex(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index, e->vertexOffset);
+	if (Time.GetTime()  - time > 1.f) {
+		GLog.LogInfo("%f %f %d", Time.GetFPS(), Time.GetTime(), timeGetTime());
+		time = Time.GetTime();
 	}
-	
-	glBindVertexArray(0);
 
 	glFlush();
 	glFinish();

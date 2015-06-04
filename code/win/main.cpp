@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "AuroraGL.h"
+#include "Platfrom.h"
 
 #define MAX_LOADSTRING 100
 
@@ -18,7 +19,9 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-void RenderOneFrame();
+
+
+void _UpdateTimer();
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -42,6 +45,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	{
 		return FALSE;
 	}
+	PlatfromInit();
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_OGLPROJECT));
 
@@ -61,9 +65,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		}
 		else
 		{
+			_UpdateTimer();
 			DrawFrame();
 		}
 	}
+
+	PlatfromShutDown();
 	return (int) msg.wParam;
 }
 
@@ -114,7 +121,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+	   CW_USEDEFAULT, CW_USEDEFAULT, 1600, 900, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {

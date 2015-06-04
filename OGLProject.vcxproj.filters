@@ -77,6 +77,15 @@
     <ClInclude Include="code\Texture.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="code\Timer.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="code\CommandSystem.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="code\GlobalVar.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\win\MyLog.cpp">
@@ -113,6 +122,15 @@
       <Filter>源文件\thirdParty</Filter>
     </ClCompile>
     <ClCompile Include="code\Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Timer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\CommandSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\GlobalVar.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
