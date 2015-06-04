@@ -2,10 +2,13 @@
 
 #ifdef WIN32
 #include "win/glew.h"
+#include "win/wglew.h"
 
 typedef unsigned long long uint64;
 
+typedef unsigned char ubyte_t;
 typedef unsigned int uint32_t;
+
 
 #else
 #include <EGL/egl.h>

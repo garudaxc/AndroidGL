@@ -9,4 +9,6 @@ void checkGlError(const char* op);
 
 void LogGLInfo();
 
+const char* GLCompressedTexName(uint32_t type);
+
 
