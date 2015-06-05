@@ -25,10 +25,7 @@ extern const char* psInclude;
 void PlatfromInit();
 void PlatfromShutDown();
 
-
 void EnumGLConfig();
-
-void LogSencorInfo();
 
 uint64_t GetTicksNanos();
 uint32_t	GetTicksMS();

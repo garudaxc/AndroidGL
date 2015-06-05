@@ -73,19 +73,25 @@ int setupGraphics(int w, int h) {
 }
 
 
+Matrix4f _GetDeviceRotationMatrix();
+
 void DrawView(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
 
 	for (vector<ModelInstance*>::iterator it = Models.begin(); it != Models.end(); ++it) {
 
-		Matrix4f mWorld;
-		MatrixRotationAxis(mWorld, Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
+		Matrix4f mWorld = _GetDeviceRotationMatrix();
+		//MatrixRotationAxis(mWorld, Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
 
 		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
 
 		Matrix4f mView, mEyeOffset, mProj;
 		MatrixLookAtRH(mView, Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
+
+		//Matrix4f mR = _GetDeviceRotationMatrix();
+		//MatrixMultiply(mView, mView, mR);
+
 		MatrixTranslation(mEyeOffset, Vector3f(eyeOffset, 0.f, 0.f));
 		MatrixMultiply(mView, mView, mEyeOffset);
 

@@ -20,7 +20,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../code
 
 LOCAL_MODULE    := native-activity
 #VisualGDBAndroid: AutoUpdateSourcesInNextLine
-LOCAL_SRC_FILES := ../code/android/TrackDropping.cpp ../code/android/draw.cpp ../code/android/main.cpp ../code/android/MyLog.cpp ../code/android/PlatfromAndroid.cpp ../code/FileSystem.cpp ../code/glUtil.cpp ../code/MathObject.cpp ../code/Model.cpp ../code/ShaderManager.cpp ../code/Texture.cpp ../code/thirdParty/stb/stb_image.c ../code/Timer.cpp
+LOCAL_SRC_FILES := ../code/android/TrackDropping.cpp ../code/android/draw.cpp ../code/android/main.cpp ../code/android/MyLog.cpp ../code/android/PlatfromAndroid.cpp ../code/CommandSystem.cpp ../code/FileSystem.cpp ../code/GlobalVar.cpp ../code/glUtil.cpp ../code/MathObject.cpp ../code/Model.cpp ../code/ShaderManager.cpp ../code/Texture.cpp ../code/thirdParty/stb/stb_image.c ../code/Timer.cpp
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv2
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
 

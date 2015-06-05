@@ -45,7 +45,6 @@ struct EGLAttri
 #define EGLATTRI( v )	{v, #v}
 
 
-
 void EnumGLConfig() {
 
 	EGLAttri eglAttri[] = {
@@ -82,65 +81,8 @@ void EnumGLConfig() {
 	}
 }
 
-#define EVENT_IDEN 234
-#define SENSOR_EVENT_PER_SEC 60
 
-ASensorEventQueue* eventQueue;
-
-void LogSencorInfo(){
-	ASensorManager* mgr = ASensorManager_getInstance();
-	ASensorList sensors = NULL;
-
-	int numSensor = ASensorManager_getSensorList(mgr, &sensors);
-	GLog.LogInfo("num sensor : %d", numSensor);
-
-	for (int i = 0; i < numSensor; i++) {
-		GLog.LogInfo("0x%X name %s\tvendor %s\ttype %d\tresolution %f",
-			sensors[i],
-			ASensor_getName(sensors[i]),
-			ASensor_getVendor(sensors[i]),
-			ASensor_getType(sensors[i]),
-			ASensor_getResolution(sensors[i]));
-	}
-
-	ASensorRef gryo = ASensorManager_getDefaultSensor(mgr, ASENSOR_TYPE_GYROSCOPE);
-	GLog.LogInfo("default gyroscope 0x%X", gryo);
-
-	ASensorRef acceler = ASensorManager_getDefaultSensor(mgr, ASENSOR_TYPE_ACCELEROMETER);
-	GLog.LogInfo("default accelerometer 0x%X Resolution %f MinDelay %f", acceler,
-		ASensor_getResolution(acceler), ASensor_getMinDelay(acceler));
-
-
-	//ALooper* looper = ALooper_forThread();
-	//if (looper == NULL) {
-	//	GLog.LogError("ALooper_forThread failed!");
-	//	return;
-	//}
-
-	//ASensorEventQueue* eventQueue = ASensorManager_createEventQueue(mgr, looper, EVENT_IDEN, NULL, NULL);
-
-	//int succ = ASensorEventQueue_enableSensor(eventQueue, acceler);
-	//if (succ < 0) {
-	//	GLog.LogError("ASensorEventQueue_enableSensor failed! code : %d", succ);
-	//	return;
-	//}
-
-	//succ = ASensorEventQueue_setEventRate(eventQueue, acceler, (1000 / 60) * 1000);
-	//if (succ < 0) {
-	//	GLog.LogError("ASensorEventQueue_setEventRate failed! code : %d", succ);
-	//	return;
-	//}
-
-
-}
-
-ASensorRef Accelerometer = NULL;
-
-
-void LogAccData(){
-
-}
-
+//////////////////////////////////////////////////////////////////////////
 
 uint64_t GetTicksNanos()
 {
@@ -157,12 +99,14 @@ uint64_t GetTicksNanos()
 	return result;
 }
 
-
-
-uint32_t	GetTicksMS()
+uint32_t GetTicksMS()
 {
 	return GetTicksNanos() / 1000000;
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+
 
 
 void PlatfromInit()

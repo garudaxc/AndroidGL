@@ -39,7 +39,7 @@
 adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
-    <NMakeIncludeSearchPath>$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include;$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include\android;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include-fixed;$(ANDROID_NDK_ROOT)\sources\cxx-stl\stlport\stlport;D:\develop\androidGL\code;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include;$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include\android;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include-fixed;$(ANDROID_NDK_ROOT)\sources\cxx-stl\stlport\stlport;$(ANDROID_NDK_ROOT)\sources\android\native_app_glue;$(SolutionDir)code;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <IncludePath />
@@ -94,6 +94,7 @@ adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine
     <ClInclude Include="code\Vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\android\Sensor.cpp" />
     <ClCompile Include="code\android\TrackDropping.cpp" />
     <ClCompile Include="code\android\draw.cpp" />
     <ClCompile Include="code\android\main.cpp" />
