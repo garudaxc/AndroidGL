@@ -90,13 +90,15 @@ void ListSensors(){
 	}
 }
 
-Vector3f rotationVec;
+
 Vector3f gravityVec_;
+Vector3f magneticVec_;
+Vector3f gyroVec_;
+Vector3f rotation_;
+Vector3f rotationVec_;
 
 void _InitSensor()
 {	
-	rotationVec = Vector3f::ZERO;
-
 	sensorManager	= ASensorManager_getInstance();
 
 	ListSensors();
@@ -181,6 +183,11 @@ void GyroscopeData(const ASensorEvent& e)
 	GLog.LogInfo("GyroscopeData\t%f\t%f\t%f", e.data[0], e.data[1], e.data[2]);
 }
 
+void LogVector(const char* prefix, const float* v)
+{
+	GLog.LogInfo("%s %f %f %f", prefix, v[0], v[1], v[2]);
+}
+
 
 void _ProcessSensorData(int identifier)
 {
@@ -195,12 +202,25 @@ void _ProcessSensorData(int identifier)
 		//GLog.LogInfo("%f %f %f, sensor event sensor type %d", event.data[0], event.data[1], event.data[2], event.type);
 		eventCount++;
 
-		if (event.type == SENSOR_TYPE_ROTATION_VECTOR){
-			rotationVec.Set(event.data);
+		//if (event.type == SENSOR_TYPE_ROTATION_VECTOR){
+		//	rotationVec.Set(event.data);
+		//}
+
+		if (event.type == SENSOR_TYPE_MAGNETIC_FIELD) {
+			magneticVec_.Set(event.data);
 		}
 
 		if (event.type == SENSOR_TYPE_GRAVITY) {
 			gravityVec_.Set(event.data);
+		}
+
+		if (event.type == SENSOR_TYPE_GYROSCOPE) {
+			LogVector("gyroscope", event.data);
+		}
+
+		if (event.type == SENSOR_TYPE_ORIENTATION) {
+			LogVector("orientation", event.data);
+			rotation_.Set(event.data);
 		}
 	}
 
@@ -208,23 +228,54 @@ void _ProcessSensorData(int identifier)
 }
 
 
-Matrix4f _GetDeviceRotationMatrix()
+Matrix4f _GetDeviceRotationMatrix2()
 {
-	Matrix3f phoneFrame;
-	phoneFrame.Set(0.f, 1.f, 0.f,
-		0.f, 0.f, -1.f,
-		-1.f, 0.f, 0.f);
-
+	magneticVec_.Normalize();
 	gravityVec_.Normalize();
 
-	Vector3f vecInVr;
-	Vector3Transform(vecInVr, gravityVec_, phoneFrame);
-
-	Quaternionf qRot;
-	QuaternionVectorToVector(qRot, vecInVr, -Vector3f::UNIT_Z);
+	Vector3f z = -magneticVec_;
+	Vector3f x = gravityVec_;
+	Vector3f y = CrossProduct(z, x);
+	y.Normalize();
+	x = CrossProduct(y, z);
 	
-	Matrix4f matRot;
-	MatrixFromQuaternion(matRot, qRot);
+	Matrix4f view(x.y, -x.x, -x.z, 0.f,
+		y.y, -y.x, -y.z, 0.f,
+		z.y, -z.x, -z.z, 0.f,
+		0.f, 0.f, 0.f, 1.f);
 
-	return matRot;
+	//GLog.LogInfo("magnetic vec %f %f %f", magneticVec_.x, magneticVec_.y, magneticVec_.z);
+
+	return view;
+}
+
+Matrix4f _GetDeviceRotationMatrix()
+{
+	Matrix3f frame, roll, pitch, yaw, view;
+
+	frame = Matrix3f::IDENTITY;
+	roll = Matrix3f::IDENTITY;
+	pitch = Matrix3f::IDENTITY;
+	yaw = Matrix3f::IDENTITY;
+	view = Matrix3f::IDENTITY;
+
+
+	MatrixRotationAxis(roll, Vector3f::UNIT_X, -rotation_.z * Mathf::DEG_TO_RAD);
+	MatrixRotationAxis(pitch, Vector3f::UNIT_Y, rotation_.y * Mathf::DEG_TO_RAD);
+	MatrixRotationAxis(yaw, Vector3f::UNIT_Z, -rotation_.x * Mathf::DEG_TO_RAD);
+	
+	MatrixMultiply(view, roll, pitch);
+	MatrixMultiply(view, view, yaw);
+
+	//frame.Set(1.0f, 0.f, 0.f,
+	//	0.f, 0.f, -1.f,
+	//	0.f, 1.f, 0.f);
+	MatrixMultiply(view, frame, view);
+
+	view.TransposeSelf();
+
+	Matrix4f view44;
+	MatrixTransform(view44, view, Vector3f::ZERO);
+
+	return view44;
 }

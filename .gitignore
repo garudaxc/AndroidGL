@@ -1,4 +1,3 @@
-local.properties
 *.opensdf
 *.sdf
 *.user
@@ -7,3 +6,4 @@ bin/*
 obj/*
 libs/*
 !libs/win32
+local.properties

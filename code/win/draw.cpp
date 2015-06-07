@@ -57,12 +57,17 @@ void LoadResource() {
 	checkGlError("GShaderManager.LoadFromFile");
 
 	ModelInstance* model = NULL;
-	model = CreateModel("build_tower003.mesh", "other_stone001_d.TGA");
+	model = CreateModel("build_tower003.mesh", "1.TGA");
 	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 
-	model = CreateModel("build_house008.mesh", "other_stone001_d.TGA");
+	model = CreateModel("build_house008.mesh", "2.TGA");
 	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
+	Models.push_back(model);
+
+
+	model = CreateModel("Box001.mesh", "2.png");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 }
 

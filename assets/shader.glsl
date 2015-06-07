@@ -36,11 +36,12 @@ varying vec2 v_texcoord;
 void main() {
 
 	vec3 l = normalize(vLightDir);
-	float dnl = max(dot(l, v_normal), 0.0);
+	float dnl = max(dot(l, v_normal), 0.5);
 
 	vec3 tex0 = texture2D(texDiffuse, v_texcoord).rgb;
 
 	gl_FragColor = vec4(tex0 * vLightColor * dnl, 1.0);
+	//gl_FragColor = vec4(tex0, 1.0);
 }
 
 #endif

@@ -4,7 +4,6 @@
 #include "Platfrom.h"
 #include <stdio.h>
 #include <stdlib.h>
-//#include "glew.h"
 #include "AuroraGL.h"
 #include "MyLog.h"
 #include "glUtil.h"
@@ -60,12 +59,17 @@ int setupGraphics(int w, int h) {
 	GShaderManager.LoadFromFile("/sdcard/MyTest/shader.glsl");
 
 	ModelInstance* model = NULL;
-	model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
-	Models.push_back(model);
+	//model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
+	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
+	//Models.push_back(model);
 
-	model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
+	//model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
+	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
+	//Models.push_back(model);
+
+
+	model = CreateModel("/sdcard/MyTest/Box001.mesh", "/sdcard/MyTest/2.png");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 	
 	checkGlError("CreateModel");
@@ -79,25 +83,28 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
 
+	Matrix4f mView, mEyeOffset, mProj;
+
+	//MatrixLookAtRH(mView, Vector3f(0.f, -6.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
+
+	mView = _GetDeviceRotationMatrix();
+	Vector3f eyePos(0.f, 0.f, 0.f);
+	Matrix4f matEyePos;
+	MatrixTranslation(matEyePos, -eyePos);
+	MatrixMultiply(mView, matEyePos, mView);
+	
+	MatrixTranslation(mEyeOffset, Vector3f(eyeOffset, 0.f, 0.f));
+	MatrixMultiply(mView, mView, mEyeOffset);
+
+	MatrixPerspectiveFovRH(mProj, Mathf::PI / 3.0f, w / (float)h, 0.1f);
+	mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
+	mProj._43 = mProj._43 * 2.f;
+
 	for (vector<ModelInstance*>::iterator it = Models.begin(); it != Models.end(); ++it) {
-
-		Matrix4f mWorld = _GetDeviceRotationMatrix();
+		
+		Matrix4f mWorld = Matrix4f::IDENTITY;
 		//MatrixRotationAxis(mWorld, Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
-
 		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
-
-		Matrix4f mView, mEyeOffset, mProj;
-		MatrixLookAtRH(mView, Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
-
-		//Matrix4f mR = _GetDeviceRotationMatrix();
-		//MatrixMultiply(mView, mView, mR);
-
-		MatrixTranslation(mEyeOffset, Vector3f(eyeOffset, 0.f, 0.f));
-		MatrixMultiply(mView, mView, mEyeOffset);
-
-		MatrixPerspectiveFovRH(mProj, Mathf::PI / 3.0f, w / (float)h, 0.1f);
-		mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
-		mProj._43 = mProj._43 * 2.f;
 
 		GShaderManager.Bind();
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());
@@ -117,7 +124,6 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 			glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
 		}
 	}
-
 }
 
 
@@ -129,8 +135,8 @@ void renderFrame() {
 	glClearDepthf(1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glDisable(GL_CULL_FACE);
-	glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	float eyeDistance = EyeDistance.GetFloat();
