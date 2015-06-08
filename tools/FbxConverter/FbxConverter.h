@@ -38,7 +38,7 @@ struct Argument
 	Argument()
 	{
 		convertAxis = false;
-		flipTexcoordV = false;
+		flipTexcoordV = true;
 		optimise = true;
 	}
 };

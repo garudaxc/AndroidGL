@@ -222,12 +222,16 @@ void _ProcessSensorData(int identifier)
 			LogVector("orientation", event.data);
 			rotation_.Set(event.data);
 		}
+
+		if (event.type == SENSOR_TYPE_ROTATION_VECTOR){
+			rotationVec_.Set(event.data);
+		}
 	}
 
 	GLog.LogInfo("sensor event count %d", eventCount);
 }
 
-
+// 使用重力加速计和电子罗盘构造世界坐标系
 Matrix4f _GetDeviceRotationMatrix2()
 {
 	magneticVec_.Normalize();
@@ -249,7 +253,8 @@ Matrix4f _GetDeviceRotationMatrix2()
 	return view;
 }
 
-Matrix4f _GetDeviceRotationMatrix()
+// 使用欧拉角
+Matrix4f _GetDeviceRotationMatrix1()
 {
 	Matrix3f frame, roll, pitch, yaw, view;
 
@@ -272,10 +277,40 @@ Matrix4f _GetDeviceRotationMatrix()
 	//	0.f, 1.f, 0.f);
 	MatrixMultiply(view, frame, view);
 
-	view.TransposeSelf();
+	//view.TransposeSelf();
 
 	Matrix4f view44;
 	MatrixTransform(view44, view, Vector3f::ZERO);
 
 	return view44;
+}
+
+
+Matrix4f _GetDeviceRotationMatrix()
+{
+	// 世界坐标系变换到手机坐标系
+	Matrix4f mFrame;
+	mFrame.Set(0.f, 1.f, 0.f, 0.f,
+		-1.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+
+	// 应用手机的姿态
+	float w = Mathf::Sqrt(1.0f - rotationVec_.LengthSQ());
+	Quaternionf qRot(w, rotationVec_.x, rotationVec_.y, rotationVec_.z);
+	Matrix4f mRot;
+	MatrixTransform(mRot, qRot, Vector3f::ZERO);
+	MatrixMultiply(mRot, mFrame, mRot);
+
+	// 手机坐标系到世界坐标系
+	mFrame.Set(0.f, -1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+	MatrixMultiply(mRot, mRot, mFrame);
+
+	// 矩阵作为坐标系
+	mRot.TransposeSelf();
+
+	return mRot;
 }

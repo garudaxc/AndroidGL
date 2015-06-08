@@ -68,6 +68,10 @@ int setupGraphics(int w, int h) {
 	//Models.push_back(model);
 
 
+	//model = CreateModel("/sdcard/MyTest/Box01.mesh", "/sdcard/MyTest/2.png");
+	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+	//Models.push_back(model);
+
 	model = CreateModel("/sdcard/MyTest/Box001.mesh", "/sdcard/MyTest/2.png");
 	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	Models.push_back(model);
@@ -85,7 +89,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 	Matrix4f mView, mEyeOffset, mProj;
 
-	//MatrixLookAtRH(mView, Vector3f(0.f, -6.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
+	//MatrixLookAtRH(mView, Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
 
 	mView = _GetDeviceRotationMatrix();
 	Vector3f eyePos(0.f, 0.f, 0.f);
@@ -103,6 +107,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	for (vector<ModelInstance*>::iterator it = Models.begin(); it != Models.end(); ++it) {
 		
 		Matrix4f mWorld = Matrix4f::IDENTITY;
+		//Matrix4f mWorld = _GetDeviceRotationMatrix();
 		//MatrixRotationAxis(mWorld, Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
 		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
 
