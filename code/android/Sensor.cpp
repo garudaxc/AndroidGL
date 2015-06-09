@@ -17,12 +17,14 @@ using namespace Aurora;
 enum {
 	SENSOR_TYPE_ACCELEROMETER = 1,
 	SENSOR_TYPE_MAGNETIC_FIELD = 2,
+	SENSOR_TYPE_ORIENTATION = 3,
 	SENSOR_TYPE_GYROSCOPE = 4,
 	SENSOR_TYPE_LIGHT = 5,
 	SENSOR_TYPE_PROXIMITY = 8,
 	SENSOR_TYPE_GRAVITY = 9,
-	SENSOR_TYPE_ROTATION_VECTOR = 11,
-	SENSOR_TYPE_ORIENTATION = 3,
+	SENSOR_TYPE_ROTATION_VECTOR = 11, 
+	SENSOR_TYPE_GAME_ROTATION_VECTOR = 15,
+
 };
 
 
@@ -82,10 +84,16 @@ void ListSensors(){
 			type == SENSOR_TYPE_GYROSCOPE ||
 			type == SENSOR_TYPE_ROTATION_VECTOR ||
 			type == SENSOR_TYPE_ORIENTATION ||
-			type == SENSOR_TYPE_GRAVITY)
+			type == SENSOR_TYPE_GRAVITY ||
+			type == SENSOR_TYPE_GAME_ROTATION_VECTOR)
 		{
 			//SensorObj(sensors[i], i);
 			sensors_.push_back(SensorObj(sensors[i], i));
+
+			if (type == SENSOR_TYPE_GYROSCOPE){
+				break;
+			}
+
 		}
 	}
 }
@@ -189,6 +197,8 @@ void LogVector(const char* prefix, const float* v)
 }
 
 
+void IntigrateGyroValue(const ASensorEvent& event);
+
 void _ProcessSensorData(int identifier)
 {
 	if (identifier != EVENT_IDEN){
@@ -216,14 +226,17 @@ void _ProcessSensorData(int identifier)
 
 		if (event.type == SENSOR_TYPE_GYROSCOPE) {
 			LogVector("gyroscope", event.data);
+			GLog.LogInfo("time stamp %lld", event.timestamp);
+			IntigrateGyroValue(event);
 		}
 
 		if (event.type == SENSOR_TYPE_ORIENTATION) {
-			LogVector("orientation", event.data);
+			//LogVector("orientation", event.data);
 			rotation_.Set(event.data);
 		}
 
-		if (event.type == SENSOR_TYPE_ROTATION_VECTOR){
+		if (event.type == SENSOR_TYPE_ROTATION_VECTOR ||
+			event.type == SENSOR_TYPE_GAME_ROTATION_VECTOR){
 			rotationVec_.Set(event.data);
 		}
 	}
@@ -232,7 +245,7 @@ void _ProcessSensorData(int identifier)
 }
 
 // 使用重力加速计和电子罗盘构造世界坐标系
-Matrix4f _GetDeviceRotationMatrix2()
+Matrix4f _GetDeviceRotationMatrix0()
 {
 	magneticVec_.Normalize();
 	gravityVec_.Normalize();
@@ -285,8 +298,8 @@ Matrix4f _GetDeviceRotationMatrix1()
 	return view44;
 }
 
-
-Matrix4f _GetDeviceRotationMatrix()
+// 使用传感器ROTATION_VECTOR
+Matrix4f _GetDeviceRotationMatrix2()
 {
 	// 世界坐标系变换到手机坐标系
 	Matrix4f mFrame;
@@ -313,4 +326,104 @@ Matrix4f _GetDeviceRotationMatrix()
 	mRot.TransposeSelf();
 
 	return mRot;
+}
+
+
+
+
+
+static float EPSILON = 0.0001f;
+
+//Quaternionf void getRotationVectorFromGyro(float[] gyroValues,
+//	float[] deltaRotationVector,
+//	float timeFactor)
+//{
+//	float[] normValues = new float[3];
+//
+//	// Calculate the angular speed of the sample
+//	float omegaMagnitude =
+//		(float)Math.sqrt(gyroValues[0] * gyroValues[0] +
+//		gyroValues[1] * gyroValues[1] +
+//		gyroValues[2] * gyroValues[2]);
+//
+//	// Normalize the rotation vector if it's big enough to get the axis
+//	if (omegaMagnitude > EPSILON) {
+//		normValues[0] = gyroValues[0] / omegaMagnitude;
+//		normValues[1] = gyroValues[1] / omegaMagnitude;
+//		normValues[2] = gyroValues[2] / omegaMagnitude;
+//	}
+//
+//	// Integrate around this axis with the angular speed by the timestep
+//	// in order to get a delta rotation from this sample over the timestep
+//	// We will convert this axis-angle representation of the delta rotation
+//	// into a quaternion before turning it into the rotation matrix.
+//	float thetaOverTwo = omegaMagnitude * timeFactor;
+//	float sinThetaOverTwo = Mathf::Sin(thetaOverTwo);
+//	float cosThetaOverTwo = Mathf::Cos(thetaOverTwo);
+//	deltaRotationVector[0] = sinThetaOverTwo * normValues[0];
+//	deltaRotationVector[1] = sinThetaOverTwo * normValues[1];
+//	deltaRotationVector[2] = sinThetaOverTwo * normValues[2];
+//	deltaRotationVector[3] = cosThetaOverTwo;
+//}
+
+Matrix4f GyroMatrix;
+
+void IntigrateGyroValue(const ASensorEvent& event)
+{
+	static int64_t lastTime = 0;
+	if (lastTime == 0)
+	{
+		lastTime = event.timestamp;
+		GyroMatrix = Matrix4f::IDENTITY;
+		return;
+	}
+
+	Vector3f eyroSample;
+	eyroSample.Set(event.data);
+
+	float omegaMagnitude = eyroSample.LengthSQ();
+
+	if (omegaMagnitude > EPSILON) {
+		eyroSample.Normalize();
+	}
+
+	float t = (event.timestamp - lastTime) * 0.000000001f;
+	lastTime = event.timestamp;
+	float thetaOverTwo = omegaMagnitude * t;
+	float sinThetaOverTwo = Mathf::Sin(thetaOverTwo * Mathf::DEG_TO_RAD);
+	float cosThetaOverTwo = Mathf::Cos(thetaOverTwo * Mathf::DEG_TO_RAD);
+
+
+	eyroSample *= sinThetaOverTwo;
+
+	// 世界坐标系变换到手机坐标系
+	Matrix4f mFrame;
+	mFrame.Set(0.f, 1.f, 0.f, 0.f,
+		-1.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+
+	// 应用手机的姿态
+	float w = cosThetaOverTwo;
+	Quaternionf qRot(w, eyroSample.x, eyroSample.y, eyroSample.z);
+	Matrix4f mRot;
+	MatrixTransform(mRot, qRot, Vector3f::ZERO);
+	MatrixMultiply(mRot, mFrame, mRot);
+
+	// 手机坐标系到世界坐标系
+	mFrame.Set(0.f, -1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+	MatrixMultiply(mRot, mRot, mFrame);
+
+	// 矩阵作为坐标系
+	mRot.TransposeSelf();
+	
+	MatrixMultiply(GyroMatrix, mRot, GyroMatrix);
+}
+
+Matrix4f _GetDeviceRotationMatrix()
+{
+	return GyroMatrix;
 }

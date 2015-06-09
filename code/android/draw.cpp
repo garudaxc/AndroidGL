@@ -108,7 +108,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		
 		Matrix4f mWorld = Matrix4f::IDENTITY;
 		//Matrix4f mWorld = _GetDeviceRotationMatrix();
-		//MatrixRotationAxis(mWorld, Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
+
 		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
 
 		GShaderManager.Bind();
