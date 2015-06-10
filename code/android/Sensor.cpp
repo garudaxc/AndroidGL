@@ -73,7 +73,7 @@ private:
 
 	Quaternionf fusedRot_;
 
-	Matrix4f mView_;
+	bool init_;
 };
 
 
@@ -81,18 +81,12 @@ float SensorFuse::EPSILON = 0.0001f;
 
 SensorFuse::SensorFuse()
 {
-	gravityVec_ = Vector3f::UNIT_Z;
-	magneticVec_ = Vector3f::UNIT_X;
-	gyroRot_ = Quaternionf::IDENTITY;
-	fusedRot_ = Quaternionf::IDENTITY;
-	accMagRot_.Set(0.f, 0.f, 0.f, 0.f);
+	init_ = true;
 }
 
 SensorFuse::~SensorFuse()
 {
 }
-
-
 
 void IntigrateGyroValue(const ASensorEvent& event)
 {
@@ -102,10 +96,11 @@ void SensorFuse::UpdateGyroScope(const Vector3f& v, int64_t timestamp)
 {
 	//IntigrateGyroValue
 	static int64_t lastTime = 0;
-	if (lastTime == 0)
+	if (init_ || lastTime == 0)
 	{
 		lastTime = timestamp;
-		gyroRot_ = Quaternionf::IDENTITY;
+		QuaternionRotationAxis(gyroRot_, Vector3f::UNIT_Z, Mathf::HALF_PI);
+		init_ = false;
 		return;
 	}
 	float t = (timestamp - lastTime) * 0.000000001f;
@@ -143,8 +138,7 @@ void SensorFuse::UpdateMagneticField(const Vector3f& v)
 
 void SensorFuse::Fuse()
 {
-	//////////////////////////////////////////////////////////////////////////
-	// low pass filter
+	// calculate rotation from magnetic and gravity frame
 	gravityVec_.Normalize();
 	Vector3f x, y, z;
 	x = magneticVec_ - gravityVec_ * DotProduct(gravityVec_, magneticVec_);
@@ -167,15 +161,16 @@ void SensorFuse::Fuse()
 		return;
 	}
 
-	float factor = 0.05f;
+	float factor = 0.05f;	
+	// low pass filter
 	QuaternionSlerp(accMagRot_, accMagRot_, qRot, factor);
 	//////////////////////////////////////////////////////////////////////////
 	
-	// 世界坐标系变换到手机坐标系
-	QuaternionRotationAxis(qRot, Vector3f::UNIT_Z, Mathf::HALF_PI);
-	QuaternionMultiply(qRot, gyroRot_, qRot);
+	// fuse
+	QuaternionSlerp(fusedRot_, gyroRot_, accMagRot_, factor);
 
-	QuaternionSlerp(fusedRot_, gyroRot_, qRot, factor);
+	// compensate gyro rotation
+	gyroRot_ = fusedRot_;
 }
 
 
@@ -183,9 +178,6 @@ Matrix4f SensorFuse::GetViewMatrix()
 {
 	Matrix4f view;
 	MatrixTransform(view, fusedRot_, Vector3f::ZERO);
-
-	//MatrixMultiply(view, mFrame, view);
-	//MatrixFromQuaternion(view, accMagRot_);
 
 	Matrix4f frame(0.f, -1.f, 0.f, 0.f,
 		1.f, 0.f, 0.f, 0.f,
