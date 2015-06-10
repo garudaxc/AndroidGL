@@ -131,6 +131,7 @@ template<typename T>
 inline Quaternion<T> 
 Quaternion<T>::operator *(T scale) const
 {
+	return Quaternion<T>(w * scale, x * scale, y * scale, z * scale);
 }
 //---------------------------------------------------------------
 template<typename T>

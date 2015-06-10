@@ -39,6 +39,172 @@ ASensorRef magnetic = NULL;
 ALooper* looper = NULL;
 
 
+
+void LogVector(const char* prefix, const float* v)
+{
+	GLog.LogInfo("%s %f %f %f", prefix, v[0], v[1], v[2]);
+}
+
+
+
+class SensorFuse
+{
+public:
+	SensorFuse();
+	~SensorFuse();
+
+	void UpdateGyroScope(const Vector3f& v, int64_t timestamp);
+	void UpdateAccelerometer(const Vector3f& v);
+	void UpdateMagneticField(const Vector3f& v);
+
+	void Fuse();
+
+	Matrix4f GetViewMatrix();
+
+private:
+
+	Vector3f gravityVec_;
+	Vector3f magneticVec_;
+	//Vector3f gyroVec_;
+
+	static float EPSILON;
+	Quaternionf gyroRot_;
+	Quaternionf accMagRot_;
+
+	Quaternionf fusedRot_;
+
+	Matrix4f mView_;
+};
+
+
+float SensorFuse::EPSILON = 0.0001f;
+
+SensorFuse::SensorFuse()
+{
+	gravityVec_ = Vector3f::UNIT_Z;
+	magneticVec_ = Vector3f::UNIT_X;
+	gyroRot_ = Quaternionf::IDENTITY;
+	fusedRot_ = Quaternionf::IDENTITY;
+	accMagRot_.Set(0.f, 0.f, 0.f, 0.f);
+}
+
+SensorFuse::~SensorFuse()
+{
+}
+
+
+
+void IntigrateGyroValue(const ASensorEvent& event)
+{
+}
+
+void SensorFuse::UpdateGyroScope(const Vector3f& v, int64_t timestamp)
+{
+	//IntigrateGyroValue
+	static int64_t lastTime = 0;
+	if (lastTime == 0)
+	{
+		lastTime = timestamp;
+		gyroRot_ = Quaternionf::IDENTITY;
+		return;
+	}
+	float t = (timestamp - lastTime) * 0.000000001f;
+	lastTime = timestamp;
+
+	// 注意这里直接取逆了
+	Vector3f eyroSample = -v;
+
+	float omegaMagnitude = eyroSample.Length();
+	if (omegaMagnitude < EPSILON) {
+		return;
+	}
+
+	eyroSample.Normalize();
+
+	float thetaOverTwo = omegaMagnitude * t * 0.5f;
+	float sinThetaOverTwo = Mathf::Sin(thetaOverTwo);
+	float cosThetaOverTwo = Mathf::Cos(thetaOverTwo);
+
+	eyroSample *= sinThetaOverTwo;
+	Quaternionf qRot(cosThetaOverTwo, eyroSample.x, eyroSample.y, eyroSample.z);
+
+	QuaternionMultiply(gyroRot_, qRot, gyroRot_);
+}
+
+void SensorFuse::UpdateAccelerometer(const Vector3f& v)
+{
+	gravityVec_ = v;
+}
+
+void SensorFuse::UpdateMagneticField(const Vector3f& v)
+{
+	magneticVec_ = v;
+}
+
+void SensorFuse::Fuse()
+{
+	//////////////////////////////////////////////////////////////////////////
+	// low pass filter
+	gravityVec_.Normalize();
+	Vector3f x, y, z;
+	x = magneticVec_ - gravityVec_ * DotProduct(gravityVec_, magneticVec_);
+
+	x.Normalize();
+
+	z = gravityVec_;
+	y = CrossProduct(z, x);
+	y.Normalize();
+
+	Matrix4f view(x.x, x.y, x.z, 0.f,
+		y.x, y.y, y.z, 0.f,
+		z.x, z.y, z.z, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+
+	Quaternionf qRot;
+	QuaternionFromRotationMatrix(qRot, view);
+	if (accMagRot_.LengthSQ() < 0.001f)	{
+		accMagRot_ = qRot;
+		return;
+	}
+
+	float factor = 0.05f;
+	QuaternionSlerp(accMagRot_, accMagRot_, qRot, factor);
+	//////////////////////////////////////////////////////////////////////////
+	
+	// 世界坐标系变换到手机坐标系
+	QuaternionRotationAxis(qRot, Vector3f::UNIT_Z, Mathf::HALF_PI);
+	QuaternionMultiply(qRot, gyroRot_, qRot);
+
+	QuaternionSlerp(fusedRot_, gyroRot_, qRot, factor);
+}
+
+
+Matrix4f SensorFuse::GetViewMatrix()
+{
+	Matrix4f view;
+	MatrixTransform(view, fusedRot_, Vector3f::ZERO);
+
+	//MatrixMultiply(view, mFrame, view);
+	//MatrixFromQuaternion(view, accMagRot_);
+
+	Matrix4f frame(0.f, -1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+
+	MatrixMultiply(view, view, frame);
+
+	return view;
+}
+
+SensorFuse sensorFuse;
+
+Matrix4f _GetDeviceRotationMatrix()
+{
+	return sensorFuse.GetViewMatrix();
+}
+
+
 struct SensorObj
 {
 	ASensorRef	sensor;
@@ -82,28 +248,32 @@ void ListSensors(){
 		int type = ASensor_getType(sensors[i]);
 		if (type == SENSOR_TYPE_MAGNETIC_FIELD ||
 			type == SENSOR_TYPE_GYROSCOPE ||
-			type == SENSOR_TYPE_ROTATION_VECTOR ||
-			type == SENSOR_TYPE_ORIENTATION ||
+			//type == SENSOR_TYPE_ROTATION_VECTOR ||
+			//type == SENSOR_TYPE_ORIENTATION ||
 			type == SENSOR_TYPE_GRAVITY ||
 			type == SENSOR_TYPE_GAME_ROTATION_VECTOR)
 		{
-			//SensorObj(sensors[i], i);
-			sensors_.push_back(SensorObj(sensors[i], i));
-
+			static bool bGyro = false;
 			if (type == SENSOR_TYPE_GYROSCOPE){
-				break;
+				if (!bGyro)	{
+					bGyro = true;
+				} else {
+					continue;
+				}
 			}
 
+			//SensorObj(sensors[i], i);
+			sensors_.push_back(SensorObj(sensors[i], i));
 		}
 	}
 }
 
 
-Vector3f gravityVec_;
-Vector3f magneticVec_;
-Vector3f gyroVec_;
-Vector3f rotation_;
-Vector3f rotationVec_;
+//Vector3f gravityVec_;
+//Vector3f magneticVec_;
+//Vector3f gyroVec_;
+//Vector3f rotation_;
+//Vector3f rotationVec_;
 
 void _InitSensor()
 {	
@@ -120,39 +290,6 @@ void _InitSensor()
 
 	eventQueue = ASensorManager_createEventQueue(sensorManager, looper, EVENT_IDEN, NULL, NULL);
 
-	//{
-	//	ASensorRef gryo = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_GYROSCOPE);
-	//	if (gryo == NULL){
-	//		GLog.LogError("can not find gryoscope sensor!");
-	//	}
-	//	else {
-	//		GLog.LogInfo("default gyroscope 0x%X", gryo);
-	//		SensorObj s(gryo);
-	//		sensors.push_back(s);
-	//	}
-	//}
-
-	//{
-	//	ASensorRef magnetic = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_MAGNETIC_FIELD);
-	//	if (magnetic == NULL){
-	//		GLog.LogError("can not find magnetic sensor!");
-	//	}
-	//	else {
-	//		GLog.LogInfo("default magnetic 0x%X", magnetic);
-	//		SensorObj s(magnetic);
-	//		sensors.push_back(s);
-	//	}
-	//}
-
-	//ASensorRef acceler = ASensorManager_getDefaultSensor(mgr, ASENSOR_TYPE_ACCELEROMETER);
-	//GLog.LogInfo("default accelerometer 0x%X Resolution %f MinDelay %f", acceler,
-	//	ASensor_getResolution(acceler), ASensor_getMinDelay(acceler));
-	
-	//succ = ASensorEventQueue_setEventRate(eventQueue, acceler, (1000 / 60) * 1000);
-	//if (succ < 0) {
-	//	GLog.LogError("ASensorEventQueue_setEventRate failed! code : %d", succ);
-	//	return;
-	//}
 }
 
 
@@ -181,22 +318,6 @@ void _DisableSensor()
 
 
 
-void MagnaticData(const ASensorEvent& e)
-{
-	GLog.LogInfo("MagnaticData\t%f\t%f\t%f", e.data[0], e.data[1], e.data[2]);
-}
-
-void GyroscopeData(const ASensorEvent& e)
-{
-	GLog.LogInfo("GyroscopeData\t%f\t%f\t%f", e.data[0], e.data[1], e.data[2]);
-}
-
-void LogVector(const char* prefix, const float* v)
-{
-	GLog.LogInfo("%s %f %f %f", prefix, v[0], v[1], v[2]);
-}
-
-
 void IntigrateGyroValue(const ASensorEvent& event);
 
 void _ProcessSensorData(int identifier)
@@ -217,54 +338,81 @@ void _ProcessSensorData(int identifier)
 		//}
 
 		if (event.type == SENSOR_TYPE_MAGNETIC_FIELD) {
-			magneticVec_.Set(event.data);
+			//LogVector("MAGNETIC_FIELD", event.data);		
+
+			Vector3f v;
+			v.Set(event.data);
+			//magneticVec_.Set(event.data);
+			sensorFuse.UpdateMagneticField(v);
 		}
 
 		if (event.type == SENSOR_TYPE_GRAVITY) {
-			gravityVec_.Set(event.data);
+			Vector3f v;
+			v.Set(event.data);
+			//gravityVec_.Set(event.data);
+			sensorFuse.UpdateAccelerometer(v);
 		}
 
 		if (event.type == SENSOR_TYPE_GYROSCOPE) {
-			LogVector("gyroscope", event.data);
-			GLog.LogInfo("time stamp %lld", event.timestamp);
-			IntigrateGyroValue(event);
+			//LogVector("gyroscope", event.data);
+			//GLog.LogInfo("time stamp %lld", event.timestamp);
+			//IntigrateGyroValue(event);
+
+			Vector3f v;
+			v.Set(event.data);
+			sensorFuse.UpdateGyroScope(v, event.timestamp);
+
 		}
 
 		if (event.type == SENSOR_TYPE_ORIENTATION) {
 			//LogVector("orientation", event.data);
-			rotation_.Set(event.data);
+			//rotation_.Set(event.data);
 		}
 
 		if (event.type == SENSOR_TYPE_ROTATION_VECTOR ||
 			event.type == SENSOR_TYPE_GAME_ROTATION_VECTOR){
-			rotationVec_.Set(event.data);
+			//rotationVec_.Set(event.data);
 		}
 	}
 
+	sensorFuse.Fuse();
 	GLog.LogInfo("sensor event count %d", eventCount);
 }
 
+#if 0
 // 使用重力加速计和电子罗盘构造世界坐标系
-Matrix4f _GetDeviceRotationMatrix0()
+Matrix4f _GetDeviceRotationMatrix2()
 {
-	magneticVec_.Normalize();
-	gravityVec_.Normalize();
+	//LogVector("gravityVec_", gravityVec_.Ptr());
 
-	Vector3f z = -magneticVec_;
-	Vector3f x = gravityVec_;
-	Vector3f y = CrossProduct(z, x);
-	y.Normalize();
-	x = CrossProduct(y, z);
+	gravityVec_.Normalize();
+	Vector3f x, y, z;
+	x = magneticVec_ - gravityVec_ * DotProduct(gravityVec_, magneticVec_);
 	
-	Matrix4f view(x.y, -x.x, -x.z, 0.f,
-		y.y, -y.x, -y.z, 0.f,
-		z.y, -z.x, -z.z, 0.f,
+	LogVector("north", x.Ptr());
+
+	x.Normalize();
+
+	z = gravityVec_;
+	y = CrossProduct(z, x);
+	y.Normalize();
+
+	Matrix4f view(x.x, x.y, x.z, 0.f,
+		y.x, y.y, y.z, 0.f,
+		z.x, z.y, z.z, 0.f,
 		0.f, 0.f, 0.f, 1.f);
 
-	//GLog.LogInfo("magnetic vec %f %f %f", magneticVec_.x, magneticVec_.y, magneticVec_.z);
+
+	Matrix4f frame(0.f, -1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+
+	MatrixMultiply(view, view, frame);
 
 	return view;
 }
+
 
 // 使用欧拉角
 Matrix4f _GetDeviceRotationMatrix1()
@@ -329,73 +477,8 @@ Matrix4f _GetDeviceRotationMatrix2()
 }
 
 
-
-
-
-static float EPSILON = 0.0001f;
-
-//Quaternionf void getRotationVectorFromGyro(float[] gyroValues,
-//	float[] deltaRotationVector,
-//	float timeFactor)
-//{
-//	float[] normValues = new float[3];
-//
-//	// Calculate the angular speed of the sample
-//	float omegaMagnitude =
-//		(float)Math.sqrt(gyroValues[0] * gyroValues[0] +
-//		gyroValues[1] * gyroValues[1] +
-//		gyroValues[2] * gyroValues[2]);
-//
-//	// Normalize the rotation vector if it's big enough to get the axis
-//	if (omegaMagnitude > EPSILON) {
-//		normValues[0] = gyroValues[0] / omegaMagnitude;
-//		normValues[1] = gyroValues[1] / omegaMagnitude;
-//		normValues[2] = gyroValues[2] / omegaMagnitude;
-//	}
-//
-//	// Integrate around this axis with the angular speed by the timestep
-//	// in order to get a delta rotation from this sample over the timestep
-//	// We will convert this axis-angle representation of the delta rotation
-//	// into a quaternion before turning it into the rotation matrix.
-//	float thetaOverTwo = omegaMagnitude * timeFactor;
-//	float sinThetaOverTwo = Mathf::Sin(thetaOverTwo);
-//	float cosThetaOverTwo = Mathf::Cos(thetaOverTwo);
-//	deltaRotationVector[0] = sinThetaOverTwo * normValues[0];
-//	deltaRotationVector[1] = sinThetaOverTwo * normValues[1];
-//	deltaRotationVector[2] = sinThetaOverTwo * normValues[2];
-//	deltaRotationVector[3] = cosThetaOverTwo;
-//}
-
-Matrix4f GyroMatrix;
-
-void IntigrateGyroValue(const ASensorEvent& event)
+Matrix4f _GetDeviceRotationMatrix3()
 {
-	static int64_t lastTime = 0;
-	if (lastTime == 0)
-	{
-		lastTime = event.timestamp;
-		GyroMatrix = Matrix4f::IDENTITY;
-		return;
-	}
-
-	Vector3f eyroSample;
-	eyroSample.Set(event.data);
-
-	float omegaMagnitude = eyroSample.LengthSQ();
-
-	if (omegaMagnitude > EPSILON) {
-		eyroSample.Normalize();
-	}
-
-	float t = (event.timestamp - lastTime) * 0.000000001f;
-	lastTime = event.timestamp;
-	float thetaOverTwo = omegaMagnitude * t;
-	float sinThetaOverTwo = Mathf::Sin(thetaOverTwo * Mathf::DEG_TO_RAD);
-	float cosThetaOverTwo = Mathf::Cos(thetaOverTwo * Mathf::DEG_TO_RAD);
-
-
-	eyroSample *= sinThetaOverTwo;
-
 	// 世界坐标系变换到手机坐标系
 	Matrix4f mFrame;
 	mFrame.Set(0.f, 1.f, 0.f, 0.f,
@@ -403,11 +486,8 @@ void IntigrateGyroValue(const ASensorEvent& event)
 		0.f, 0.f, 1.f, 0.f,
 		0.f, 0.f, 0.f, 1.f);
 
-	// 应用手机的姿态
-	float w = cosThetaOverTwo;
-	Quaternionf qRot(w, eyroSample.x, eyroSample.y, eyroSample.z);
 	Matrix4f mRot;
-	MatrixTransform(mRot, qRot, Vector3f::ZERO);
+	MatrixTransform(mRot, GyroRot, Vector3f::ZERO);
 	MatrixMultiply(mRot, mFrame, mRot);
 
 	// 手机坐标系到世界坐标系
@@ -419,11 +499,8 @@ void IntigrateGyroValue(const ASensorEvent& event)
 
 	// 矩阵作为坐标系
 	mRot.TransposeSelf();
-	
-	MatrixMultiply(GyroMatrix, mRot, GyroMatrix);
+
+	return mRot;
 }
 
-Matrix4f _GetDeviceRotationMatrix()
-{
-	return GyroMatrix;
-}
+#endif

@@ -22,6 +22,8 @@ using namespace Aurora;
 
 struct glState_t glState;
 
+#define TEST_MODEL 0
+
 
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
 
@@ -67,15 +69,17 @@ int setupGraphics(int w, int h) {
 	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
 	//Models.push_back(model);
 
-
-	//model = CreateModel("/sdcard/MyTest/Box01.mesh", "/sdcard/MyTest/2.png");
-	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
-	//Models.push_back(model);
-
+#if TEST_MODEL
+	model = CreateModel("/sdcard/MyTest/Box01.mesh", "/sdcard/MyTest/2.png");
+	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+	Models.push_back(model);
+#else
 	model = CreateModel("/sdcard/MyTest/Box001.mesh", "/sdcard/MyTest/2.png");
 	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	Models.push_back(model);
-	
+#endif
+
+		
 	checkGlError("CreateModel");
 	return 1;
 }
@@ -89,9 +93,12 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 	Matrix4f mView, mEyeOffset, mProj;
 
-	//MatrixLookAtRH(mView, Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
-
+#if TEST_MODEL
+	MatrixLookAtRH(mView, Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
+#else
 	mView = _GetDeviceRotationMatrix();
+#endif
+	
 	Vector3f eyePos(0.f, 0.f, 0.f);
 	Matrix4f matEyePos;
 	MatrixTranslation(matEyePos, -eyePos);
@@ -104,10 +111,13 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
 	mProj._43 = mProj._43 * 2.f;
 
-	for (vector<ModelInstance*>::iterator it = Models.begin(); it != Models.end(); ++it) {
-		
+	for (vector<ModelInstance*>::iterator it = Models.begin(); it != Models.end(); ++it) {		
+
+#if TEST_MODEL
+		Matrix4f mWorld = _GetDeviceRotationMatrix();
+#else
 		Matrix4f mWorld = Matrix4f::IDENTITY;
-		//Matrix4f mWorld = _GetDeviceRotationMatrix();
+#endif
 
 		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
 
