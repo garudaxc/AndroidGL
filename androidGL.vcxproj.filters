@@ -85,6 +85,9 @@
     <ClInclude Include="code\GlobalVar.h">
       <Filter>Source files</Filter>
     </ClInclude>
+    <ClInclude Include="code\android\Thread.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -134,6 +137,9 @@
     </ClCompile>
     <ClCompile Include="code\android\Sensor.cpp">
       <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\Thread.cpp">
+      <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

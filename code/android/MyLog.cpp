@@ -1,5 +1,6 @@
 #include "MyLog.h"
 #include <android/log.h>
+#include "Thread.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -10,8 +11,7 @@
 #define LOGE(...)	((void)__android_log_print(ANDROID_LOG_ERROR,LOG_TAG, __VA_ARGS__))
 
 
-
-Log::Log() :pfLog(NULL){
+Log::Log() :pfLog(NULL), mutex_(NULL){
 	const char* filename = "/sdcard/MyTest/log.txt";
 	FILE* pf = fopen(filename, "w+");
 	if (pf == NULL) {
@@ -21,6 +21,8 @@ Log::Log() :pfLog(NULL){
 
 	LOGI("create log file %s", filename);
 	pfLog = pf;
+	
+	mutex_ = new Mutex();
 }
 
 Log::~Log() {
@@ -28,6 +30,9 @@ Log::~Log() {
 		fclose(pfLog);
 		pfLog = NULL;
 	}	
+
+	delete mutex_;
+	mutex_ = NULL;
 }
 
 void Log::LogInfo(const char* str, ...) {
@@ -37,14 +42,16 @@ void Log::LogInfo(const char* str, ...) {
 	if (len == 0) {
 		return;
 	}
-	
+
 	va_list argptr;
 	va_start(argptr, str);
 	vsnprintf(buff, sizeof(buff)-1, str, argptr);
 	va_end(argptr);
 
+	AutoLock lock(mutex_);
 	__android_log_write(ANDROID_LOG_INFO, LOG_TAG, buff);
-	fprintf(pfLog, "info : %s\n", buff);
+
+	fprintf(pfLog, "info tid(%X): %s\n", pthread_self(), buff);
 	fflush(pfLog);
 }
 
@@ -61,6 +68,7 @@ void Log::LogError(const char* str, ...) {
 	vsnprintf(buff, sizeof(buff)-1, str, argptr);
 	va_end(argptr);
 
+	AutoLock lock(mutex_);
 	__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, buff);
 	fprintf(pfLog, "error : %s\n", buff);
 	fflush(pfLog);

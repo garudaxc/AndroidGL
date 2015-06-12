@@ -221,10 +221,11 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
     return 0;
 }
 
-void _InitSensor();
-void _EnableSensor();
-void _DisableSensor();
-void _ProcessSensorData(int identifier);
+//void _InitSensor();
+//void _EnableSensor();
+//void _DisableSensor();
+//void _ProcessSensorData(int identifier);
+void InitSensor();
 
 /**
  * Process the next main command.
@@ -253,11 +254,11 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             engine_term_display(engine);
             break;
         case APP_CMD_GAINED_FOCUS:
-			_EnableSensor();
+			//_EnableSensor();
 			engine->animating = 1;
             break;
         case APP_CMD_LOST_FOCUS:
-			_DisableSensor();
+			//_DisableSensor();
             // Also stop animating.
             engine->animating = 0;
             engine_draw_frame(engine);
@@ -284,7 +285,8 @@ void android_main(struct android_app* state) {
     engine.app = state;
 	PlatfromInit();
 
-	_InitSensor();
+	//_InitSensor();
+	InitSensor();
 	
 	ANativeActivity_setWindowFlags(state->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
 
@@ -312,7 +314,7 @@ void android_main(struct android_app* state) {
                 source->process(state, source);
             }
 
-			_ProcessSensorData(ident);
+			//_ProcessSensorData(ident);
 
             // Check if we are exiting.
             if (state->destroyRequested != 0) {

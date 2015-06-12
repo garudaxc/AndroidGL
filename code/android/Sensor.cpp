@@ -8,6 +8,7 @@
 #include "MathFunction.h"
 #include "Quaternion.h"
 #include "Platfrom.h"
+#include "Thread.h"
 #include "MyLog.h"
 
 using namespace std;
@@ -33,9 +34,6 @@ enum {
 
 ASensorManager* sensorManager = NULL;
 ASensorEventQueue* eventQueue = NULL;
-ASensorRef accelerometer = NULL;
-ASensorRef gyroscope = NULL;
-ASensorRef magnetic = NULL;
 ALooper* looper = NULL;
 
 
@@ -44,7 +42,6 @@ void LogVector(const char* prefix, const float* v)
 {
 	GLog.LogInfo("%s %f %f %f", prefix, v[0], v[1], v[2]);
 }
-
 
 
 class SensorFuse
@@ -281,7 +278,6 @@ void _InitSensor()
 	}
 
 	eventQueue = ASensorManager_createEventQueue(sensorManager, looper, EVENT_IDEN, NULL, NULL);
-
 }
 
 
@@ -307,7 +303,6 @@ void _DisableSensor()
 		}
 	}
 }
-
 
 
 void IntigrateGyroValue(const ASensorEvent& event);
@@ -496,3 +491,79 @@ Matrix4f _GetDeviceRotationMatrix3()
 }
 
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+
+class SensorThread : public Thread
+{
+public:
+	SensorThread()	{}
+	~SensorThread()	{}
+
+	virtual void*		Run();
+
+private:
+
+	ALooper*	looper_;
+};
+
+
+void* SensorThread::Run()
+{
+	looper_ = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+	if (looper_ == NULL) {
+		GLog.LogError("ALooper_prepare failed!");
+		return (void*)0;
+	}
+
+	_InitSensor();
+
+	_EnableSensor();
+
+	while (1) {
+		// Read all pending events.
+		int ident;
+		int events;
+		struct android_poll_source* source;
+
+		// If not animating, we will block forever waiting for events.
+		// If animating, we loop until all events are read, then continue
+		// to draw the next frame of animation.
+		while ((ident = ALooper_pollAll(20, NULL, &events, (void**)&source)) >= 0) {
+
+			//// Process this event.
+			//if (source != NULL) {
+			//	source->process(state, source);
+			//}
+
+			_ProcessSensorData(ident);
+
+			//// Check if we are exiting.
+			//if (state->destroyRequested != 0) {
+			//	engine_term_display(&engine);
+			//	PlatfromShutDown();
+			//	return;
+			//}
+		}
+
+		//if (engine.animating) {
+
+		//	// Drawing is throttled to the screen update rate, so there
+		//	// is no need to do timing here.
+		//	engine_draw_frame(&engine);
+		//}
+	}
+
+	return (void*)0;
+}
+
+SensorThread sensorThread;
+
+void InitSensor()
+{
+	bool r = sensorThread.Create();
+
+	if (!r) {
+		GLog.LogError("sensorThread.Create() failed!");
+	}
+}

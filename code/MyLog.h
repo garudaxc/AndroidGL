@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+class Mutex;
+
 class Log
 {
 public:
@@ -14,6 +16,7 @@ public:
 private:
 
 	FILE* pfLog;
+	Mutex* mutex_;
 };
 
 extern Log GLog;

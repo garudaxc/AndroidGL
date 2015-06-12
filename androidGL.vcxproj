@@ -75,6 +75,7 @@ adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\android\AuroraGL.h" />
+    <ClInclude Include="code\android\Thread.h" />
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\Color.h" />
     <ClInclude Include="code\CommandSystem.h" />
@@ -95,6 +96,7 @@ adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\android\Sensor.cpp" />
+    <ClCompile Include="code\android\Thread.cpp" />
     <ClCompile Include="code\android\TrackDropping.cpp" />
     <ClCompile Include="code\android\draw.cpp" />
     <ClCompile Include="code\android\main.cpp" />
