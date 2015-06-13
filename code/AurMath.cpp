@@ -1,8 +1,4 @@
-#include "Vector.h"
-#include "Matrix.h"
-#include "Quaternion.h"
 #include "Color.h"
-#include "MathFunction.h"
 #include "AurMath.h"
 
 namespace Aurora
@@ -52,5 +48,16 @@ template<> const Matrix4<float> Matrix4<float>::IDENTITY(1.0f, 0.0f, 0.0f, 0.0f,
 														 0.0f, 0.0f, 0.0f, 1.0f);
 //--------------------------------------------------------------------------
 template<> const Quaternion<float> Quaternion<float>::IDENTITY(1.0f, 0.0f, 0.0f, 0.0f);
+
+
+template<>
+Vector3<float> Vector3<float>::FromString(const char* str)
+{
+	float x, y, z;
+	sscanf(str, "%f,%f,%f", &x, &y, &z);
+	return Vector3<float>(x, y, z);
+}
+
+
 
 }

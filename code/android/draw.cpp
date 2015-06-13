@@ -10,9 +10,6 @@
 #include "ShaderManager.h"
 #include "Model.h"
 #include "AurMath.h"
-#include "Matrix.h"
-#include "Vector.h"
-#include "MathFunction.h"
 #include "Texture.h"
 #include "Timer.h"
 #include "GlobalVar.h"
@@ -75,7 +72,7 @@ int setupGraphics(int w, int h) {
 	Models.push_back(model);
 #else
 	model = CreateModel("/sdcard/MyTest/Box001.mesh", "/sdcard/MyTest/2.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 #endif
 
@@ -91,7 +88,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
 
-	Matrix4f mView, mEyeOffset, mProj;
+	Matrix4f mView, mEyeOffset;
 
 #if TEST_MODEL
 	MatrixLookAtRH(mView, Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
@@ -100,14 +97,10 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 #endif
 	
 	Vector3f eyePos(0.f, 0.f, 0.f);
-	Matrix4f matEyePos;
-	MatrixTranslation(matEyePos, -eyePos);
-	MatrixMultiply(mView, matEyePos, mView);
+	mView = Matrix4f::Translate(-eyePos) * mView;
+	mView *= Matrix4f::Translate(Vector3f(eyeOffset, 0.f, 0.f));
 	
-	MatrixTranslation(mEyeOffset, Vector3f(eyeOffset, 0.f, 0.f));
-	MatrixMultiply(mView, mView, mEyeOffset);
-
-	MatrixPerspectiveFovRH(mProj, Mathf::PI / 3.0f, w / (float)h, 0.1f);
+	Matrix4f mProj = Matrix4f::PerspectiveFovRH(Mathf::PI / 3.0f, w / (float)h, 0.1f);
 	mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
 	mProj._43 = mProj._43 * 2.f;
 
@@ -118,8 +111,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 #else
 		Matrix4f mWorld = Matrix4f::IDENTITY;
 #endif
-
-		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
+		mWorld *= (*it)->transform_;
 
 		GShaderManager.Bind();
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());

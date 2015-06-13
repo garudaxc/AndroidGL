@@ -78,9 +78,9 @@ Vector3Rotate(Vector3<real>& out, const Vector3<real>& p, const Quaternion<real>
 	float s = q.w;
 	Vector3<real> v(q.x, q.y, q.z);
 	Vector3f o = p * (s * s);
-	o += CrossProduct(v * ((real)2.0 * s), p);
-	o += v * DotProduct(v, p);
-	o -= CrossProduct(CrossProduct(v, p), v);
+	o += Vector3f::Cross(v * ((real)2.0 * s), p);
+	o += v * Vector3f::Dot(v, p);
+	o -= Vector3f::Cross(Vector3f::Cross(v, p), v);
 
 	return out = o;
 }
@@ -630,13 +630,13 @@ yaxis = cross(zaxis, xaxis)
 
 	Vector3<real> z = vAt - vEye;
 	z.Normalize();
-	Vector3<real> x = CrossProduct(vUp, z);
+	Vector3<real> x = Vector3f::Cross(vUp, z);
 	x.Normalize();
-	Vector3<real> y = CrossProduct(z, x);
+	Vector3<real> y = Vector3f::Cross(z, x);
 	matrix.Set(x.x, y.x, z.x, 0.0f,
 			   x.y, y.y, z.y, 0.0f,
 			   x.z, y.z, z.z, 0.0f,
-			   -DotProduct(x, vEye), -DotProduct(y, vEye), -DotProduct(z, vEye), 1.0f);
+			   -Vector3f::Dot(x, vEye), -Vector3f::Dot(y, vEye), -Vector3f::Dot(z, vEye), 1.0f);
 	return matrix;
 }
 //-----------------------------------------------------------
@@ -658,13 +658,13 @@ yaxis = cross(zaxis, xaxis)
 
 	Vector3<real> z = vEye - vAt;
 	z.Normalize();
-	Vector3<real> x = CrossProduct(vUp, z);
+	Vector3<real> x = Vector3f::Cross(vUp, z);
 	x.Normalize();
-	Vector3<real> y = CrossProduct(z, x);
+	Vector3<real> y = Vector3f::Cross(z, x);
 	matrix.Set(x.x, y.x, z.x, 0.0f,
 			   x.y, y.y, z.y, 0.0f,
 			   x.z, y.z, z.z, 0.0f,
-			   -DotProduct(x, vEye), -DotProduct(y, vEye), -DotProduct(z, vEye), 1.0f);
+			   -Vector3f::Dot(x, vEye), -Vector3f::Dot(y, vEye), -Vector3f::Dot(z, vEye), 1.0f);
 	return matrix;
 }
 //-----------------------------------------------------------
@@ -899,8 +899,8 @@ QuaternionVectorToVector(Quaternion<real>& out, const Vector3<real>& vFrom, cons
 	Vector3<real> vHalf = vFromNorm + vToNorm;
 	vHalf.Normalize();
 
-	Vector3<real> cross = CrossProduct(vFromNorm, vHalf);
-	real dot = DotProduct(vFromNorm, vHalf);
+	Vector3<real> cross = Vector3f::Cross(vFromNorm, vHalf);
+	real dot = Vector3f::Dot(vFromNorm, vHalf);
 	out.Set(dot, cross.x, cross.y, cross.z);
 	return out;	
 }
@@ -911,7 +911,7 @@ QuaternionSlerp(Quaternion<real>& out, const Quaternion<real>& ql, const Quatern
 {
 	Quaternion<real>	r = qr;
 	// range 1 to -1
-	real cosOmega = DotProduct(ql, qr);
+	real cosOmega = Vector3f::Dot(ql, qr);
 	if (cosOmega < (real)0.0)
 	{
 		r *= (real)-1.0;

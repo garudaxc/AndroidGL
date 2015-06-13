@@ -17,16 +17,12 @@
     <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\GlobalVar.h" />
     <ClInclude Include="code\glUtil.h" />
-    <ClInclude Include="code\MathFunction.h" />
-    <ClInclude Include="code\Matrix.h" />
     <ClInclude Include="code\Model.h" />
     <ClInclude Include="code\MyLog.h" />
-    <ClInclude Include="code\Quaternion.h" />
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
     <ClInclude Include="code\Timer.h" />
-    <ClInclude Include="code\Vector.h" />
     <ClInclude Include="code\win\AuroraGL.h" />
     <ClInclude Include="code\win\glew.h" />
     <ClInclude Include="code\win\glxew.h" />
@@ -39,7 +35,7 @@
     <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\GlobalVar.cpp" />
     <ClCompile Include="code\glUtil.cpp" />
-    <ClCompile Include="code\MathObject.cpp" />
+    <ClCompile Include="code\AurMath.cpp" />
     <ClCompile Include="code\Model.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
     <ClCompile Include="code\Texture.cpp" />

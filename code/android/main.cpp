@@ -27,9 +27,6 @@
 #include "AuroraGL.h"
 #include "MyLog.h"
 #include "Platfrom.h"
-#include "Vector.h"
-
-using namespace Aurora;
 
 /**
  * Our saved state data.

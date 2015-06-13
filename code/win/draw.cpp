@@ -5,9 +5,7 @@
 #include "glew.h"
 #include "AuroraGL.h"
 #include "MyLog.h"
-
-#include "MathFunction.h"
-#include "Matrix.h"
+#include "AurMath.h"
 #include "Model.h"
 #include "ShaderManager.h"
 #include "Texture.h"
@@ -57,40 +55,37 @@ void LoadResource() {
 	checkGlError("GShaderManager.LoadFromFile");
 
 	ModelInstance* model = NULL;
-	model = CreateModel("build_tower003.mesh", "1.TGA");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
+	model = CreateModel("OilTank001.mesh", "1.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 
-	model = CreateModel("build_house008.mesh", "2.TGA");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
+	model = CreateModel("Torus Knot001.mesh", "1.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
 	Models.push_back(model);
 
 
-	model = CreateModel("Box001.mesh", "2.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
-	Models.push_back(model);
+	//model = CreateModel("Box001.mesh", "2.png");
+	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+	//Models.push_back(model);
 }
 
 
 void DrawView(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
+
+	Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
+	mView *= Matrix4f::Translate(Vector3f(eyeOffset, 0.f, 0.f));
+
+
+	Matrix4f mProj = Matrix4f::PerspectiveFovRH(Mathf::PI / 3.0f, w / (float)h, 0.1f);
+	mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
+	mProj._43 = mProj._43 * 2.f;
 	
 	for (auto it = Models.begin(); it != Models.end(); ++it) {
 
-		Matrix4f mWorld;
-		MatrixRotationAxis(mWorld, Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
-		
-		MatrixMultiply(mWorld, mWorld, (*it)->transform_);
-
-		Matrix4f mView, mEyeOffset, mProj;
-		MatrixLookAtRH(mView, Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
-		MatrixTranslation(mEyeOffset, Vector3f(eyeOffset, 0.f, 0.f));
-		MatrixMultiply(mView, mView, mEyeOffset);
-
-		MatrixPerspectiveFovRH(mProj, Mathf::PI / 3.0f, w / (float)h, 0.1f);
-		mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
-		mProj._43 = mProj._43 * 2.f;
+		Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
+		mWorld *= (*it)->transform_;
 
 		GShaderManager.Bind();
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());

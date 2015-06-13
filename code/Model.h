@@ -1,10 +1,8 @@
 #pragma once
 #include <vector>
-#include <Matrix.h>
 #include "Platfrom.h"
 
 using namespace std;
-using namespace Aurora;
 
 struct ModelElement
 {

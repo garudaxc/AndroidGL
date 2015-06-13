@@ -3,10 +3,6 @@
 #include <android_native_app_glue.h>
 #include <vector>
 #include "AurMath.h"
-#include "Matrix.h"
-#include "Vector.h"
-#include "MathFunction.h"
-#include "Quaternion.h"
 #include "Platfrom.h"
 #include "Thread.h"
 #include "MyLog.h"
@@ -96,7 +92,7 @@ void SensorFuse::UpdateGyroScope(const Vector3f& v, int64_t timestamp)
 	if (init_ || lastTime == 0)
 	{
 		lastTime = timestamp;
-		QuaternionRotationAxis(gyroRot_, Vector3f::UNIT_Z, Mathf::HALF_PI);
+		gyroRot_ = Quaternionf::RotationAxis(Vector3f::UNIT_Z, Mathf::HALF_PI);
 		init_ = false;
 		return;
 	}
@@ -120,7 +116,7 @@ void SensorFuse::UpdateGyroScope(const Vector3f& v, int64_t timestamp)
 	eyroSample *= sinThetaOverTwo;
 	Quaternionf qRot(cosThetaOverTwo, eyroSample.x, eyroSample.y, eyroSample.z);
 
-	QuaternionMultiply(gyroRot_, qRot, gyroRot_);
+	gyroRot_ = qRot * gyroRot_;
 }
 
 void SensorFuse::UpdateAccelerometer(const Vector3f& v)
@@ -138,12 +134,12 @@ void SensorFuse::Fuse()
 	// calculate rotation from magnetic and gravity frame
 	gravityVec_.Normalize();
 	Vector3f x, y, z;
-	x = magneticVec_ - gravityVec_ * DotProduct(gravityVec_, magneticVec_);
+	x = magneticVec_ - gravityVec_ * Vector3f::Dot(gravityVec_, magneticVec_);
 
 	x.Normalize();
 
 	z = gravityVec_;
-	y = CrossProduct(z, x);
+	y = Vector3f::Cross(z, x);
 	y.Normalize();
 
 	Matrix4f view(x.x, x.y, x.z, 0.f,
@@ -151,8 +147,7 @@ void SensorFuse::Fuse()
 		z.x, z.y, z.z, 0.f,
 		0.f, 0.f, 0.f, 1.f);
 
-	Quaternionf qRot;
-	QuaternionFromRotationMatrix(qRot, view);
+	Quaternionf qRot = view.ToQuaternion();
 	if (accMagRot_.LengthSQ() < 0.001f)	{
 		accMagRot_ = qRot;
 		return;
@@ -160,11 +155,11 @@ void SensorFuse::Fuse()
 
 	float factor = 0.05f;	
 	// low pass filter
-	QuaternionSlerp(accMagRot_, accMagRot_, qRot, factor);
+	accMagRot_ = Quaternionf::Slerp(accMagRot_, qRot, factor);
 	//////////////////////////////////////////////////////////////////////////
 	
 	// fuse
-	QuaternionSlerp(fusedRot_, gyroRot_, accMagRot_, factor);
+	fusedRot_ = Quaternionf::Slerp(gyroRot_, accMagRot_, factor);
 
 	// compensate gyro rotation
 	gyroRot_ = fusedRot_;
@@ -173,15 +168,12 @@ void SensorFuse::Fuse()
 
 Matrix4f SensorFuse::GetViewMatrix()
 {
-	Matrix4f view;
-	MatrixTransform(view, fusedRot_, Vector3f::ZERO);
+	Matrix4f view = Matrix4f::Transform(fusedRot_, Vector3f::ZERO);
 
-	Matrix4f frame(0.f, -1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f, 0.f,
-		0.f, 0.f, 1.f, 0.f,
-		0.f, 0.f, 0.f, 1.f);
-
-	MatrixMultiply(view, view, frame);
+	view *= Matrix4f(0.f, -1.f, 0.f, 0.f,
+			1.f, 0.f, 0.f, 0.f,
+			0.f, 0.f, 1.f, 0.f,
+			0.f, 0.f, 0.f, 1.f);
 
 	return view;
 }

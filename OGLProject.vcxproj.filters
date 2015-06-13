@@ -44,18 +44,6 @@
     <ClInclude Include="code\Color.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="code\MathFunction.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Matrix.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Quaternion.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Vector.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="code\ShaderManager.h">
       <Filter>源文件</Filter>
     </ClInclude>
@@ -97,9 +85,6 @@
     <ClCompile Include="code\glUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="code\MathObject.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="code\ShaderManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -131,6 +116,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="code\GlobalVar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\AurMath.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

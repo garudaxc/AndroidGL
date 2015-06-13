@@ -1,6 +1,5 @@
 #include <android/sensor.h>
 #include "MyLog.h"
-#include "Vector.h"
 #include "AurMath.h"
 
 

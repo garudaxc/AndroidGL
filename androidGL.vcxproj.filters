@@ -55,15 +55,6 @@
     <ClInclude Include="code\MathFunction.h">
       <Filter>Source files</Filter>
     </ClInclude>
-    <ClInclude Include="code\Matrix.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Quaternion.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Vector.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
     <ClInclude Include="code\ShaderManager.h">
       <Filter>Source files</Filter>
     </ClInclude>
@@ -94,9 +85,6 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="code\glUtil.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\MathObject.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="code\ShaderManager.cpp">
@@ -139,6 +127,9 @@
       <Filter>Source files\android</Filter>
     </ClCompile>
     <ClCompile Include="code\android\Thread.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\AurMath.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
