@@ -218,10 +218,9 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
     return 0;
 }
 
-//void _InitSensor();
-//void _EnableSensor();
-//void _DisableSensor();
-//void _ProcessSensorData(int identifier);
+
+void StartSensor();
+void PauseSensor();
 void InitSensor();
 
 /**
@@ -243,6 +242,8 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 				setupGraphics(engine->width, engine->height);
 
+				InitSensor();
+
                 engine_draw_frame(engine);
             }
             break;
@@ -252,13 +253,15 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             break;
         case APP_CMD_GAINED_FOCUS:
 			//_EnableSensor();
+			StartSensor();
 			engine->animating = 1;
             break;
         case APP_CMD_LOST_FOCUS:
 			//_DisableSensor();
             // Also stop animating.
             engine->animating = 0;
-            engine_draw_frame(engine);
+			PauseSensor();
+            //engine_draw_frame(engine);
             break;
     }
 }
@@ -283,7 +286,7 @@ void android_main(struct android_app* state) {
 	PlatfromInit();
 
 	//_InitSensor();
-	InitSensor();
+	//InitSensor();
 	
 	ANativeActivity_setWindowFlags(state->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
 

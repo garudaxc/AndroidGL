@@ -384,8 +384,10 @@ public:
 	Matrix3<real>			operator * (const Matrix3<real>& m);
 	Matrix3<real>&			operator *= (const Matrix3<real>& m);
 
-	friend Vector3<real>	operator * (const Vector3<real>& v, const Matrix3<real>& m);
-	friend Vector3<real>&	operator *= (Vector3<real>& v, const Matrix3<real>& m);
+	template<typename U>
+	friend Vector3<U>	operator * (const Vector3<U>& v, const Matrix3<U>& m);
+	template<typename U>
+	friend Vector3<U>&	operator *= (Vector3<U>& v, const Matrix3<U>& m);
 
 	Matrix4<real>		ToMat4() const;
 
@@ -448,8 +450,11 @@ public:
 	Matrix4<real>			operator * (const Matrix4<real>& m);
 	Matrix4<real>&			operator *= (const Matrix4<real>& m);
 
-	friend Vector3<real>	operator * (const Vector3<real>& v, const Matrix4<real>& m);
-	friend Vector3<real>&	operator *= (Vector3<real>& v, const Matrix4<real>& m);
+	template<typename U>
+	friend Vector3<U>	operator * (const Vector3<U>& v, const Matrix4<U>& m);
+
+	template<typename U>
+	friend Vector3<U>&	operator *= (Vector3<U>& v, const Matrix4<U>& m);
 	
 	inline real* Ptr();
 	inline const real* Ptr() const;
@@ -523,8 +528,11 @@ public:
 	inline void Set(T fx, T fy, T fz);
 
 	Quaternion<T>		operator * (const Quaternion<T>& r) const;
-	friend Vector3<T>	operator * (const Vector3<T>& v, const Quaternion<T>& q);
-	friend Vector3<T>&	operator *= (Vector3<T>& v, const Quaternion<T>& q);
+
+	template<typename U>
+	friend Vector3<U>	operator * (const Vector3<U>& v, const Quaternion<U>& q);
+	template<typename U>
+	friend Vector3<U>&	operator *= (Vector3<U>& v, const Quaternion<U>& q);
 
 	Quaternion<T> Inverse() const;
 	const Quaternion<T>& InverseSelf();
@@ -1368,22 +1376,21 @@ Matrix3<real>& Matrix3<real>::operator *= (const Matrix3<real>& m)
 	return *this;
 }
 
-template<typename real>
-Vector3<real> operator * (const Vector3<real>& v, const Matrix3<real>& m)
+template<typename U>
+Vector3<U> operator * (const Vector3<U>& v, const Matrix3<U>& m)
 {
-	Vector3<real> out(v.x*m._11 + v.y*m._21 + v.z*m._31,
+	Vector3<U> out(v.x*m._11 + v.y*m._21 + v.z*m._31,
 		v.x*m._12 + v.y*m._22 + v.z*m._32,
 		v.x*m._13 + v.y*m._23 + v.z*m._33);
 	return out;
 }
 
-template<typename real>
-Vector3<real>&	operator *= (Vector3<real>& v, const Matrix3<real>& m)
+template<typename U>
+Vector3<U>&	operator *= (Vector3<U>& v, const Matrix3<U>& m)
 {
 	v = v * m;
 	return v;
 }
-
 
 typedef Matrix3<float> Matrix3f;
 
@@ -1595,18 +1602,18 @@ Matrix4<real>& Matrix4<real>::operator *= (const Matrix4<real>& m)
 	return *this;
 }
 
-template<typename real>
-Vector3<real> operator * (const Vector3<real>& v, const Matrix4<real>& m)
+template<typename U>
+Vector3<U> operator * (const Vector3<U>& v, const Matrix4<U>& m)
 {
-	Vector3<real> out(
+	Vector3<U> out(
 		v.x*m._11 + v.y*m._21 + v.z*m._31 + m._41,
 		v.x*m._12 + v.y*m._22 + v.z*m._32 + m._42,
 		v.x*m._13 + v.y*m._23 + v.z*m._33 + m._43);
 	return out;
 }
 
-template<typename real>
-Vector3<real>& operator *= (Vector3<real>& v, const Matrix4<real>& m)
+template<typename U>
+Vector3<U>& operator *= (Vector3<U>& v, const Matrix4<U>& m)
 {
 	v = v * m;
 	return v;
@@ -2115,23 +2122,23 @@ Quaternion<T> Quaternion<T>::operator * (const Quaternion<T>& r) const
 		w * r.z + z * r.w + x * r.y - y * r.x);
 }
 
-template<typename T>
-Vector3<T> operator * (const Vector3<T>& p, const Quaternion<T>& q)
+template<typename U>
+Vector3<U> operator * (const Vector3<U>& p, const Quaternion<U>& q)
 {
 	// q*P*q-1 = (s+v)P(s-v)
 	//		   = s^2*P + 2s*v%P + (v.P)*v - v%P%v (% means cross product)
-	T s = q.w;
-	Vector3<T> v(q.x, q.y, q.z);
-	Vector3<T> o = p * (s * s);
-	o += Vector3<T>::Cross(v * ((T)2.0 * s), p);
-	o += v * Vector3<T>::Dot(v, p);
-	o -= Vector3<T>::Cross(Vector3<T>::Cross(v, p), v);
+	U s = q.w;
+	Vector3<U> v(q.x, q.y, q.z);
+	Vector3<U> o = p * (s * s);
+	o += Vector3<U>::Cross(v * ((U)2.0 * s), p);
+	o += v * Vector3<U>::Dot(v, p);
+	o -= Vector3<U>::Cross(Vector3<U>::Cross(v, p), v);
 
 	return o;
 }
 
-template<typename T>
-Vector3<T>&	operator *= (Vector3<T>& v, const Quaternion<T>& q)
+template<typename U>
+Vector3<U>&	operator *= (Vector3<U>& v, const Quaternion<U>& q)
 {
 	v = v * q;
 	return v;

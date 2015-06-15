@@ -6,6 +6,7 @@
 #include "Platfrom.h"
 #include "Thread.h"
 #include "MyLog.h"
+#include "MessageQueue.h"
 
 using namespace std;
 using namespace Aurora;
@@ -32,6 +33,7 @@ ASensorManager* sensorManager = NULL;
 ASensorEventQueue* eventQueue = NULL;
 ALooper* looper = NULL;
 
+MessageQueue* messageQueue_ = NULL;
 
 
 void LogVector(const char* prefix, const float* v)
@@ -51,6 +53,7 @@ public:
 	void UpdateMagneticField(const Vector3f& v);
 
 	void Fuse();
+	void Fuse2();
 
 	Matrix4f GetViewMatrix();
 
@@ -87,7 +90,7 @@ void IntigrateGyroValue(const ASensorEvent& event)
 
 void SensorFuse::UpdateGyroScope(const Vector3f& v, int64_t timestamp)
 {
-	//IntigrateGyroValue
+	//intigrate GyroValue
 	static int64_t lastTime = 0;
 	if (init_ || lastTime == 0)
 	{
@@ -135,13 +138,13 @@ void SensorFuse::Fuse()
 	gravityVec_.Normalize();
 	Vector3f x, y, z;
 	x = magneticVec_ - gravityVec_ * Vector3f::Dot(gravityVec_, magneticVec_);
-
 	x.Normalize();
 
 	z = gravityVec_;
 	y = Vector3f::Cross(z, x);
 	y.Normalize();
 
+	// transform matrix from (real) world coordinate to phone coordinate
 	Matrix4f view(x.x, x.y, x.z, 0.f,
 		y.x, y.y, y.z, 0.f,
 		z.x, z.y, z.z, 0.f,
@@ -161,7 +164,26 @@ void SensorFuse::Fuse()
 	// fuse
 	fusedRot_ = Quaternionf::Slerp(gyroRot_, accMagRot_, factor);
 
+	Vector3f v = Vector3f::UNIT_Z *	gyroRot_;
+	v = Vector3f::Cross(v, gravityVec_);
+	GLog.LogInfo("diff %f %f %f len %f", v.x, v.y, v.z, v.LengthSQ());
+
 	// compensate gyro rotation
+	gyroRot_ = fusedRot_;
+
+}
+
+// only use gravity direction to correct pitch
+void SensorFuse::Fuse2()
+{
+	gravityVec_.Normalize();
+
+	Vector3f v = Vector3f::UNIT_Z *	gyroRot_;
+	Quaternionf tiltCorrect = Quaternionf::FromVectorToVector(v, gravityVec_);
+	tiltCorrect = Quaternionf::Slerp(Quaternionf::IDENTITY, tiltCorrect, 0.05f);
+
+	fusedRot_ = tiltCorrect * gyroRot_;
+
 	gyroRot_ = fusedRot_;
 }
 
@@ -170,6 +192,8 @@ Matrix4f SensorFuse::GetViewMatrix()
 {
 	Matrix4f view = Matrix4f::Transform(fusedRot_, Vector3f::ZERO);
 
+	// transform from phone coordinate to camera coordinate
+	// phone handled in reverseLandscape
 	view *= Matrix4f(0.f, -1.f, 0.f, 0.f,
 			1.f, 0.f, 0.f, 0.f,
 			0.f, 0.f, 1.f, 0.f,
@@ -207,7 +231,6 @@ struct SensorObj
 };
 
 vector<SensorObj>	sensors_;
-
 
 void ListSensors(){
 	ASensorManager* mgr = ASensorManager_getInstance();
@@ -354,8 +377,8 @@ void _ProcessSensorData(int identifier)
 		}
 	}
 
-	sensorFuse.Fuse();
-	GLog.LogInfo("sensor event count %d", eventCount);
+	sensorFuse.Fuse2();
+	//GLog.LogInfo("sensor event count %d time %d", eventCount, GetTicksMS());
 }
 
 #if 0
@@ -486,64 +509,89 @@ Matrix4f _GetDeviceRotationMatrix3()
 
 //////////////////////////////////////////////////////////////////////////
 
+#define COMMAND_INIT	"init"
+#define COMMAND_START	"start"
+#define COMMAND_PAUSE	"pause"
+#define COMMAND_DESTROY	"destroy"
+
+#define COMMAND_MATCH(cmd, toMatch)		( strcmp(cmd, toMatch) == 0 )
+
+
 class SensorThread : public Thread
 {
 public:
-	SensorThread()	{}
+	SensorThread();
 	~SensorThread()	{}
 
 	virtual void*		Run();
-
+	
 private:
-
 	ALooper*	looper_;
+	bool		initialized_;
+	bool		running_;
 };
 
+SensorThread::SensorThread() :looper_(NULL), initialized_(false), running_(false)
+{
+}
 
 void* SensorThread::Run()
 {
-	looper_ = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
-	if (looper_ == NULL) {
-		GLog.LogError("ALooper_prepare failed!");
-		return (void*)0;
-	}
+	for (;;){
+		if (!initialized_){
+			messageQueue_->SleepUntilMessage();
+			const char* cmd = messageQueue_->GetNextMessage();
+			if (COMMAND_MATCH(cmd, COMMAND_INIT)) {
+				looper_ = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+				if (looper_ == NULL) {
+					GLog.LogError("ALooper_prepare failed!");
+					return (void*)0;
+				}
 
-	_InitSensor();
+				_InitSensor();
 
-	_EnableSensor();
-
-	while (1) {
-		// Read all pending events.
-		int ident;
-		int events;
-		struct android_poll_source* source;
-
-		// If not animating, we will block forever waiting for events.
-		// If animating, we loop until all events are read, then continue
-		// to draw the next frame of animation.
-		while ((ident = ALooper_pollAll(20, NULL, &events, (void**)&source)) >= 0) {
-
-			//// Process this event.
-			//if (source != NULL) {
-			//	source->process(state, source);
-			//}
-
-			_ProcessSensorData(ident);
-
-			//// Check if we are exiting.
-			//if (state->destroyRequested != 0) {
-			//	engine_term_display(&engine);
-			//	PlatfromShutDown();
-			//	return;
-			//}
+				initialized_ = true;
+				continue;
+			} else {
+				GLog.LogError("SensorThread error command %s", cmd);
+				continue;
+			}
 		}
 
-		//if (engine.animating) {
+		// sleeping
+		if (!running_){
+			messageQueue_->SleepUntilMessage();
+			const char* cmd = messageQueue_->GetNextMessage();
+			if (COMMAND_MATCH(cmd, COMMAND_START)) {
+				running_ = true;
 
-		//	// Drawing is throttled to the screen update rate, so there
-		//	// is no need to do timing here.
-		//	engine_draw_frame(&engine);
-		//}
+				_EnableSensor();
+
+				GLog.LogInfo("SensorThread start running");
+				continue;
+			} else {
+				GLog.LogError("sensor thread expect start command : %s", cmd);
+				continue;
+			}
+		} else {
+			// running
+			const char* cmd = messageQueue_->GetNextMessage();
+			if (cmd == NULL) {
+				// Read all pending events.
+				int ident;
+				int events;
+				struct android_poll_source* source;
+
+				if ((ident = ALooper_pollAll(20, NULL, &events, (void**)&source)) >= 0) {
+					_ProcessSensorData(ident);
+				}
+			} else if (COMMAND_MATCH(cmd, COMMAND_PAUSE)) {
+				GLog.LogInfo("SensorThread paused");
+				
+				_DisableSensor();
+				running_ = false;
+			}			
+		}
 	}
 
 	return (void*)0;
@@ -553,9 +601,25 @@ SensorThread sensorThread;
 
 void InitSensor()
 {
-	bool r = sensorThread.Create();
+	messageQueue_ = new MessageQueue(10);
 
+	GLog.LogInfo("Create scesor thread %d", GetTicksMS());
+	bool r = sensorThread.Create();
 	if (!r) {
 		GLog.LogError("sensorThread.Create() failed!");
 	}
+
+	GLog.LogInfo("Create scesor thread done ! %d", GetTicksMS());
+
+	messageQueue_->SendString(COMMAND_INIT);
+}
+
+void StartSensor()
+{
+	messageQueue_->PostString(COMMAND_START);
+}
+
+void PauseSensor()
+{
+	messageQueue_->PostString(COMMAND_PAUSE);
 }

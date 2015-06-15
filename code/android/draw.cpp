@@ -76,7 +76,6 @@ int setupGraphics(int w, int h) {
 	Models.push_back(model);
 #endif
 
-		
 	checkGlError("CreateModel");
 	return 1;
 }
