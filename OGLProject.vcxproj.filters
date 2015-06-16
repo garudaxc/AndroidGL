@@ -74,6 +74,12 @@
     <ClInclude Include="code\GlobalVar.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="code\BitmapFont.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="code\SpriteBatch.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\win\MyLog.cpp">
@@ -119,6 +125,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="code\AurMath.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\BitmapFont.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\SpriteBatch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

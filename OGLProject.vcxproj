@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\AurMath.h" />
+    <ClInclude Include="code\BitmapFont.h" />
     <ClInclude Include="code\Color.h" />
     <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
@@ -20,6 +21,7 @@
     <ClInclude Include="code\Model.h" />
     <ClInclude Include="code\MyLog.h" />
     <ClInclude Include="code\ShaderManager.h" />
+    <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
     <ClInclude Include="code\Timer.h" />
@@ -31,6 +33,7 @@
     <ClInclude Include="code\win\wglew.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\BitmapFont.cpp" />
     <ClCompile Include="code\CommandSystem.cpp" />
     <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\GlobalVar.cpp" />
@@ -38,6 +41,7 @@
     <ClCompile Include="code\AurMath.cpp" />
     <ClCompile Include="code\Model.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
+    <ClCompile Include="code\SpriteBatch.cpp" />
     <ClCompile Include="code\Texture.cpp" />
     <ClCompile Include="code\thirdParty\stb\stb_image.c" />
     <ClCompile Include="code\Timer.cpp" />

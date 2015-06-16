@@ -16,7 +16,7 @@ bool File::Open(const char* fileName)
 {
 	FILE* pf = fopen(fileName, "rb");
 	if (pf == NULL){
-		GLog.LogError("Model::Load failed! %s", fileName);
+		GLog.LogError("File::Open failed! %s", fileName);
 		return false;
 	}
 

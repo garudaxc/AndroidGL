@@ -1,0 +1,1 @@
+MakeSpriteFont.exe "Consolas" consolas.bitmapfont /debugoutputspritesheet:consolas.bmp /TextureFormat:rgba32

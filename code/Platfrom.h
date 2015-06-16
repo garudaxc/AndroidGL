@@ -14,10 +14,18 @@ typedef unsigned long long uint64_t;
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-
 typedef unsigned char ubyte_t;
 
 #endif // WIN32
+
+
+typedef struct tagRect_t
+{
+	int    left;
+	int    top;
+	int    right;
+	int    bottom;
+} rect_t;
 
 extern const char* vsInclude;
 extern const char* psInclude;

@@ -12,6 +12,7 @@
 #include "glUtil.h"
 #include "Timer.h"
 #include "GlobalVar.h"
+#include "BitmapFont.h"
 
 using namespace std;
 using namespace Aurora;
@@ -36,6 +37,9 @@ private:
 
 vector<ModelInstance*>		Models;
 
+BitmapFont bitmapFont;
+
+
 ModelInstance*	CreateModel(const char* mesh, const char* texture)
 {
 	ModelInstance* model = new ModelInstance;
@@ -43,6 +47,8 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 	model->texture_.Load(texture);
 
 	model->transform_ = Matrix4f::IDENTITY;
+
+	bitmapFont.LoadFromFile("consolas.bitmapfont");
 
 	return model;
 }
