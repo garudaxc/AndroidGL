@@ -135,19 +135,19 @@ bool ShaderManager::LoadFromFile(EShader s, const char* fileName)
 	GLog.LogInfo("vUV attrib location %d", loc);
 
 	uniform_[s][SU_WORLD] = glGetUniformLocation(program_[s], "mWorld");
-	GLog.LogInfo("uniform_[SU_WORLD] %d", uniform_[SU_WORLD]);
+	GLog.LogInfo("uniform_[SU_WORLD] %d", uniform_[s][SU_WORLD]);
 
 	uniform_[s][SU_VIEW] = glGetUniformLocation(program_[s], "mView");
-	GLog.LogInfo("uniform_[SU_VIEW] %d", uniform_[SU_VIEW]);
+	GLog.LogInfo("uniform_[SU_VIEW] %d", uniform_[s][SU_VIEW]);
 
 	uniform_[s][SU_PROJECTION] = glGetUniformLocation(program_[s], "mProj");
-	GLog.LogInfo("uniform_[SU_PROJECTION] %d", uniform_[SU_PROJECTION]);
+	GLog.LogInfo("uniform_[SU_PROJECTION] %d", uniform_[s][SU_PROJECTION]);
 
 	uniform_[s][SU_TEX_DIFFUSE] = glGetUniformLocation(program_[s], "texDiffuse");
-	GLog.LogInfo("uniform_[SU_TEX_DIFFUSE] %d", uniform_[SU_TEX_DIFFUSE]);
+	GLog.LogInfo("uniform_[SU_TEX_DIFFUSE] %d", uniform_[s][SU_TEX_DIFFUSE]);
 
 	uniform_[s][SU_TEX_NORMAL] = glGetUniformLocation(program_[s], "texNormal");
-	GLog.LogInfo("uniform_[SU_TEX_NORMAL] %d", uniform_[SU_TEX_NORMAL]);
+	GLog.LogInfo("uniform_[SU_TEX_NORMAL] %d", uniform_[s][SU_TEX_NORMAL]);
 
 	//GLint unifromSampler = glGetUniformLocation(program, "texture1");
 	//GLint unifromSampler2 = glGetUniformLocation(program, "texture2");

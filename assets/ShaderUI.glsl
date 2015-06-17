@@ -25,8 +25,10 @@ uniform sampler2D texDiffuse;
 layout (location = 0) out vec4 color;
 
 void main() {
-	vec4 tex0 = texture2D(texDiffuse, v_texcoord).rgba;
+	vec2 uv = vec2(v_texcoord.x, v_texcoord.y);
+	vec4 tex0 = texture2D(texDiffuse, uv).rgba;
 	color = tex0 * v_color;
+	//color = vec4(0, v_texcoord.y, 0, 1);
 }
 
 
