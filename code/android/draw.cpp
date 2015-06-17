@@ -55,7 +55,7 @@ int setupGraphics(int w, int h) {
 	glState.height = h;
 
 	LogGLInfo();
-	GShaderManager.LoadFromFile("/sdcard/MyTest/shader.glsl");
+	GShaderManager.LoadFromFile(ShaderDiffuse, "/sdcard/MyTest/shader.glsl");
 
 	ModelInstance* model = NULL;
 	//model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
@@ -103,7 +103,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
 	mProj._43 = mProj._43 * 2.f;
 
-	for (vector<ModelInstance*>::iterator it = Models.begin(); it != Models.end(); ++it) {		
+	for (auto it = Models.begin(); it != Models.end(); ++it) {		
 
 #if TEST_MODEL
 		Matrix4f mWorld = _GetDeviceRotationMatrix();
@@ -112,7 +112,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 #endif
 		mWorld *= (*it)->transform_;
 
-		GShaderManager.Bind();
+		GShaderManager.Bind(ShaderDiffuse);
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());
 		GShaderManager.SetUnifrom(SU_VIEW, mView.Ptr());
 		GShaderManager.SetUnifrom(SU_PROJECTION, mProj.Ptr());

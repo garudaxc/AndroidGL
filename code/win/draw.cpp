@@ -48,7 +48,6 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 
 	model->transform_ = Matrix4f::IDENTITY;
 
-	bitmapFont.LoadFromFile("consolas.bitmapfont");
 
 	return model;
 }
@@ -57,15 +56,18 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 void LoadResource() {
 	GGlobalVarManager->Init();
 
-	GShaderManager.LoadFromFile("../../assets/shader330.glsl");
+	GShaderManager.LoadFromFile(ShaderDiffuse, "../../assets/shader330.glsl");
+	GShaderManager.LoadFromFile(ShaderUI, "../../assets/ShaderUI.glsl");
 	checkGlError("GShaderManager.LoadFromFile");
 
+	bitmapFont.LoadFromFile("consolas.bitmapfont");
+
 	ModelInstance* model = NULL;
-	model = CreateModel("OilTank001.mesh", "1.png");
+	model = CreateModel("OilTank001.mesh", "3.png");
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 
-	model = CreateModel("Torus Knot001.mesh", "1.png");
+	model = CreateModel("build_tower003.mesh", "2.png");
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
 	Models.push_back(model);
 
@@ -79,7 +81,7 @@ void LoadResource() {
 void DrawView(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
-
+	
 	Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
 	mView *= Matrix4f::Translate(Vector3f(eyeOffset, 0.f, 0.f));
 
@@ -93,7 +95,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
 		mWorld *= (*it)->transform_;
 
-		GShaderManager.Bind();
+		GShaderManager.Bind(ShaderDiffuse);
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());
 		GShaderManager.SetUnifrom(SU_VIEW, mView.Ptr());
 		GShaderManager.SetUnifrom(SU_PROJECTION, mProj.Ptr());
@@ -116,6 +118,9 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 			glDrawElementsBaseVertex(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index, e->vertexOffset);
 		}
 	}
+
+	bitmapFont.SetViewPort(w, h);
+	bitmapFont.DrawString(NULL, "A", Vector3f(100.f, 100.f, 0.f));
 
 	glBindVertexArray(0);
 

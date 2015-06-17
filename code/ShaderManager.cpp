@@ -59,9 +59,10 @@ static bool CompileShader(GLuint shader, const char* include, const char* code)
 }
 
 
-
-ShaderManager::ShaderManager() :program_(0)
+ShaderManager::ShaderManager() :currentBind_(ShaderDiffuse)
 {
+	memset(program_, 0, sizeof(program_));
+	memset(uniform_, 0, sizeof(uniform_));
 }
 
 ShaderManager::~ShaderManager()
@@ -69,7 +70,7 @@ ShaderManager::~ShaderManager()
 }
 
 
-bool ShaderManager::LoadFromFile(const char* fileName)
+bool ShaderManager::LoadFromFile(EShader s, const char* fileName)
 {
 	GLint state = 0;
 	bool bRes = false;
@@ -96,27 +97,27 @@ bool ShaderManager::LoadFromFile(const char* fileName)
 		return false;
 	}
 
-	program_ = glCreateProgram();
-	glBindAttribLocation(program_, 0, "vPosition");
-	glBindAttribLocation(program_, 1, "vNormal");
-	//glBindAttribLocation(program_, 2, "vColor");
-	glBindAttribLocation(program_, 2, "vUV");
+	program_[s] = glCreateProgram();
+	glBindAttribLocation(program_[s], VERTEX_ATTRIBUTE_LOCATION_POSITION, "vPosition");
+	glBindAttribLocation(program_[s], VERTEX_ATTRIBUTE_LOCATION_NORMAL, "vNormal");
+	glBindAttribLocation(program_[s], VERTEX_ATTRIBUTE_LOCATION_COLOR, "vColor");
+	glBindAttribLocation(program_[s], VERTEX_ATTRIBUTE_LOCATION_UV0, "vUV");
 
-	glAttachShader(program_, vs);
-	glAttachShader(program_, ps);
+	glAttachShader(program_[s], vs);
+	glAttachShader(program_[s], ps);
 	glDeleteShader(vs);
 	glDeleteShader(ps);
-	glLinkProgram(program_);
-	glGetProgramiv(program_, GL_LINK_STATUS, &state);
+	glLinkProgram(program_[s]);
+	glGetProgramiv(program_[s], GL_LINK_STATUS, &state);
 	if (state != GL_TRUE) {
 		GLog.LogError("link shader failed!");
 
 		GLint infoLen = 0;
-		glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &infoLen);
+		glGetProgramiv(program_[s], GL_INFO_LOG_LENGTH, &infoLen);
 
 		if (infoLen > 0) {
 			vector<char> err(infoLen + 1);
-			glGetProgramInfoLog(program_, infoLen + 1, NULL, &err[0]);
+			glGetProgramInfoLog(program_[s], infoLen + 1, NULL, &err[0]);
 			GLog.LogError(&err[0]);
 		}
 
@@ -124,28 +125,28 @@ bool ShaderManager::LoadFromFile(const char* fileName)
 	}
 
 	GLint loc = -1;
-	loc = glGetAttribLocation(program_, "vPosition");
+	loc = glGetAttribLocation(program_[s], "vPosition");
 	GLog.LogInfo("vPostition attrib location %d", loc);
-	loc = glGetAttribLocation(program_, "vNormal");
+	loc = glGetAttribLocation(program_[s], "vNormal");
 	GLog.LogInfo("vNormal attrib location %d", loc);
-	loc = glGetAttribLocation(program_, "vColor");
+	loc = glGetAttribLocation(program_[s], "vColor");
 	GLog.LogInfo("vColor attrib location %d", loc);
-	loc = glGetAttribLocation(program_, "vUV");
+	loc = glGetAttribLocation(program_[s], "vUV");
 	GLog.LogInfo("vUV attrib location %d", loc);
 
-	uniform_[SU_WORLD] = glGetUniformLocation(program_, "mWorld");
+	uniform_[s][SU_WORLD] = glGetUniformLocation(program_[s], "mWorld");
 	GLog.LogInfo("uniform_[SU_WORLD] %d", uniform_[SU_WORLD]);
 
-	uniform_[SU_VIEW] = glGetUniformLocation(program_, "mView");
+	uniform_[s][SU_VIEW] = glGetUniformLocation(program_[s], "mView");
 	GLog.LogInfo("uniform_[SU_VIEW] %d", uniform_[SU_VIEW]);
 
-	uniform_[SU_PROJECTION] = glGetUniformLocation(program_, "mProj");
+	uniform_[s][SU_PROJECTION] = glGetUniformLocation(program_[s], "mProj");
 	GLog.LogInfo("uniform_[SU_PROJECTION] %d", uniform_[SU_PROJECTION]);
 
-	uniform_[SU_TEX_DIFFUSE] = glGetUniformLocation(program_, "texDiffuse");
+	uniform_[s][SU_TEX_DIFFUSE] = glGetUniformLocation(program_[s], "texDiffuse");
 	GLog.LogInfo("uniform_[SU_TEX_DIFFUSE] %d", uniform_[SU_TEX_DIFFUSE]);
 
-	uniform_[SU_TEX_NORMAL] = glGetUniformLocation(program_, "texNormal");
+	uniform_[s][SU_TEX_NORMAL] = glGetUniformLocation(program_[s], "texNormal");
 	GLog.LogInfo("uniform_[SU_TEX_NORMAL] %d", uniform_[SU_TEX_NORMAL]);
 
 	//GLint unifromSampler = glGetUniformLocation(program, "texture1");
@@ -155,16 +156,17 @@ bool ShaderManager::LoadFromFile(const char* fileName)
 }
 
 
-void ShaderManager::Bind()
+void ShaderManager::Bind(EShader s)
 {
-	glUseProgram(program_);
+	currentBind_ = s;
+	glUseProgram(program_[s]);
 }
 
 void ShaderManager::SetUnifrom(ShaderUniform u, const float* value)
 {
 	if (u == SU_WORLD || u == SU_VIEW || u == SU_PROJECTION) {
-		if (uniform_[u] != -1) {
-			glUniformMatrix4fv(uniform_[u], 1, GL_FALSE, value);
+		if (uniform_[currentBind_][u] != -1) {
+			glUniformMatrix4fv(uniform_[currentBind_][u], 1, GL_FALSE, value);
 		}
 	}
 }
@@ -172,8 +174,8 @@ void ShaderManager::SetUnifrom(ShaderUniform u, const float* value)
 void ShaderManager::SetUnifrom(ShaderUniform u, int value)
 {
 	if (u == SU_TEX_DIFFUSE || u == SU_TEX_NORMAL) {
-		if (uniform_[u] != -1) {
-			glUniform1i(uniform_[u], value);
+		if (uniform_[currentBind_][u] != -1) {
+			glUniform1i(uniform_[currentBind_][u], value);
 		}
 	}
 }

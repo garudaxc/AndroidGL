@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shader330.glsl" />
+    <None Include="assets\ShaderUI.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{27D13C93-5F89-4977-A339-0AE47D16475A}</ProjectGuid>

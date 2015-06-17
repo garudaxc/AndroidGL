@@ -16,6 +16,7 @@ public:
 	~BitmapFont();
 
 	bool		LoadFromFile(const char* fileName);
+	void		SetViewPort(uint32_t viewWidth, uint32_t viewHeight);
 
 	void		DrawString(SpriteBatch* sprite, const char* text, const Vector3f& pos, float scale = 1.f, const Color& color = Color::WHITE);
 
@@ -29,9 +30,13 @@ public:
 	};
 
 private:
+
+	const Glyph&	FindGlyph(char c) const;
+
 	vector<Glyph>	glyphs_;
 	float			lineSpacing_;
 	uint32_t		defaultChar_;
+
 
 	GLuint		texture_;
 };

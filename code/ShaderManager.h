@@ -12,6 +12,30 @@ enum ShaderUniform
 	SU_COUNT,
 };
 
+enum EShader
+{
+	ShaderDiffuse = 0,
+	ShaderUI,
+	ShaderBump,
+
+	ShaderCount
+};
+
+
+enum VertexAttributeLocation
+{
+	VERTEX_ATTRIBUTE_LOCATION_POSITION = 0,
+	VERTEX_ATTRIBUTE_LOCATION_NORMAL = 1,
+	VERTEX_ATTRIBUTE_LOCATION_TANGENT = 2,
+	VERTEX_ATTRIBUTE_LOCATION_BINORMAL = 3,
+	VERTEX_ATTRIBUTE_LOCATION_COLOR = 4,
+	VERTEX_ATTRIBUTE_LOCATION_UV0 = 5,
+	VERTEX_ATTRIBUTE_LOCATION_UV1 = 6,
+	VERTEX_ATTRIBUTE_LOCATION_JOINT_INDICES = 7,
+	VERTEX_ATTRIBUTE_LOCATION_JOINT_WEIGHTS = 8,
+	VERTEX_ATTRIBUTE_LOCATION_FONT_PARMS = 9
+};
+
 
 class ShaderManager
 {
@@ -19,18 +43,19 @@ public:
 	ShaderManager();
 	~ShaderManager();
 
-	bool	LoadFromFile(const char* fileName);
+	bool	LoadFromFile(EShader s, const char* fileName);
 
-	void	Bind();
+	void	Bind(EShader s);
 
 	void	SetUnifrom(ShaderUniform u, const float* value);
 	void	SetUnifrom(ShaderUniform u, int value);
 	
 private:
 
-	GLuint program_;
-	
-	GLint	uniform_[SU_COUNT];
+	GLuint program_[ShaderCount];
+	GLint	uniform_[ShaderCount][SU_COUNT];
+
+	EShader		currentBind_;
 
 };
 

@@ -229,6 +229,7 @@ public:
 	static T Dot(const Vector2<T>& lhs, const Vector2<T>& rhs);
 
 	static Vector2<T> Lerp(const Vector2<T>& a, const Vector2<T>& b, T s);
+	static Vector2<T> Modulate(const Vector2<T>& a, const Vector2<T>& b);
 
 	static const Vector2 ZERO;
 	static const Vector2 UNIT_X;
@@ -282,6 +283,7 @@ public:
 	inline const T* Ptr() const;
 
 	static Vector3<T> Lerp(const Vector3<T>& a, const Vector3<T>& b, T s);
+	static Vector3<T> Modulate(const Vector3<T>& a, const Vector3<T>& b);
 
 	inline std::string ToString() const;
 	static Vector3<T> FromString(const char* str);
@@ -772,6 +774,12 @@ Vector2<T> Vector2<T>::Lerp(const Vector2<T>& a, const Vector2<T>& b, T s)
 		a.y + s * (b.y - a.y));
 }
 
+template<typename T>
+Vector2<T> Vector2<T>::Modulate(const Vector2<T>& a, const Vector2<T>& b)
+{
+	return Vector2<T>(a.x * b.x, a.y * b.y);
+}
+
 typedef	Vector2<float>	Vector2f;
 
 //////////////////////////////////////////////////////////////////////////
@@ -1006,12 +1014,10 @@ Vector3<T> Vector3<T>::Lerp(const Vector3<T>& a, const Vector3<T>& b, T s)
 		a.z + s * (b.z - a.z));
 }
 
-//---------------------------------------------------------------
 template<typename T>
-inline Vector3<T>
-Modulate(const Vector3<T>& lhs, const Vector3<T>& rhs)
+Vector3<T> Vector3<T>::Modulate(const Vector3<T>& a, const Vector3<T>& b)
 {
-	return Vector3<T>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
+	return Vector3<T>(a.x * b.x, a.y * b.y, a.z * b.z);
 }
 //--------------------------------------------------------------------------
 

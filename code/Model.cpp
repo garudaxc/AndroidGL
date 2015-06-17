@@ -2,6 +2,7 @@
 //#include "glUtil.h"
 #include "MyLog.h"
 #include "FileSystem.h"
+#include "ShaderManager.h"
 #include "assert.h"
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
@@ -116,14 +117,14 @@ bool Model::Load(const char* filename)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(DrawVertex) * numVertex, &vertexes[0], GL_STATIC_DRAW);
 
 #ifdef GL_ARB_vertex_array_object
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_POSITION);
+	glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(0));
 
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(12));
+	glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_NORMAL);
+	glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(12));
 
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(24));
+	glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_UV0);
+	glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_UV0, 2, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(24));
 
 #endif
 
@@ -148,7 +149,6 @@ bool Model::Load(const char* filename)
 }
 
 
-
 int Model::GetElementCount() const
 {
 	return elements_.size();
@@ -165,14 +165,14 @@ void Model::Bind()
 	glBindVertexArray(vao_);
 #else
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_POSITION);
+	glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(0));
 
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(12));
+	glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_NORMAL);
+	glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(12));
 
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(24));
+	glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_UV0);
+	glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_UV0, 2, GL_FLOAT, GL_FALSE, sizeof(DrawVertex), BUFFER_OFFSET(24));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
 #endif

@@ -151,5 +151,8 @@
     <None Include="assets\shader330.glsl">
       <Filter>源文件\shader</Filter>
     </None>
+    <None Include="assets\ShaderUI.glsl">
+      <Filter>源文件\shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

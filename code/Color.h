@@ -20,7 +20,6 @@ public:
 
 	inline void Set(float fr, float fg, float fb, float fa);
 
-
 	inline Color operator +(const Color& c) const;
 	inline Color operator -(const Color& c) const;
 	inline Color operator *(float scale) const;
@@ -40,9 +39,7 @@ public:
 	const Color&		FromStringRGB(const std::string& str);
 	const Color&		FromStringRGBA(const std::string& str);
 
-
 	float r, g, b, a;
-
 
 	static const Color WHITE;
 	static const Color BLACK;
@@ -58,8 +55,6 @@ inline void ColorModulate(Color& out, const Color& c1, const Color& c2);
 inline const Color& ColorLerp(Color& out, const Color& c1, const Color& c2, float fLerp);
 
 //=============================================================================
-
-
 
 
 //-----------------------------------------------------------
