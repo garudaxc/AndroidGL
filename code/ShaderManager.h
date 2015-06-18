@@ -1,12 +1,16 @@
 #pragma once
 
 #include "Platfrom.h"
+#include "AurMath.h"
+
+using namespace Aurora;
 
 enum ShaderUniform
 {
 	SU_WORLD = 0,
 	SU_VIEW,
 	SU_PROJECTION,
+	SU_VIEWPROJ,
 	SU_TEX_DIFFUSE,
 	SU_TEX_NORMAL,
 	SU_COUNT,
@@ -47,7 +51,7 @@ public:
 
 	void	Bind(EShader s);
 
-	void	SetUnifrom(ShaderUniform u, const float* value);
+	void	SetUnifrom(ShaderUniform u, const Matrix4f& matrix);
 	void	SetUnifrom(ShaderUniform u, int value);
 	
 private:

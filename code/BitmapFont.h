@@ -20,6 +20,9 @@ public:
 
 	void		DrawString(SpriteBatch* sprite, const char* text, const Vector3f& pos, float scale = 1.f, const Color& color = Color::WHITE);
 
+	void		DrawString3D(SpriteBatch* sprite, const char* text, const Vector3f& pos, const Vector3f& normal,
+							const Vector3f& up, float scale, const Color& color, const Matrix4f& matViewProj);
+
 	struct Glyph
 	{
 		uint32_t character;

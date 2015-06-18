@@ -55,11 +55,11 @@ struct Geometry
 		vector<uint16_t> index(numIndex);
 		for (uint16_t i = 0; i < numVertex / 4; i++) {
 			index[i * 6 + 0] = i * 4 + 0;
-			index[i * 6 + 1] = i * 4 + 1;
+			index[i * 6 + 1] = i * 4 + 3;
 			index[i * 6 + 2] = i * 4 + 2;
 
 			index[i * 6 + 3] = i * 4 + 2;
-			index[i * 6 + 4] = i * 4 + 3;
+			index[i * 6 + 4] = i * 4 + 1;
 			index[i * 6 + 5] = i * 4 + 0;
 		}
 
@@ -125,7 +125,7 @@ bool BitmapFont::LoadFromFile(const char* fileName)
 	file.Read(textureFormat);
 	file.Read(textureStride);
 	file.Read(textureRows);
-
+	
 	textureWidth_	= textureWidth;
 	textureHeight_	= textureHeight;
 
@@ -189,21 +189,20 @@ void BitmapFont::SetViewPort(uint32_t viewWidth, uint32_t viewHeight)
 }
 
 
-
-void Draw(GLuint texture, rect_t uvRect, const Vector3f& pos, const Color& color)
+void Draw(GLuint texture, rect_t uvRect, const Vector3f& pos, float scale, const Color& color)
 {
 	Vector2f invTex(1.f / textureWidth_, 1.f / textureHeight_);
 	Vector3f invViewPort(2.f / viewWidth_, 2.f / viewHeight_, 1.f);
 
 	TextVert vert[4];
 
-	uvRect.right += 100;
-	uvRect.bottom += 100;
+	//uvRect.right += 100;
+	//uvRect.bottom += 100;
 
 	Vector3f p = Vector3f::Modulate(pos, invViewPort) - Vector3f(1.0f, 1.0f, 0.f);
 	Vector3f size = Vector3f::Modulate(Vector3f(
 		(float)(uvRect.right - uvRect.left), 
-		(float)(uvRect.bottom - uvRect.top), 0.f), invViewPort) * 5.0f;
+		(float)(uvRect.bottom - uvRect.top), 0.f), invViewPort) * scale;
 	
 	vert[0].pos = Vector3f(p.x, p.y, p.z);;
 	vert[0].color = color;
@@ -213,24 +212,32 @@ void Draw(GLuint texture, rect_t uvRect, const Vector3f& pos, const Color& color
 	vert[1].color = color;
 	vert[1].uv = Vector2f(uvRect.right * invTex.x, uvRect.top * invTex.y);
 
-	vert[2].pos = Vector3f(p.x + size.x, p.y + size.y, p.z);
+	vert[2].pos = Vector3f(p.x + size.x, p.y - size.y, p.z);
 	vert[2].color = color;
 	vert[2].uv = Vector2f(uvRect.right * invTex.x, uvRect.bottom * invTex.y);
 
-	vert[3].pos = Vector3f(p.x, p.y + size.y, p.z);
+	vert[3].pos = Vector3f(p.x, p.y - size.y, p.z);
 	vert[3].color = color;
 	vert[3].uv = Vector2f(uvRect.left * invTex.x, uvRect.bottom * invTex.y);
+
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBindVertexArray(geometry_.vao_);
 	glBindBuffer(GL_ARRAY_BUFFER, geometry_.vbo_);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(TextVert), (void *)&vert[0]);
 
 	GShaderManager.Bind(ShaderUI);
+	GShaderManager.SetUnifrom(SU_VIEWPROJ, Matrix4f::IDENTITY);
 	GShaderManager.SetUnifrom(SU_TEX_DIFFUSE, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
 	glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0, 0);
+
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
 }
 
 void BitmapFont::DrawString(SpriteBatch* sprite, const char* text, const Vector3f& pos, float scale, const Color& color)
@@ -241,14 +248,106 @@ void BitmapFont::DrawString(SpriteBatch* sprite, const char* text, const Vector3
 	float y = pos.y;
 
 	while (*c){
-		auto glyph = FindGlyph(*c);
+		if (*c == '\n'){
+			y -= lineSpacing_ * scale;
+			x = pos.x;
+		} else {
 
-		x += glyph.xoffset;
-
-		Draw(texture_, glyph.subrect, Vector3f(x, y + glyph.yoffset, 0.f), color);
-
-		x += (glyph.subrect.right - glyph.subrect.left) + glyph.xAdvance;
+			auto glyph = FindGlyph(*c);
+			x += glyph.xoffset * scale;
+			Draw(texture_, glyph.subrect, Vector3f(x, y - glyph.yoffset * scale, 0.f), scale, color);
+			x += ((glyph.subrect.right - glyph.subrect.left) + glyph.xAdvance) * scale;
+		}
 
 		c++;
 	}
 }
+
+
+void Draw3D(GLuint texture, rect_t uvRect, const Vector3f& pos, const Vector3f& right,
+	const Vector3f& up, float scale, const Color& color, const Matrix4f& ViewProj)
+{
+	Vector2f invTex(1.f / textureWidth_, 1.f / textureHeight_);
+	Vector3f invViewPort(2.f / viewWidth_, 2.f / viewHeight_, 1.f);
+
+	TextVert vert[4];
+
+	//uvRect.right += 100;
+	//uvRect.bottom += 100;
+
+	Vector3f p = Vector3f::Modulate(pos, invViewPort) - Vector3f(1.0f, 1.0f, 0.f);
+	Vector3f size = Vector3f(
+		(float)(uvRect.right - uvRect.left),
+		(float)(uvRect.bottom - uvRect.top), 0.f) * scale;
+
+
+	vert[0].pos = pos;
+	vert[0].color = color;
+	vert[0].uv = Vector2f(uvRect.left * invTex.x, uvRect.top * invTex.y);
+
+	vert[1].pos = pos + right * size.x; //(p.x + size.x, p.y, p.z);
+	vert[1].color = color;
+	vert[1].uv = Vector2f(uvRect.right * invTex.x, uvRect.top * invTex.y);
+
+	vert[2].pos = vert[1].pos - up * size.y; //Vector3f(p.x + size.x, p.y - size.y, p.z);
+	vert[2].color = color;
+	vert[2].uv = Vector2f(uvRect.right * invTex.x, uvRect.bottom * invTex.y);
+
+	vert[3].pos = pos - up * size.y;//Vector3f(p.x, p.y - size.y, p.z);
+	vert[3].color = color;
+	vert[3].uv = Vector2f(uvRect.left * invTex.x, uvRect.bottom * invTex.y);
+
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glBindVertexArray(geometry_.vao_);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry_.vbo_);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(TextVert), (void *)&vert[0]);
+
+	GShaderManager.Bind(ShaderUI);
+	GShaderManager.SetUnifrom(SU_VIEWPROJ, ViewProj);
+	GShaderManager.SetUnifrom(SU_TEX_DIFFUSE, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0, 0);
+
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+}
+
+
+void BitmapFont::DrawString3D(SpriteBatch* sprite, const char* text, const Vector3f& pos, const Vector3f& normal,
+	const Vector3f& up, float scale, const Color& color, const Matrix4f& ViewProj)
+{
+	const char* c = text;
+
+	float x = pos.x;
+	float y = pos.y;
+
+	Vector3f p = pos;
+
+	Vector3f right = Vector3f::Cross(up, normal);
+
+	while (*c){
+		if (*c == '\n'){
+			p -= up * (lineSpacing_ * scale);
+			p.x = pos.x;
+		}
+		else {
+
+			auto glyph = FindGlyph(*c);
+			p += right * glyph.xoffset * scale;
+			Vector3f anchor = p - up * (glyph.yoffset * scale);
+
+			Draw3D(texture_, glyph.subrect, anchor, right, up,
+				scale, color, ViewProj);
+
+			p += right * ((glyph.subrect.right - glyph.subrect.left + glyph.xAdvance) * scale);
+		}
+
+		c++;
+	}
+}
+

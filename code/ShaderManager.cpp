@@ -143,6 +143,9 @@ bool ShaderManager::LoadFromFile(EShader s, const char* fileName)
 	uniform_[s][SU_PROJECTION] = glGetUniformLocation(program_[s], "mProj");
 	GLog.LogInfo("uniform_[SU_PROJECTION] %d", uniform_[s][SU_PROJECTION]);
 
+	uniform_[s][SU_VIEWPROJ] = glGetUniformLocation(program_[s], "mViewProj");
+	GLog.LogInfo("uniform_[SU_VIEWPROJ] %d", uniform_[s][SU_VIEWPROJ]);
+
 	uniform_[s][SU_TEX_DIFFUSE] = glGetUniformLocation(program_[s], "texDiffuse");
 	GLog.LogInfo("uniform_[SU_TEX_DIFFUSE] %d", uniform_[s][SU_TEX_DIFFUSE]);
 
@@ -162,12 +165,10 @@ void ShaderManager::Bind(EShader s)
 	glUseProgram(program_[s]);
 }
 
-void ShaderManager::SetUnifrom(ShaderUniform u, const float* value)
+void ShaderManager::SetUnifrom(ShaderUniform u, const Matrix4f& matrix)
 {
-	if (u == SU_WORLD || u == SU_VIEW || u == SU_PROJECTION) {
-		if (uniform_[currentBind_][u] != -1) {
-			glUniformMatrix4fv(uniform_[currentBind_][u], 1, GL_FALSE, value);
-		}
+	if (uniform_[currentBind_][u] != -1) {
+		glUniformMatrix4fv(uniform_[currentBind_][u], 1, GL_FALSE, matrix.Ptr());
 	}
 }
 

@@ -67,9 +67,9 @@ void LoadResource() {
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 
-	model = CreateModel("build_tower003.mesh", "2.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
-	Models.push_back(model);
+	//model = CreateModel("build_tower003.mesh", "2.png");
+	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
+	//Models.push_back(model);
 
 
 	//model = CreateModel("Box001.mesh", "2.png");
@@ -96,9 +96,9 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		mWorld *= (*it)->transform_;
 
 		GShaderManager.Bind(ShaderDiffuse);
-		GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());
-		GShaderManager.SetUnifrom(SU_VIEW, mView.Ptr());
-		GShaderManager.SetUnifrom(SU_PROJECTION, mProj.Ptr());
+		GShaderManager.SetUnifrom(SU_WORLD, mWorld);
+		GShaderManager.SetUnifrom(SU_VIEW, mView);
+		GShaderManager.SetUnifrom(SU_PROJECTION, mProj);
 		GShaderManager.SetUnifrom(SU_TEX_DIFFUSE, 0);
 		GShaderManager.SetUnifrom(SU_TEX_NORMAL, 1);
 
@@ -120,7 +120,19 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	}
 
 	bitmapFont.SetViewPort(w, h);
-	bitmapFont.DrawString(NULL, "A", Vector3f(100.f, 100.f, 0.f));
+
+	char buff[64];
+	sprintf(buff, "%.2f", Time.GetFPS());
+
+	bitmapFont.DrawString(NULL, buff, Vector3f(100.f, h - 100.f, 0.f));
+
+	Matrix4f vp = mView * mProj;
+
+	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
+
+	Vector3f n = -Vector3f::UNIT_Y * mWorld;
+
+	bitmapFont.DrawString3D(NULL, buff, Vector3f(0.f, 50.f, 0.f), n, Vector3f::UNIT_Z, 0.1f, Color::WHITE, vp);
 
 	glBindVertexArray(0);
 

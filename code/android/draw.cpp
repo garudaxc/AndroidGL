@@ -113,9 +113,9 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		mWorld *= (*it)->transform_;
 
 		GShaderManager.Bind(ShaderDiffuse);
-		GShaderManager.SetUnifrom(SU_WORLD, mWorld.Ptr());
-		GShaderManager.SetUnifrom(SU_VIEW, mView.Ptr());
-		GShaderManager.SetUnifrom(SU_PROJECTION, mProj.Ptr());
+		GShaderManager.SetUnifrom(SU_WORLD, mWorld);
+		GShaderManager.SetUnifrom(SU_VIEW, mView);
+		GShaderManager.SetUnifrom(SU_PROJECTION, mProj);
 		GShaderManager.SetUnifrom(SU_TEX_DIFFUSE, 0);
 
 		glActiveTexture(GL_TEXTURE0);
