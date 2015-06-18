@@ -78,6 +78,7 @@ adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine
     <ClInclude Include="code\android\MessageQueue.h" />
     <ClInclude Include="code\android\Thread.h" />
     <ClInclude Include="code\AurMath.h" />
+    <ClInclude Include="code\BitmapFont.h" />
     <ClInclude Include="code\Color.h" />
     <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
@@ -88,6 +89,7 @@ adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine
     <ClInclude Include="code\MyLog.h" />
     <ClInclude Include="code\Platfrom.h" />
     <ClInclude Include="code\ShaderManager.h" />
+    <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
     <ClInclude Include="code\Timer.h" />
@@ -102,12 +104,14 @@ adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine
     <ClCompile Include="code\android\MyLog.cpp" />
     <ClCompile Include="code\android\PlatfromAndroid.cpp" />
     <ClCompile Include="code\AurMath.cpp" />
+    <ClCompile Include="code\BitmapFont.cpp" />
     <ClCompile Include="code\CommandSystem.cpp" />
     <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\GlobalVar.cpp" />
     <ClCompile Include="code\glUtil.cpp" />
     <ClCompile Include="code\Model.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
+    <ClCompile Include="code\SpriteBatch.cpp" />
     <ClCompile Include="code\Texture.cpp" />
     <ClCompile Include="code\thirdParty\stb\stb_image.c" />
     <ClCompile Include="code\Timer.cpp" />

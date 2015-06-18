@@ -16,12 +16,11 @@ public:
 	~BitmapFont();
 
 	bool		LoadFromFile(const char* fileName);
-	void		SetViewPort(uint32_t viewWidth, uint32_t viewHeight);
 
 	void		DrawString(SpriteBatch* sprite, const char* text, const Vector3f& pos, float scale = 1.f, const Color& color = Color::WHITE);
 
 	void		DrawString3D(SpriteBatch* sprite, const char* text, const Vector3f& pos, const Vector3f& normal,
-							const Vector3f& up, float scale, const Color& color, const Matrix4f& matViewProj);
+							const Vector3f& up, float scale, const Color& color);
 
 	struct Glyph
 	{
@@ -39,7 +38,8 @@ private:
 	vector<Glyph>	glyphs_;
 	float			lineSpacing_;
 	uint32_t		defaultChar_;
-
+	uint32_t		textureWidth_;
+	uint32_t		textureHeight_;
 
 	GLuint		texture_;
 };

@@ -13,6 +13,7 @@
 #include "Timer.h"
 #include "GlobalVar.h"
 #include "BitmapFont.h"
+#include "SpriteBatch.h"
 
 using namespace std;
 using namespace Aurora;
@@ -38,6 +39,7 @@ private:
 vector<ModelInstance*>		Models;
 
 BitmapFont bitmapFont;
+SpriteBatch spriteBatch;
 
 
 ModelInstance*	CreateModel(const char* mesh, const char* texture)
@@ -47,7 +49,6 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 	model->texture_.Load(texture);
 
 	model->transform_ = Matrix4f::IDENTITY;
-
 
 	return model;
 }
@@ -61,6 +62,7 @@ void LoadResource() {
 	checkGlError("GShaderManager.LoadFromFile");
 
 	bitmapFont.LoadFromFile("consolas.bitmapfont");
+	spriteBatch.Init(128);
 
 	ModelInstance* model = NULL;
 	model = CreateModel("OilTank001.mesh", "3.png");
@@ -119,20 +121,21 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		}
 	}
 
-	bitmapFont.SetViewPort(w, h);
 
 	char buff[64];
 	sprintf(buff, "%.2f", Time.GetFPS());
 
-	bitmapFont.DrawString(NULL, buff, Vector3f(100.f, h - 100.f, 0.f));
+	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(100.f, h - 100.f, 0.f), 0.4f, Color::BLUE);
 
-	Matrix4f vp = mView * mProj;
 
 	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
 
 	Vector3f n = -Vector3f::UNIT_Y * mWorld;
 
-	bitmapFont.DrawString3D(NULL, buff, Vector3f(0.f, 50.f, 0.f), n, Vector3f::UNIT_Z, 0.1f, Color::WHITE, vp);
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(0.f, 50.f, 0.f), n, Vector3f::UNIT_Z, 0.3f, Color::RED);
+
+	Matrix4f vp = mView * mProj;
+	spriteBatch.Commit(w, h, vp);
 
 	glBindVertexArray(0);
 
