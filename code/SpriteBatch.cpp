@@ -7,10 +7,9 @@
 struct TextVert
 {
 	Vector3f	pos;
-	Color		color;
+	uint32_t	color;
 	Vector2f	uv;
 };
-
 
 
 struct Geometry
@@ -49,10 +48,10 @@ struct Geometry
 		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(TextVert), BUFFER_OFFSET(0));
 
 		glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_COLOR);
-		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(TextVert), BUFFER_OFFSET(12));
+		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TextVert), BUFFER_OFFSET(12));
 
 		glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_UV0);
-		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_UV0, 2, GL_FLOAT, GL_FALSE, sizeof(TextVert), BUFFER_OFFSET(28));
+		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_UV0, 2, GL_FLOAT, GL_FALSE, sizeof(TextVert), BUFFER_OFFSET(16));
 
 #endif
 
@@ -74,14 +73,15 @@ struct Geometry
 #ifdef GL_ARB_vertex_array_object
 		glBindVertexArray(vao_);
 #else
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 		glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_POSITION);
 		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(TextVert), BUFFER_OFFSET(0));
 
 		glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_COLOR);
-		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(TextVert), BUFFER_OFFSET(12));
+		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TextVert), BUFFER_OFFSET(12));
 
 		glEnableVertexAttribArray(VERTEX_ATTRIBUTE_LOCATION_UV0);
-		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_UV0, 2, GL_FLOAT, GL_FALSE, sizeof(TextVert), BUFFER_OFFSET(28));
+		glVertexAttribPointer(VERTEX_ATTRIBUTE_LOCATION_UV0, 2, GL_FLOAT, GL_FALSE, sizeof(TextVert), BUFFER_OFFSET(16));
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
 #endif
@@ -115,14 +115,14 @@ void SpriteBatch::Init(uint32_t maxSprites)
 
 void SpriteBatch::Draw(GLuint texture, const rect_t& uvRect, uint32_t texWidth, uint32_t texHeight,
 	const Vector3f& pos, const Quaternionf& rot,
-	float scale, const Color& color, bool is3d)
+	float scale, const Vector4f& color, bool is3d)
 {
 	Sprite& sprite = sprites_[spriteCount_++];
 
 	float invTexW = 1.f / texWidth;
 	float intTexH = 1.f / texHeight;
 	
-	sprite.color = color;
+	sprite.color = color.ToDWORD();
 	sprite.texture = texture;
 	sprite.is3d = is3d;
 	sprite.rotation = rot;
@@ -137,7 +137,7 @@ void SpriteBatch::Draw(GLuint texture, const rect_t& uvRect, uint32_t texWidth, 
 }
 
 void SpriteBatch::Draw(GLuint texture, const rect_t& uvRect, uint32_t texWidth, uint32_t texHeight,
-	const Vector3f& pos, float scale, const Color& color)
+	const Vector3f& pos, float scale, const Vector4f& color)
 {
 	Draw(texture, uvRect, texWidth, texHeight, pos, Quaternionf::IDENTITY, scale, color, false);
 }
@@ -145,7 +145,7 @@ void SpriteBatch::Draw(GLuint texture, const rect_t& uvRect, uint32_t texWidth, 
 
 void SpriteBatch::Draw3D(GLuint texture, const rect_t& uvRect, uint32_t texWidth, uint32_t texHeight,
 	const Vector3f& pos, const Quaternionf& rot,
-	float scale, const Color& color)
+	float scale, const Vector4f& color)
 {
 	Draw(texture, uvRect, texWidth, texHeight, pos, rot, scale, color, true);
 }

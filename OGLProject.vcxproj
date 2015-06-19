@@ -13,7 +13,6 @@
   <ItemGroup>
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\BitmapFont.h" />
-    <ClInclude Include="code\Color.h" />
     <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\GlobalVar.h" />

@@ -328,6 +328,9 @@ public:
 
 	inline Vector3<T> ProjectToVector3() const;
 
+	//clamp the color value between 0.0 and 1.0
+	inline void EnValidate();
+
 	inline T LengthSQ()	const;
 	inline T Length()	const;
 
@@ -336,6 +339,8 @@ public:
 	T Dot(const Vector4<T>& rhs) const;
 	static T Dot(const Vector4<T>& lhs, const Vector4<T>& rhs);
 
+	unsigned int	ToDWORD() const;
+
 	inline std::string ToString() const;
 	static Vector3<T> FromString(const char* str);
 
@@ -343,8 +348,26 @@ public:
 	inline const T* Ptr() const;
 
 	static const Vector4 ZERO;
+	
+	static const Vector4 WHITE;
+	static const Vector4 BLACK;
+	static const Vector4 RED;
+	static const Vector4 GREEN;
+	static const Vector4 BLUE;
+	static const Vector4 GRAY;
 
-	T	x, y, z, w;
+	union
+	{
+		struct
+		{
+			T	x, y, z, w;
+		};
+
+		struct
+		{
+			T	r, g, b, a;
+		};
+	};
 };
 
 
@@ -1243,6 +1266,15 @@ inline T Vector4<T>::Dot(const Vector4<T>& rhs) const
 }
 
 template<typename T>
+inline void Vector4<T>::EnValidate()
+{
+	r = Math<T>::Clamp(r, (T)0.0, (T)1.0);
+	g = Math<T>::Clamp(g, (T)0.0, (T)1.0);
+	b = Math<T>::Clamp(b, (T)0.0, (T)1.0);
+	a = Math<T>::Clamp(a, (T)0.0, (T)1.0);
+}
+
+template<typename T>
 inline std::string Vector4<T>::ToString() const
 {
 	return std::string();
@@ -1252,6 +1284,16 @@ template<typename T>
 Vector3<T> Vector4<T>::FromString(const char* str)
 {
 	return  Vector4<T>::ZERO;
+}
+
+template<typename T>
+unsigned int Vector4<T>::ToDWORD() const
+{
+	unsigned char dx = (unsigned char)(r * 255.0f);
+	unsigned char dy = (unsigned char)(g * 255.0f);
+	unsigned char dz = (unsigned char)(b * 255.0f);
+	unsigned char dw = (unsigned char)(a * 255.0f);
+	return (dx << 0) | (dy << 8) | (dz << 16) | (dw << 24);
 }
 
 //---------------------------------------------------------------

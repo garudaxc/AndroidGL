@@ -98,7 +98,7 @@ const BitmapFont::Glyph& BitmapFont::FindGlyph(char c) const
 }
 
 
-void BitmapFont::DrawString(SpriteBatch* sprite, const char* text, const Vector3f& pos, float scale, const Color& color)
+void BitmapFont::DrawString(SpriteBatch* sprite, const char* text, const Vector3f& pos, float scale, const Vector4f& color)
 {
 	const char* c = text;
 
@@ -124,10 +124,8 @@ void BitmapFont::DrawString(SpriteBatch* sprite, const char* text, const Vector3
 	}
 }
 
-
-
 void BitmapFont::DrawString3D(SpriteBatch* sprite, const char* text, const Vector3f& pos, const Vector3f& normal,
-	const Vector3f& up, float scale, const Color& color)
+	const Vector3f& up, float scale, const Vector4f& color)
 {
 	const char* c = text;
 
@@ -150,8 +148,7 @@ void BitmapFont::DrawString3D(SpriteBatch* sprite, const char* text, const Vecto
 		if (*c == '\n'){
 			p -= up * (lineSpacing_ * scale);
 			p.x = pos.x;
-		}
-		else {
+		} else {
 
 			auto glyph = FindGlyph(*c);
 			p += right * glyph.xoffset * scale;
@@ -165,5 +162,12 @@ void BitmapFont::DrawString3D(SpriteBatch* sprite, const char* text, const Vecto
 
 		c++;
 	}
+}
+
+
+void BitmapFont::BindTexture()
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_);
 }
 

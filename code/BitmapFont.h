@@ -1,6 +1,5 @@
 #pragma once
 #include "Platfrom.h"
-#include "Color.h"
 #include "AurMath.h"
 #include <vector>
 
@@ -17,10 +16,12 @@ public:
 
 	bool		LoadFromFile(const char* fileName);
 
-	void		DrawString(SpriteBatch* sprite, const char* text, const Vector3f& pos, float scale = 1.f, const Color& color = Color::WHITE);
+	void		DrawString(SpriteBatch* sprite, const char* text, const Vector3f& pos, float scale = 1.f, const Vector4f& color = Vector4f::WHITE);
 
 	void		DrawString3D(SpriteBatch* sprite, const char* text, const Vector3f& pos, const Vector3f& normal,
-							const Vector3f& up, float scale, const Color& color);
+		const Vector3f& up, float scale, const Vector4f& color);
+
+	void		BindTexture();
 
 	struct Glyph
 	{

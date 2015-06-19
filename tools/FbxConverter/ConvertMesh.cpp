@@ -2,6 +2,7 @@
 #include "FbxConverter.h"
 #include <vector>
 #include <assert.h>
+#include <algorithm>
 #include <map>
 #include <DirectXMath.h>
 #include "DirectXMesh/DirectXMesh.h"
@@ -19,6 +20,8 @@ struct MeshData
 	vector<unsigned char>		blendIndex_;
 
 	vector<int>			index_;
+
+	vector<int>			elements_;		// index count for every element
 
 	int		vertexCount_;
 
@@ -86,8 +89,6 @@ bool MeshData::SaveToFile(const char* fileName)
 
 	return true;
 }
-
-
 
 
 void DisplayPolygons(FbxMesh* pMesh)
@@ -351,6 +352,14 @@ void DisplayPolygons(FbxMesh* pMesh)
 		} // for polygonSize
 	} // for polygonCount
 
+	FBXSDK_printf("polygon group:\n");
+	for (int i = 0; i < pMesh->GetPolygonCount(); i++)
+	{
+		int g = pMesh->GetPolygonGroup(i);
+		FBXSDK_printf("%d ", g);
+	}
+	FBXSDK_printf("\n");
+
 
 	return;
 	//check visibility for the edges of the mesh
@@ -479,6 +488,44 @@ void RemapIndex(int* index, int indexCount, int* mapper)
 		int indexMapTo = mapper[index[i]];
 		index[i] = indexMapTo;
 	}
+}
+
+// reorder index according to polygon attribute
+// polygon with same attribute should be grouped together
+// return index count for every group
+vector<int> ReorderIndex(int* index, int* polygonAttri, int polygonCount)
+{
+	vector<int> groups;
+	
+	struct AttriInfo
+	{
+		int	attri;
+		int index;
+
+		bool operator < (const AttriInfo& info)
+		{
+			return attri < info.attri;
+		}
+	};
+
+	vector<AttriInfo> sortBuffer(polygonCount);
+	for (int i = 0; i < polygonCount; i++){
+		sortBuffer[i].attri = polygonAttri[i];
+		sortBuffer[i].index = i;
+	}
+
+	sort(sortBuffer.begin(), sortBuffer.end());
+
+	int arrti = -1;
+	vector<int> newIndex(polygonCount * 3);
+	for (int i = 0; i < polygonCount; i++){
+
+		if (sortBuffer[i].attri != arrti){
+		}
+		printf("%d %d\t", sortBuffer[i].attri, sortBuffer[i].index);
+	}
+
+	return groups;
 }
 
 void ProcessBufferIndex(std::vector<float>& buffer, std::vector<int>& index, int stride)
@@ -619,6 +666,7 @@ void ConvertMesh(FbxMesh* mesh)
 			texcoordIndex[i * 3 + j] = mesh->GetTextureUVIndex(i, j);
 		}
 	}
+	
 
 	ProcessBufferIndex(positionData, positionIndex, 3);
 	ProcessBufferIndex(normalData, normalIndex, 3);
@@ -643,9 +691,29 @@ void ConvertMesh(FbxMesh* mesh)
 			meshIndex[i] = iter->second;
 		}
 	}
+		
 
 	int nNumMeshVert = expVertIdx;
 	printf("final vertex count %d\n", nNumMeshVert);
+
+
+	FbxLayerElementArrayTemplate<int>* arrayMaterial = NULL;
+	bRes = mesh->GetMaterialIndices(&arrayMaterial);
+	if (!bRes){
+		FBXSDK_printf("Error! GetMaterialIndices failed\n");
+		return;
+	}
+
+	vector<int> materialIndex(polygonCount);
+	FBXSDK_printf("GetMaterialIndices %d : \n", arrayMaterial->GetCount());
+	for (int i = 0; i < arrayMaterial->GetCount(); i++){
+		materialIndex[i] = arrayMaterial->GetAt(i);
+		FBXSDK_printf("%d ", arrayMaterial->GetAt(i));
+	}
+	FBXSDK_printf("\n");
+
+	ReorderIndex(&meshIndex[0], &materialIndex[0], polygonCount);
+
 
 	MeshData meshData;
 	meshData.Alloc(nNumMeshVert, polygonCount * 3);

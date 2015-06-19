@@ -35,8 +35,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)"
-adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
     <NMakeIncludeSearchPath>$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include;$(ANDROID_NDK_ROOT)\platforms\android-17\arch-arm\usr\include\android;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include;$(ANDROID_NDK_ROOT)\toolchains\mipsel-linux-android-4.6\prebuilt\windows\lib\gcc\mipsel-linux-android\4.6\include-fixed;$(ANDROID_NDK_ROOT)\sources\cxx-stl\stlport\stlport;$(ANDROID_NDK_ROOT)\sources\android\native_app_glue;$(SolutionDir)code;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
@@ -69,7 +68,6 @@ adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine
     <Xml Include="build.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shader.glsl" />
     <None Include="jni\Android.mk" />
     <None Include="jni\Application.mk" />
   </ItemGroup>
@@ -79,7 +77,6 @@ adb push $(SolutionDir)assets\shader.glsl /sdcard/MyTest/</NMakeBuildCommandLine
     <ClInclude Include="code\android\Thread.h" />
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\BitmapFont.h" />
-    <ClInclude Include="code\Color.h" />
     <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\GlobalVar.h" />

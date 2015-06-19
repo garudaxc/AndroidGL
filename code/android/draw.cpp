@@ -13,13 +13,15 @@
 #include "Texture.h"
 #include "Timer.h"
 #include "GlobalVar.h"
+#include "BitmapFont.h"
+#include "SpriteBatch.h"
 
 using namespace std;
 using namespace Aurora;
 
 struct glState_t glState;
 
-#define TEST_MODEL 0
+#define TEST_MODEL 1
 
 
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
@@ -36,6 +38,9 @@ private:
 };
 
 vector<ModelInstance*>		Models;
+BitmapFont bitmapFont;
+SpriteBatch spriteBatch;
+
 
 ModelInstance*	CreateModel(const char* mesh, const char* texture)
 {
@@ -56,19 +61,23 @@ int setupGraphics(int w, int h) {
 
 	LogGLInfo();
 	GShaderManager.LoadFromFile(ShaderDiffuse, "/sdcard/MyTest/shader.glsl");
+	GShaderManager.LoadFromFile(ShaderUI, "/sdcard/MyTest/ShaderUI.glsl");
+
+	bitmapFont.LoadFromFile("/sdcard/MyTest/consolas.bitmapfont");
+	spriteBatch.Init(128);
 
 	ModelInstance* model = NULL;
-	//model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
-	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
-	//Models.push_back(model);
+	model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/1.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
+	Models.push_back(model);
 
-	//model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/other_stone001_d.TGA");
-	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
-	//Models.push_back(model);
+	model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/1.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
+	Models.push_back(model);
 
 #if TEST_MODEL
 	model = CreateModel("/sdcard/MyTest/Box01.mesh", "/sdcard/MyTest/2.png");
-	MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 #else
 	model = CreateModel("/sdcard/MyTest/Box001.mesh", "/sdcard/MyTest/2.png");
@@ -90,7 +99,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	Matrix4f mView, mEyeOffset;
 
 #if TEST_MODEL
-	MatrixLookAtRH(mView, Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
+	mView = Matrix4f::LookAtRH(Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
 #else
 	mView = _GetDeviceRotationMatrix();
 #endif
@@ -110,7 +119,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 #else
 		Matrix4f mWorld = Matrix4f::IDENTITY;
 #endif
-		mWorld *= (*it)->transform_;
+		mWorld = (*it)->transform_;
 
 		GShaderManager.Bind(ShaderDiffuse);
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld);
@@ -120,7 +129,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 		glActiveTexture(GL_TEXTURE0);
 		(*it)->texture_.Bind();
-		
+				
 		Model& mesh = (*it)->mesh_;
 		mesh.Bind();
 		for (int i = 0; i < mesh.GetElementCount(); i++) {
@@ -130,6 +139,16 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 			glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
 		}
 	}
+	
+	char buff[64];
+	sprintf(buff, "%.2f", Time.GetFPS());/*
+	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(100.f, h - 100.f, 0.f));
+	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
+	Vector3f n = -Vector3f::UNIT_Y * mWorld;*/
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(0.f, 50.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.1f, Vector4f::RED);
+	Matrix4f vp = mView * mProj;
+	spriteBatch.Commit(w, h, vp);
+
 }
 
 

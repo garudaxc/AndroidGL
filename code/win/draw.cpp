@@ -19,7 +19,6 @@ using namespace std;
 using namespace Aurora;
 
 
-
 GlobalVar EyeDistance("EyeDistance", "0.065f", GVFLAG_FLOAT, "");
 
 #define COLOR(r, g, b, a) (a << 24 | b << 16 | g << 8 | r)
@@ -65,7 +64,7 @@ void LoadResource() {
 	spriteBatch.Init(128);
 
 	ModelInstance* model = NULL;
-	model = CreateModel("OilTank001.mesh", "3.png");
+	model = CreateModel("Plane01.mesh", "3.png");
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 
@@ -109,7 +108,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 		glActiveTexture(GL_TEXTURE1);
 		(*it)->texture_.Bind();
-		
+				
 		Model& mesh = (*it)->mesh_;
 		mesh.Bind();
 		for (int i = 0; i < mesh.GetElementCount(); i++) {
@@ -121,19 +120,9 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		}
 	}
 
-
 	char buff[64];
 	sprintf(buff, "%.2f", Time.GetFPS());
-
-	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(100.f, h - 100.f, 0.f), 0.4f, Color::BLUE);
-
-
-	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
-
-	Vector3f n = -Vector3f::UNIT_Y * mWorld;
-
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(0.f, 50.f, 0.f), n, Vector3f::UNIT_Z, 0.3f, Color::RED);
-
+	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(10.f, h - 10.f, 0.f));
 	Matrix4f vp = mView * mProj;
 	spriteBatch.Commit(w, h, vp);
 
@@ -145,7 +134,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 float time = 0.f;
 
 void DrawFrame() {
-
+	
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
 	glClearDepthf(1.0f);

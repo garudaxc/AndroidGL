@@ -41,9 +41,6 @@
     <ClInclude Include="code\AurMath.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="code\Color.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="code\ShaderManager.h">
       <Filter>源文件</Filter>
     </ClInclude>

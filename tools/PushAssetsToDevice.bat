@@ -1,0 +1,1 @@
+adb push $(SolutionDir)assets\android\shader.glsl /sdcard/MyTest/

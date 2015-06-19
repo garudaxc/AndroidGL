@@ -1,6 +1,5 @@
 #pragma once
 #include "Platfrom.h"
-#include "Color.h"
 #include "AurMath.h"
 #include <vector>
 
@@ -16,11 +15,11 @@ public:
 	void	Init(uint32_t maxSprites);
 
 	void	Draw(GLuint texture, const rect_t& uvRect, uint32_t texWidth, uint32_t texHeight,
-		const Vector3f& pos, float scale, const Color& color);
+		const Vector3f& pos, float scale, const Vector4f& color);
 
 	void	Draw3D(GLuint texture, const rect_t& uvRect, uint32_t texWidth, uint32_t texHeight,
 		const Vector3f& pos, const Quaternionf& rot,
-		float scale, const Color& color);
+		float scale, const Vector4f& color);
 
 	void	Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f& ViewProj);
 	
@@ -28,13 +27,13 @@ private:
 
 	void	Draw(GLuint texture, const rect_t& uvRect, uint32_t texWidth, uint32_t texHeight,
 		const Vector3f& pos, const Quaternionf& rot,
-		float scale, const Color& color, bool is3d);
+		float scale, const Vector4f& color, bool is3d);
 	
 	struct Sprite
 	{
 		Vector3f	pos;
+		uint32_t	color;
 		float		uvLeft, uvRight, uvTop, uvBottom;
-		Color		color;
 		Quaternionf	rotation;
 		float		w;		//size
 		float		h;		
