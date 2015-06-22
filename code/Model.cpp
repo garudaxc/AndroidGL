@@ -109,6 +109,26 @@ bool Model::Load(const char* filename)
 		index[i] = (unsigned short)indexData[i];
 	}
 
+	if (file.Read(magic)) {
+		assert(magic == MAGIC_STR("ELEM"));
+		int numMeshGroup = 0;
+		file.Read(numMeshGroup);
+		vector<int> meshGroup(numMeshGroup);
+		file.ReadArray(&meshGroup[0], numMeshGroup);
+
+		int indexOffset = 0;
+		for (size_t i = 0; i < meshGroup.size(); i++) {
+			ModelElement elem;
+			elem.indexCount = meshGroup[i] * 3;
+			elem.indexOffset = indexOffset;
+			elem.vertexOffset = 0;
+			elements_.push_back(elem);
+
+			indexOffset += meshGroup[i] * 3;
+		}
+	}
+
+
 	file.Close();
 
 	
@@ -139,11 +159,13 @@ bool Model::Load(const char* filename)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	ModelElement elem;
-	elem.indexCount = numIndex;
-	elem.indexOffset = 0;
-	elem.vertexOffset = 0;
-	elements_.push_back(elem);
+	if (elements_.empty()) {
+		ModelElement elem;
+		elem.indexCount = numIndex;
+		elem.indexOffset = 0;
+		elem.vertexOffset = 0;
+		elements_.push_back(elem);
+	}
 
 	return true;
 }

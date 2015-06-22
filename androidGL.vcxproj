@@ -92,6 +92,7 @@
     <ClInclude Include="code\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\android\device.cpp" />
     <ClCompile Include="code\android\MessageQueue.cpp" />
     <ClCompile Include="code\android\Sensor.cpp" />
     <ClCompile Include="code\android\Thread.cpp" />

@@ -144,6 +144,9 @@
     <ClCompile Include="code\SpriteBatch.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="code\android\device.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="AndroidManifest.xml">
