@@ -15,7 +15,7 @@ Log::Log() :pfLog(NULL), mutex_(NULL){
 	const char* filename = "/sdcard/MyTest/log.txt";
 	FILE* pf = fopen(filename, "w+");
 	if (pf == NULL) {
-		LOGE("create log file failed! %s", filename);
+		LOGE("create log file failed! %s (%d)", filename, errno);
 		::exit(1);
 	}
 
