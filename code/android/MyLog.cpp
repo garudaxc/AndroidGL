@@ -3,6 +3,7 @@
 #include "Thread.h"
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 
 #define  LOG_TAG    "androidGL"

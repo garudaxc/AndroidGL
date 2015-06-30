@@ -10,6 +10,7 @@
 #include <vector>
 #include "MyLog.h"
 #include "Thread.h"
+#include <errno.h>
 
 
 using namespace std;
@@ -217,7 +218,7 @@ void DumpDevices(const char* sdir)
 						int r = ioctl(device, HIDIOCGRAWINFO, &info);
 
 						if (r < 0) {
-							GLog.LogInfo("ioctl error");
+							GLog.LogInfo("ioctl error %d", errno);
 							close(device);
 						}
 						else {
@@ -330,6 +331,8 @@ private:
 DeviceThread::DeviceThread()
 {
 
+
+
 }
 
 
@@ -380,7 +383,7 @@ static DeviceThread deviceThread;
 void DumpDevices()
 {
 	
-	DumpDevices("/dev");
+	DumpDevices("/dev/bus/usb");
 
 	return;
 
