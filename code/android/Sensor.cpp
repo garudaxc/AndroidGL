@@ -1,6 +1,6 @@
 #include <android/sensor.h>
 #include <android/looper.h>
-#include <android_native_app_glue.h>
+//#include <android_native_app_glue.h>
 #include <vector>
 #include "AurMath.h"
 #include "Platfrom.h"

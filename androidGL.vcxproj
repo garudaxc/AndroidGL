@@ -93,12 +93,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\android\device.cpp" />
+    <ClCompile Include="code\android\gl_code.cpp" />
     <ClCompile Include="code\android\MessageQueue.cpp" />
     <ClCompile Include="code\android\Sensor.cpp" />
     <ClCompile Include="code\android\Thread.cpp" />
     <ClCompile Include="code\android\TrackDropping.cpp" />
     <ClCompile Include="code\android\draw.cpp" />
-    <ClCompile Include="code\android\main.cpp" />
     <ClCompile Include="code\android\MyLog.cpp" />
     <ClCompile Include="code\android\PlatfromAndroid.cpp" />
     <ClCompile Include="code\AurMath.cpp" />

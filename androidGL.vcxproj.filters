@@ -93,9 +93,6 @@
     <ClCompile Include="code\ShaderManager.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="code\android\main.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
     <ClCompile Include="code\android\MyLog.cpp">
       <Filter>Source files\android</Filter>
     </ClCompile>
@@ -145,6 +142,9 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="code\android\device.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\gl_code.cpp">
       <Filter>Source files\android</Filter>
     </ClCompile>
   </ItemGroup>

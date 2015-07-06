@@ -21,7 +21,7 @@ using namespace Aurora;
 
 struct glState_t glState;
 
-#define TEST_MODEL 1
+#define TEST_MODEL 0
 
 
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
