@@ -23,6 +23,7 @@
  */
 
 #include <config.h>
+
 #include <windows.h>
 #include <setupapi.h>
 #include <ctype.h>
@@ -2427,11 +2428,13 @@ const struct usbi_os_backend windows_backend = {
 	"Windows",
 	USBI_CAP_HAS_HID_ACCESS,
 	windows_init,
+	NULL,				//init2
 	windows_exit,
 
 	windows_get_device_list,
 	NULL,				/* hotplug_poll */
 	windows_open,
+	NULL,				// open2
 	windows_close,
 
 	windows_get_device_descriptor,
