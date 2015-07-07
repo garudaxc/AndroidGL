@@ -12,20 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-LOCAL_PATH := $(call my-dir)
 
+LOCAL_PATH_COPY:= $(call my-dir)
+include $(LOCAL_PATH_COPY)/../code/thirdParty/libusb/android/libusb.mk
+
+LOCAL_PATH := $(LOCAL_PATH_COPY)
 include $(CLEAR_VARS)
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../code
+LOCAL_C_INCLUDES += \
+$(LOCAL_PATH)/../code \
+$(LOCAL_PATH)/../code/thirdParty/libusb/src
 
 LOCAL_CPPFLAGS := -std=c++11
 
-LOCAL_MODULE    := native-activity
+
+LOCAL_MODULE    := aurora-native
 #VisualGDBAndroid: AutoUpdateSourcesInNextLine
-LOCAL_SRC_FILES := ../code/android/device.cpp ../code/android/gl_code.cpp ../code/android/MessageQueue.cpp ../code/android/Sensor.cpp ../code/android/Thread.cpp ../code/android/TrackDropping.cpp ../code/android/draw.cpp ../code/android/MyLog.cpp ../code/android/PlatfromAndroid.cpp ../code/AurMath.cpp ../code/BitmapFont.cpp ../code/CommandSystem.cpp ../code/FileSystem.cpp ../code/GlobalVar.cpp ../code/glUtil.cpp ../code/Model.cpp ../code/ShaderManager.cpp ../code/SpriteBatch.cpp ../code/Texture.cpp ../code/thirdParty/stb/stb_image.c ../code/Timer.cpp
+LOCAL_SRC_FILES := ../code/android/device.cpp ../code/android/jniMain.cpp ../code/android/MessageQueue.cpp ../code/android/Sensor.cpp ../code/android/Thread.cpp ../code/android/TrackDropping.cpp ../code/android/draw.cpp ../code/android/MyLog.cpp ../code/android/PlatfromAndroid.cpp ../code/android/UsbDevice.cpp ../code/AurMath.cpp ../code/BitmapFont.cpp ../code/CommandSystem.cpp ../code/FileSystem.cpp ../code/GlobalVar.cpp ../code/glUtil.cpp ../code/Model.cpp ../code/ShaderManager.cpp ../code/SpriteBatch.cpp ../code/Texture.cpp ../code/thirdParty/stb/stb_image.c ../code/Timer.cpp
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv2
 
 # LOCAL_STATIC_LIBRARIES := android_native_app_glue
+
+LOCAL_STATIC_LIBRARIES := libusb1.0
 
 include $(BUILD_SHARED_LIBRARY)
 

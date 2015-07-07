@@ -86,6 +86,7 @@ int setupGraphics(int w, int h) {
 #endif
 
 	checkGlError("CreateModel");
+	GLog.LogInfo("create model finished");
 	return 1;
 }
 

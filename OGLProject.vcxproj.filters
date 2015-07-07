@@ -130,6 +130,9 @@
     <ClCompile Include="code\SpriteBatch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="code\win\UsbDevice.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="code\win\small.ico">

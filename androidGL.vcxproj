@@ -64,12 +64,17 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Xml Include="AndroidManifest.xml" />
+    <Xml Include="AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="build.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="jni\Android.mk" />
     <None Include="jni\Application.mk" />
+    <None Include="src\GL2JNILib.java" />
+    <None Include="src\GL2JNIView.java" />
+    <None Include="src\XVRActivity.java" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\android\AuroraGL.h" />
@@ -93,7 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\android\device.cpp" />
-    <ClCompile Include="code\android\gl_code.cpp" />
+    <ClCompile Include="code\android\jniMain.cpp" />
     <ClCompile Include="code\android\MessageQueue.cpp" />
     <ClCompile Include="code\android\Sensor.cpp" />
     <ClCompile Include="code\android\Thread.cpp" />
@@ -101,6 +106,7 @@
     <ClCompile Include="code\android\draw.cpp" />
     <ClCompile Include="code\android\MyLog.cpp" />
     <ClCompile Include="code\android\PlatfromAndroid.cpp" />
+    <ClCompile Include="code\android\UsbDevice.cpp" />
     <ClCompile Include="code\AurMath.cpp" />
     <ClCompile Include="code\BitmapFont.cpp" />
     <ClCompile Include="code\CommandSystem.cpp" />

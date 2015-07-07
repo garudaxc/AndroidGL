@@ -603,13 +603,13 @@ void InitSensor()
 {
 	messageQueue_ = new MessageQueue(10);
 
-	GLog.LogInfo("Create scesor thread %d", GetTicksMS());
+	GLog.LogInfo("Create sensor thread %d", GetTicksMS());
 	bool r = sensorThread.Create();
 	if (!r) {
 		GLog.LogError("sensorThread.Create() failed!");
 	}
 
-	GLog.LogInfo("Create scesor thread done ! %d", GetTicksMS());
+	GLog.LogInfo("Create sensor thread done ! %d", GetTicksMS());
 
 	messageQueue_->SendString(COMMAND_INIT);
 }

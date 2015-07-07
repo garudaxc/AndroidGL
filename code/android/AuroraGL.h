@@ -1,6 +1,4 @@
 
-//#include "glew.h"
-//#include "wglew.h"
 
 #include <android/log.h>
 
@@ -12,12 +10,6 @@ struct glState_t
 };
 
 extern struct glState_t glState;
-
-
-
-//void DrawFrame();
-//
-//void LoadResource();
 
 
 
