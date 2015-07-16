@@ -4,6 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 
 #define  LOG_TAG    "androidGL"
@@ -13,14 +15,28 @@
 
 
 Log::Log() :pfLog(NULL), mutex_(NULL){
-	const char* filename = "/sdcard/MyTest/log.txt";
-	FILE* pf = fopen(filename, "w+");
+	const char* path = "/sdcard/mytest";
+	int r = access(path, F_OK);
+	if (r < 0){
+		LOGI("path %s not exist, create", path);
+		r = mkdir(path, 0770 /*S_IRWXU | S_IRWXG | S_IROTH | S_IWOTH*/);
+		if (r < 0) {
+			LOGE("create dir %s failed errno(%d)", path, errno);
+		} else {
+			LOGI("create dir %s", path);
+		}
+	}
+
+	char logfile[128];
+	sprintf(logfile, "%s/log.txt", path);
+
+	FILE* pf = fopen(logfile, "w+");
 	if (pf == NULL) {
-		LOGE("create log file failed! %s (%d)", filename, errno);
+		LOGE("create log file failed! %s (%d)", logfile, errno);
 		::exit(1);
 	}
 
-	LOGI("create log file %s", filename);
+	LOGI("create log file %s", logfile);
 	pfLog = pf;
 	
 	mutex_ = new Mutex();

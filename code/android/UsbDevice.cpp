@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "MyLog.h"
+#include <jni.h>
 
 
 #if !defined(bool)
