@@ -1,4 +1,4 @@
-
+#include <jni.h>
 #include "libusb.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -169,7 +169,6 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 	libusb_free_config_descriptor(conf_desc);
 
 	GLog.LogInfo("first interface %d endporint in 0x%x", first_iface, (uint32_t)endpoint_in);
-
 
 	if (libusb_kernel_driver_active(handle, first_iface) == 1) {
 

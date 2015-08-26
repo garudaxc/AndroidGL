@@ -29,13 +29,13 @@
     <None Include="jni\Application.mk">
       <Filter>config</Filter>
     </None>
-    <None Include="src\GL2JNILib.java">
+    <None Include="src\com\xvr\aurora\GL2JNILib.java">
       <Filter>Source files\java</Filter>
     </None>
-    <None Include="src\GL2JNIView.java">
+    <None Include="src\com\xvr\aurora\GL2JNIView.java">
       <Filter>Source files\java</Filter>
     </None>
-    <None Include="src\XVRActivity.java">
+    <None Include="src\com\xvr\aurora\XVRActivity.java">
       <Filter>Source files\java</Filter>
     </None>
   </ItemGroup>

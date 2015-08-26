@@ -72,9 +72,9 @@
   <ItemGroup>
     <None Include="jni\Android.mk" />
     <None Include="jni\Application.mk" />
-    <None Include="src\GL2JNILib.java" />
-    <None Include="src\GL2JNIView.java" />
-    <None Include="src\XVRActivity.java" />
+    <None Include="src\com\xvr\aurora\GL2JNILib.java" />
+    <None Include="src\com\xvr\aurora\GL2JNIView.java" />
+    <None Include="src\com\xvr\aurora\XVRActivity.java" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\android\AuroraGL.h" />
