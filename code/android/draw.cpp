@@ -21,7 +21,7 @@ using namespace Aurora;
 
 struct glState_t glState;
 
-#define TEST_MODEL 0
+#define TEST_MODEL 1
 
 
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
@@ -67,13 +67,13 @@ int setupGraphics(int w, int h) {
 	spriteBatch.Init(128);
 
 	ModelInstance* model = NULL;
-	model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/1.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
-	Models.push_back(model);
+	//model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/1.png");
+	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
+	//Models.push_back(model);
 
-	model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/1.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
-	Models.push_back(model);
+	//model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/1.png");
+	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
+	//Models.push_back(model);
 
 #if TEST_MODEL
 	model = CreateModel("/sdcard/MyTest/Box01.mesh", "/sdcard/MyTest/2.png");
@@ -92,6 +92,12 @@ int setupGraphics(int w, int h) {
 
 
 Matrix4f _GetDeviceRotationMatrix();
+
+extern Vector3f accValue;
+extern Vector3f gyroValue;
+extern Vector3f magValue;
+extern uint8_t vvv[6];
+extern int readlen;
 
 void DrawView(int x, int y, int w, int h, float eyeOffset)
 {
@@ -120,7 +126,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 #else
 		Matrix4f mWorld = Matrix4f::IDENTITY;
 #endif
-		mWorld = (*it)->transform_;
+		//mWorld = (*it)->transform_;
 
 		GShaderManager.Bind(ShaderDiffuse);
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld);
@@ -141,12 +147,16 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		}
 	}
 	
-	char buff[64];
-	sprintf(buff, "%.2f", Time.GetFPS());/*
+	char buff[256];
+	//sprintf(buff, "%.2f", Time.GetFPS());
+	//sprintf(buff, "%.2f %.2f %.2f", accValue.x, accValue.y, accValue.z);
+	//sprintf(buff, "%.2f %.2f %.2f", magValue.x, magValue.y, magValue.z);
+	sprintf(buff, "%d [%d %d %d %d %d %d]",readlen, (int)vvv[0], (int)vvv[1], (int)vvv[2], (int)vvv[3], (int)vvv[4], (int)vvv[5]);
+	/*
 	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(100.f, h - 100.f, 0.f));
 	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
 	Vector3f n = -Vector3f::UNIT_Y * mWorld;*/
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(0.f, 50.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.1f, Vector4f::RED);
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 50.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
 	Matrix4f vp = mView * mProj;
 	spriteBatch.Commit(w, h, vp);
 

@@ -7,6 +7,12 @@
 #include <stdarg.h>
 #include "MyLog.h"
 #include <jni.h>
+#include "Thread.h"
+
+#include "AurMath.h"
+#include "Platfrom.h"
+
+using namespace Aurora;
 
 
 #if !defined(bool)
@@ -24,12 +30,11 @@
 #define usb_interface interface
 
 // Global variables
-static bool binary_dump = false;
 static bool extra_info = false;
-static bool force_device_request = false;	// For WCID descriptor queries
-static const char* binary_name = NULL;
 
-int devicefd = -1;
+static int devicefd = -1;
+static libusb_device_handle * devHandle = NULL;
+static int devEndPoint = -1;
 
 static int perr(char const *format, ...)
 {
@@ -168,6 +173,7 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 	}
 	libusb_free_config_descriptor(conf_desc);
 
+	endpoint_in = 0x81;
 	GLog.LogInfo("first interface %d endporint in 0x%x", first_iface, (uint32_t)endpoint_in);
 
 	if (libusb_kernel_driver_active(handle, first_iface) == 1) {
@@ -187,12 +193,10 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 		GLog.LogInfo(" libusb_claim_interface Failed. %d", r);
 		return -1;
 	}
-	
-	uint8_t buffer[128];
-	int readLen = 0;
-	r = libusb_bulk_transfer(handle, endpoint_in, buffer, 128, &readLen, 0);
-	GLog.LogInfo("read r = %d length %d", r, readLen);
 
+	devHandle = handle;
+	devEndPoint = endpoint_in;
+	
 	return 1;
 }
 
@@ -226,7 +230,8 @@ int libUsbTest(int fd, const char* path)
 			continue;
 		}
 
-		if (dd.idVendor == 10291 && dd.idProduct == 1) {
+		//if (dd.idVendor == 10291 && dd.idProduct == 1) {
+		if (dd.idVendor == 1155 && dd.idProduct == 22336) {
 			deviceFound++;
 			device = list[i];
 		}
@@ -252,6 +257,143 @@ int libUsbTest(int fd, const char* path)
 	return 0;
 }
 
+
+Vector3f accValue;
+Vector3f gyroValue;
+Vector3f magValue;
+uint8_t vvv[6];
+int readlen = 0;
+
+float DECOM(const uint8_t * raw, float scale)
+{
+	short v = raw[0] << 8 | raw[1];
+	float f = ((float)v / (short)0x7fff) * scale;
+	return f;
+}
+
+Vector3f DeomposeData(const uint8_t * data, float scale)
+{
+	Vector3f v;
+
+	v.x = DECOM(data, scale);
+	v.y = DECOM(data + 2, scale);
+	v.z = DECOM(data + 4, scale);
+
+	return v;
+}
+
+class UsbDeviceThread : public Thread
+{
+public:
+	UsbDeviceThread();
+	~UsbDeviceThread()	{}
+
+	virtual void*		Run();
+
+private:
+
+};
+
+
+UsbDeviceThread::UsbDeviceThread()
+{
+}
+
+
+
+
+bool init_ = true;
+static Quaternionf gyroRot_;
+static float EPSILON = 0.0001f;
+void UpdateGyroScope(const Vector3f& v, int64_t timestamp)
+{
+	//intigrate GyroValue
+	static int64_t lastTime = 0;
+	if (init_ || lastTime == 0)
+	{
+		lastTime = timestamp;
+		gyroRot_ = Quaternionf::RotationAxis(Vector3f::UNIT_Z, Mathf::HALF_PI);
+		init_ = false;
+		return;
+	}
+	float t = (timestamp - lastTime) * 0.000000001f;
+	lastTime = timestamp;
+
+	// 注意这里直接取逆了
+	Vector3f eyroSample = -v;
+
+	float omegaMagnitude = eyroSample.Length();
+	if (omegaMagnitude < EPSILON) {
+		return;
+	}
+
+	eyroSample.Normalize();
+
+	float thetaOverTwo = omegaMagnitude * t * 0.5f;
+	float sinThetaOverTwo = Mathf::Sin(thetaOverTwo);
+	float cosThetaOverTwo = Mathf::Cos(thetaOverTwo);
+
+	eyroSample *= sinThetaOverTwo;
+	Quaternionf qRot(cosThetaOverTwo, eyroSample.x, eyroSample.y, eyroSample.z);
+
+	gyroRot_ = qRot * gyroRot_;
+}
+
+Matrix4f _GetDeviceRotationMatrix()
+{
+	Matrix4f view = Matrix4f::Transform(gyroRot_, Vector3f::ZERO);
+
+	//// transform from phone coordinate to camera coordinate
+	//// phone handled in reverseLandscape
+	//view *= Matrix4f(0.f, -1.f, 0.f, 0.f,
+	//	1.f, 0.f, 0.f, 0.f,
+	//	0.f, 0.f, 1.f, 0.f,
+	//	0.f, 0.f, 0.f, 1.f);
+
+	return view;
+}
+
+static int sampleCount = 0;
+static int lastSampleCount = 0;
+static uint64_t lastTimeStamp = 0;
+
+
+void* UsbDeviceThread::Run()
+{	
+	uint8_t buffer[128];
+	//int readLen = 0;
+	int r = 0;
+
+	while (r == 0 && readlen >= 0){
+		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
+		if (readlen > 0) {
+			accValue = DeomposeData(buffer, 4.0f);
+			gyroValue = DeomposeData(buffer + 6, 1000.f * Mathf::DEG_TO_RAD);
+			magValue = DeomposeData(buffer + 12, 1.f);
+
+			memcpy(vvv, buffer + 12, 6);
+
+			uint64_t timeStamp = GetTicksNanos();
+			UpdateGyroScope(gyroValue, timeStamp);
+
+			sampleCount++;
+			if (timeStamp - lastTimeStamp > 1000000000)	{
+				float freq = ((sampleCount - lastSampleCount) * 1000000000.f) / (timeStamp - lastTimeStamp);
+				lastSampleCount = sampleCount;
+				lastTimeStamp = timeStamp;
+				
+				GLog.LogInfo("freq %.2f", freq);
+			}
+		}
+	}
+	//GLog.LogInfo("read r = %d length %d", r, readLen);
+}
+
+static UsbDeviceThread deviceThread;
+
+
+
+
 extern "C"
 {
 
@@ -266,6 +408,11 @@ extern "C"
 		GLog.LogInfo("fd %d len %d path %s", fd, strlen, uspfs_path);
 
 		libUsbTest(fd, uspfs_path);
+
+		if (devHandle != NULL && devEndPoint != -1)	{
+			deviceThread.Create();
+		}
+
 	}
 
 }

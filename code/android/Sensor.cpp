@@ -204,10 +204,10 @@ Matrix4f SensorFuse::GetViewMatrix()
 
 SensorFuse sensorFuse;
 
-Matrix4f _GetDeviceRotationMatrix()
-{
-	return sensorFuse.GetViewMatrix();
-}
+//Matrix4f _GetDeviceRotationMatrix()
+//{
+//	return sensorFuse.GetViewMatrix();
+//}
 
 
 struct SensorObj
