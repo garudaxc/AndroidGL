@@ -230,8 +230,8 @@ int libUsbTest(int fd, const char* path)
 			continue;
 		}
 
-		//if (dd.idVendor == 10291 && dd.idProduct == 1) {
-		if (dd.idVendor == 1155 && dd.idProduct == 22336) {
+		if ((dd.idVendor == 10291 && dd.idProduct == 1) ||
+			(dd.idVendor == 1155 && dd.idProduct == 22336)) {
 			deviceFound++;
 			device = list[i];
 		}
@@ -367,9 +367,12 @@ void* UsbDeviceThread::Run()
 	while (r == 0 && readlen >= 0){
 		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
 		if (readlen > 0) {
+			// 量程+/-4G
 			accValue = DeomposeData(buffer, 4.0f);
+			// 量程 +/- 1000度/s
 			gyroValue = DeomposeData(buffer + 6, 1000.f * Mathf::DEG_TO_RAD);
-			magValue = DeomposeData(buffer + 12, 1.f);
+			// 量程 +/- 0.88 Ga
+			magValue = DeomposeData(buffer + 12, 32767.f * 0.00073);
 
 			memcpy(vvv, buffer + 12, 6);
 
@@ -384,6 +387,8 @@ void* UsbDeviceThread::Run()
 				
 				GLog.LogInfo("freq %.2f", freq);
 			}
+		} else {
+			GLog.LogError("libusb_bulk_transfer failed! %d", r);
 		}
 	}
 	//GLog.LogInfo("read r = %d length %d", r, readLen);

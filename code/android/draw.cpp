@@ -138,28 +138,40 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		(*it)->texture_.Bind();
 				
 		Model& mesh = (*it)->mesh_;
-		mesh.Bind();
-		for (int i = 0; i < mesh.GetElementCount(); i++) {
-			const ModelElement* e = mesh.GetElement(i);
+		//mesh.Bind();
+		//for (int i = 0; i < mesh.GetElementCount(); i++) {
+		//	const ModelElement* e = mesh.GetElement(i);
 
-			void* index = (void*)(e->indexOffset * sizeof(unsigned short));
-			glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
-		}
+		//	void* index = (void*)(e->indexOffset * sizeof(unsigned short));
+		//	glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
+		//}
 	}
 	
 	char buff[256];
-	//sprintf(buff, "%.2f", Time.GetFPS());
-	//sprintf(buff, "%.2f %.2f %.2f", accValue.x, accValue.y, accValue.z);
-	//sprintf(buff, "%.2f %.2f %.2f", magValue.x, magValue.y, magValue.z);
-	sprintf(buff, "%d [%d %d %d %d %d %d]",readlen, (int)vvv[0], (int)vvv[1], (int)vvv[2], (int)vvv[3], (int)vvv[4], (int)vvv[5]);
 	/*
 	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(100.f, h - 100.f, 0.f));
 	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
 	Vector3f n = -Vector3f::UNIT_Y * mWorld;*/
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 50.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	//sprintf(buff, "%.2f", Time.GetFPS());
+	sprintf(buff, "%.2f %.2f %.2f", accValue.x, accValue.y, accValue.z);
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 10.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
 	Matrix4f vp = mView * mProj;
 	spriteBatch.Commit(w, h, vp);
+	
+	sprintf(buff, "%.2f %.2f %.2f", gyroValue.x, gyroValue.y, gyroValue.z);
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	vp = mView * mProj;
+	spriteBatch.Commit(w, h, vp);
 
+	sprintf(buff, "%.2f %.2f %.2f", magValue.x, magValue.y, magValue.z);
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, -10.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	vp = mView * mProj;
+	spriteBatch.Commit(w, h, vp);
+
+	//sprintf(buff, "%d [%d %d %d %d %d %d]", readlen, (int)vvv[0], (int)vvv[1], (int)vvv[2], (int)vvv[3], (int)vvv[4], (int)vvv[5]);
+	//bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, -10.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	//vp = mView * mProj;
+	//spriteBatch.Commit(w, h, vp);
 }
 
 
