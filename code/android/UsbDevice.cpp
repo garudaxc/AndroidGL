@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <assert.h>
 #include "MyLog.h"
 #include <jni.h>
 #include "Thread.h"
@@ -25,6 +26,12 @@ using namespace Aurora;
 #define false (!true)
 #endif
 
+enum 
+{
+	DEVICE_M3D = 0,
+	DEVICE_DK1
+};
+
 // Future versions of libusb will use usb_interface instead of interface
 // in libusb_config_descriptor => catter for that
 #define usb_interface interface
@@ -35,6 +42,7 @@ static bool extra_info = false;
 static int devicefd = -1;
 static libusb_device_handle * devHandle = NULL;
 static int devEndPoint = -1;
+static int deviceType = DEVICE_M3D;
 
 static int perr(char const *format, ...)
 {
@@ -230,8 +238,12 @@ int libUsbTest(int fd, const char* path)
 			continue;
 		}
 
-		if ((dd.idVendor == 10291 && dd.idProduct == 1) ||
-			(dd.idVendor == 1155 && dd.idProduct == 22336)) {
+		if ((dd.idVendor == 10291 && dd.idProduct == 1)) {
+			deviceType = DEVICE_DK1;
+			deviceFound++;
+			device = list[i];
+		} else if ((dd.idVendor == 1155 && dd.idProduct == 22336)) {
+			deviceType = DEVICE_M3D;
 			deviceFound++;
 			device = list[i];
 		}
@@ -257,30 +269,6 @@ int libUsbTest(int fd, const char* path)
 	return 0;
 }
 
-
-Vector3f accValue;
-Vector3f gyroValue;
-Vector3f magValue;
-uint8_t vvv[6];
-int readlen = 0;
-
-float DECOM(const uint8_t * raw, float scale)
-{
-	short v = raw[0] << 8 | raw[1];
-	float f = ((float)v / (short)0x7fff) * scale;
-	return f;
-}
-
-Vector3f DeomposeData(const uint8_t * data, float scale)
-{
-	Vector3f v;
-
-	v.x = DECOM(data, scale);
-	v.y = DECOM(data + 2, scale);
-	v.z = DECOM(data + 4, scale);
-
-	return v;
-}
 
 class UsbDeviceThread : public Thread
 {
@@ -357,6 +345,274 @@ static int sampleCount = 0;
 static int lastSampleCount = 0;
 static uint64_t lastTimeStamp = 0;
 
+Vector3f accValue;
+Vector3f gyroValue;
+Vector3f magValue;
+uint8_t vvv[6];
+int readlen = 0;
+
+//////////////////////////////////////////////////////////////////////////
+
+float DECOM(const uint8_t * raw, float scale)
+{
+	short v = raw[0] << 8 | raw[1];
+	float f = ((float)v / (short)0x7fff) * scale;
+	return f;
+}
+
+Vector3f DeomposeData(const uint8_t * data, float scale)
+{
+	Vector3f v;
+
+	v.x = DECOM(data, scale);
+	v.y = DECOM(data + 2, scale);
+	v.z = DECOM(data + 4, scale);
+
+	return v;
+}
+
+//////////////////////////////////////////////////////////////////////////
+typedef int8_t          SByte;
+typedef uint8_t         UByte;
+typedef int16_t         SInt16;
+typedef uint16_t        UInt16;
+typedef int32_t         SInt32;
+typedef uint32_t        UInt32;
+typedef int64_t         SInt64;
+typedef uint64_t        UInt64;
+
+
+// Reported data is little-endian now
+static UInt16 DecodeUInt16(const UByte* buffer)
+{
+	return (UInt16(buffer[1]) << 8) | UInt16(buffer[0]);
+}
+
+static SInt16 DecodeSInt16(const UByte* buffer)
+{
+	return (SInt16(buffer[1]) << 8) | SInt16(buffer[0]);
+}
+
+static UInt32 DecodeUInt32(const UByte* buffer)
+{
+	return (buffer[0]) | UInt32(buffer[1] << 8) | UInt32(buffer[2] << 16) | UInt32(buffer[3] << 24);
+}
+
+//static void EncodeUInt16(UByte* buffer, UInt16 val)
+//{
+//	*(UInt16*)buffer = Alg::ByteUtil::SystemToLE(val);
+//}
+
+static float DecodeFloat(const UByte* buffer)
+{
+	union {
+		UInt32 U;
+		float  F;
+	};
+
+	U = DecodeUInt32(buffer);
+	return F;
+}
+
+
+static void UnpackSensor(const UByte* buffer, SInt32* x, SInt32* y, SInt32* z)
+{
+	// Sign extending trick
+	// from http://graphics.stanford.edu/~seander/bithacks.html#FixedSignExtend
+	struct { SInt32 x : 21; } s;
+
+	*x = s.x = (buffer[0] << 13) | (buffer[1] << 5) | ((buffer[2] & 0xF8) >> 3);
+	*y = s.x = ((buffer[2] & 0x07) << 18) | (buffer[3] << 10) | (buffer[4] << 2) |
+		((buffer[5] & 0xC0) >> 6);
+	*z = s.x = ((buffer[5] & 0x3F) << 15) | (buffer[6] << 7) | (buffer[7] >> 1);
+}
+
+
+
+struct TrackerSample
+{
+	SInt32 AccelX, AccelY, AccelZ;
+	SInt32 GyroX, GyroY, GyroZ;
+};
+
+
+struct TrackerSensors
+{
+	UByte	SampleCount;
+	UInt16	Timestamp;
+	UInt16	LastCommandID;
+	SInt16	Temperature;
+
+	TrackerSample Samples[3];
+
+	SInt16	MagX, MagY, MagZ;
+
+	int Decode(const UByte* buffer, int size)
+	{
+		if (size < 62)
+			return -1;
+
+		SampleCount = buffer[1];
+		Timestamp = DecodeUInt16(buffer + 2);
+		LastCommandID = DecodeUInt16(buffer + 4);
+		Temperature = DecodeSInt16(buffer + 6);
+
+		//if (SampleCount > 2)        
+		//    OVR_DEBUG_LOG_TEXT(("TackerSensor::Decode SampleCount=%d\n", SampleCount));        
+
+		// Only unpack as many samples as there actually are
+		UByte iterationCount = (SampleCount > 2) ? 3 : SampleCount;
+
+		for (UByte i = 0; i < iterationCount; i++)
+		{
+			UnpackSensor(buffer + 8 + 16 * i, &Samples[i].AccelX, &Samples[i].AccelY, &Samples[i].AccelZ);
+			UnpackSensor(buffer + 16 + 16 * i, &Samples[i].GyroX, &Samples[i].GyroY, &Samples[i].GyroZ);
+		}
+
+		MagX = DecodeSInt16(buffer + 56);
+		MagY = DecodeSInt16(buffer + 58);
+		MagZ = DecodeSInt16(buffer + 60);
+
+		return 0;
+	}
+};
+
+
+
+struct SensorConfigImpl
+{
+	enum  { PacketSize = 7 };
+	UByte   Buffer[PacketSize];
+
+	// Flag values for Flags.
+	enum {
+		Flag_RawMode = 0x01,
+		Flag_CalibrationTest = 0x02, // Internal test mode
+		Flag_UseCalibration = 0x04,
+		Flag_AutoCalibration = 0x08,
+		Flag_MotionKeepAlive = 0x10,
+		Flag_CommandKeepAlive = 0x20,
+		Flag_SensorCoordinates = 0x40
+	};
+
+	UInt16  CommandId;
+	UByte   Flags;
+	UInt16  PacketInterval;
+	UInt16  KeepAliveIntervalMs;
+
+	SensorConfigImpl() : CommandId(0), Flags(0), PacketInterval(0), KeepAliveIntervalMs(0)
+	{
+		memset(Buffer, 0, PacketSize);
+		Buffer[0] = 2;
+	}
+
+	void    SetSensorCoordinates(bool sensorCoordinates)
+	{
+		Flags = (Flags & ~Flag_SensorCoordinates) | (sensorCoordinates ? Flag_SensorCoordinates : 0);
+	}
+	bool    IsUsingSensorCoordinates() const
+	{
+		return (Flags & Flag_SensorCoordinates) != 0;
+	}
+
+	void Pack()
+	{
+		Buffer[0] = 2;
+		Buffer[1] = UByte(CommandId & 0xFF);
+		Buffer[2] = UByte(CommandId >> 8);
+		Buffer[3] = Flags;
+		Buffer[4] = UByte(PacketInterval);
+		Buffer[5] = UByte(KeepAliveIntervalMs & 0xFF);
+		Buffer[6] = UByte(KeepAliveIntervalMs >> 8);
+	}
+
+	void Unpack()
+	{
+		CommandId = Buffer[1] | (UInt16(Buffer[2]) << 8);
+		Flags = Buffer[3];
+		PacketInterval = Buffer[4];
+		KeepAliveIntervalMs = Buffer[5] | (UInt16(Buffer[6]) << 8);
+	}
+
+};
+
+struct SensorKeepAliveImpl
+{
+	enum  { PacketSize = 5 };
+	UByte   Buffer[PacketSize];
+
+	UInt16  CommandId;
+	UInt16  KeepAliveIntervalMs;
+
+	SensorKeepAliveImpl(UInt16 interval = 0, UInt16 commandId = 0)
+		: CommandId(commandId), KeepAliveIntervalMs(interval)
+	{
+		Pack();
+	}
+
+	void  Pack()
+	{
+		Buffer[0] = 8;
+		Buffer[1] = UByte(CommandId & 0xFF);
+		Buffer[2] = UByte(CommandId >> 8);
+		Buffer[3] = UByte(KeepAliveIntervalMs & 0xFF);
+		Buffer[4] = UByte(KeepAliveIntervalMs >> 8);
+	}
+
+	void Unpack()
+	{
+		CommandId = Buffer[1] | (UInt16(Buffer[2]) << 8);
+		KeepAliveIntervalMs = Buffer[3] | (UInt16(Buffer[4]) << 8);
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+void DK1Setup() {
+
+	static int configed = 0;
+	if (configed == 1) {
+		return;
+	}
+
+	int r = 0;
+	SensorConfigImpl config;
+
+	//ctrl.bmRequestType = 0xa1;		// device to host / type : class / Recipient : interface
+	//ctrl.bRequest = 0x01;			// get report
+	//ctrl.wValue = 0x300 | 2;		// HID_FEATURE | id
+	//ctrl.wIndex = 0;
+	//ctrl.wLength = size;
+	//ctrl.data = data;
+	//ctrl.timeout = 0;
+
+	r = libusb_control_transfer(devHandle, 0xa1, 0x01, 0x300 | 2, 0, config.Buffer, config.PacketSize, 0);
+
+	GLog.LogInfo("libusb_control_transfer %d", r);
+
+	if (r >= 0) {
+		config.Unpack();
+		config.Flags &= ~SensorConfigImpl::Flag_MotionKeepAlive;
+		config.Pack();
+
+		r = libusb_control_transfer(devHandle, 0x21, 0x09, 0x300 | 2, 0, config.Buffer, config.PacketSize, 0);
+
+		GLog.LogInfo("libusb_control_transfer %d", r);
+
+		configed = 1;
+	}
+}
+
+void Dk1KeekAlive()
+{
+	SensorKeepAliveImpl keepAlive;
+	keepAlive.KeepAliveIntervalMs = 1000;
+	keepAlive.CommandId = 0;
+	keepAlive.Pack();
+	
+	int r = libusb_control_transfer(devHandle, 0x21, 0x09, 0x300 | keepAlive.Buffer[0], 0, keepAlive.Buffer, keepAlive.PacketSize, 0);
+	GLog.LogInfo("libusb_control_transfer %d", r);
+}
 
 void* UsbDeviceThread::Run()
 {	
@@ -366,13 +622,47 @@ void* UsbDeviceThread::Run()
 
 	while (r == 0 && readlen >= 0){
 		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
-		if (readlen > 0) {
+
+
+		if (r < 0) {
+			GLog.LogError("libusb_bulk_transfer failed! %d", r);
+			break;
+		}
+
+		if (deviceType == DEVICE_DK1) {
+			assert(readlen == 62);
+
+			Dk1KeekAlive();
+
+			TrackerSensors s;
+			s.Decode(buffer, readlen);
+			accValue.x = (float)s.Samples[0].AccelX;
+			accValue.y = (float)s.Samples[0].AccelY;
+			accValue.z = (float)s.Samples[0].AccelZ;
+			accValue *= 0.0001f;
+			
+			gyroValue.x = (float)s.Samples[0].GyroX;
+			gyroValue.y = (float)s.Samples[0].GyroY;
+			gyroValue.z = (float)s.Samples[0].GyroZ;
+			gyroValue *= 0.0001f;
+
+			magValue.x = (float)s.MagX;
+			magValue.y = (float)s.MagY;
+			magValue.z = (float)s.MagZ;
+			magValue *= 0.0001f;
+
+		} else if (deviceType == DEVICE_M3D) {
+			assert(readlen == 20);
+
 			// 量程+/-4G
 			accValue = DeomposeData(buffer, 4.0f);
 			// 量程 +/- 1000度/s
 			gyroValue = DeomposeData(buffer + 6, 1000.f * Mathf::DEG_TO_RAD);
 			// 量程 +/- 0.88 Ga
 			magValue = DeomposeData(buffer + 12, 32767.f * 0.00073);
+			float y = magValue.z;
+			magValue.z = magValue.y;
+			magValue.y = y;
 
 			memcpy(vvv, buffer + 12, 6);
 
@@ -388,8 +678,10 @@ void* UsbDeviceThread::Run()
 				GLog.LogInfo("freq %.2f", freq);
 			}
 		} else {
-			GLog.LogError("libusb_bulk_transfer failed! %d", r);
+			GLog.LogError("device type error %d", deviceType);
+			break;
 		}
+
 	}
 	//GLog.LogInfo("read r = %d length %d", r, readLen);
 }
