@@ -33,7 +33,9 @@ public class GL2JNILib {
 			UsbDevice device = deviceIterator.next();
 
 			if ((device.getVendorId() == 10291 && device.getProductId() == 1) ||
-			((device.getVendorId() == 1155 && device.getProductId() == 22336))) {
+				(device.getVendorId() == 1155 && device.getProductId() == 22336) ||
+				(device.getVendorId() == 949 && device.getProductId() == 1)
+			) {
 
 				// Log.i(XVRActivity.Tag, "found usb device " +
 				// device.getDeviceName());

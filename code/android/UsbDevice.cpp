@@ -128,8 +128,7 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 		if (libusb_get_string_descriptor_ascii(handle, string_index[i], (unsigned char*)string, 128) >= 0) {
 			GLog.LogInfo("   String (0x%02X): \"%s\"", string_index[i], string);
 		}
-	}
-	
+	}	
 
 	GLog.LogInfo("\nReading first configuration descriptor:");
 	CALL_CHECK(libusb_get_config_descriptor(dev, 0, &conf_desc));
@@ -147,27 +146,35 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 				conf_desc->usb_interface[i].altsetting[j].bInterfaceClass,
 				conf_desc->usb_interface[i].altsetting[j].bInterfaceSubClass,
 				conf_desc->usb_interface[i].altsetting[j].bInterfaceProtocol);
-			if ( (conf_desc->usb_interface[i].altsetting[j].bInterfaceClass == LIBUSB_CLASS_MASS_STORAGE)
-				&& ( (conf_desc->usb_interface[i].altsetting[j].bInterfaceSubClass == 0x01)
-				|| (conf_desc->usb_interface[i].altsetting[j].bInterfaceSubClass == 0x06) )
-				&& (conf_desc->usb_interface[i].altsetting[j].bInterfaceProtocol == 0x50) ) {
-					// Mass storage devices that can use basic SCSI commands
-					//test_mode = USE_SCSI;
-			}
+
 			for (k=0; k<conf_desc->usb_interface[i].altsetting[j].bNumEndpoints; k++) {
 				struct libusb_ss_endpoint_companion_descriptor *ep_comp = NULL;
 				endpoint = &conf_desc->usb_interface[i].altsetting[j].endpoint[k];
-				GLog.LogInfo("       endpoint[%d].address: %02X", k, endpoint->bEndpointAddress);
-				// Use the first interrupt or bulk IN/OUT endpoints as default for testing
-				if ((endpoint->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) & (LIBUSB_TRANSFER_TYPE_BULK | LIBUSB_TRANSFER_TYPE_INTERRUPT)) {
-					if (endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
-						if (!endpoint_in)
-							endpoint_in = endpoint->bEndpointAddress;
-					} else {
-						if (!endpoint_out)
-							endpoint_out = endpoint->bEndpointAddress;
-					}
-				}
+				
+				GLog.LogInfo("       endpoint[%d].address: %02X, direction : %s", k, endpoint->bEndpointAddress,
+					endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN ? "in" : "out");
+
+				static const char* transferType[] = {
+					"Control endpoint",
+					"Isochronous endpoint",
+					"Bulk endpoint",
+					"Interrupt endpoint",
+					"Stream endpoint",
+				};
+				
+				GLog.LogInfo("      transfer type : %s", transferType[endpoint->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK]);
+
+
+				//// Use the first interrupt or bulk IN/OUT endpoints as default for testing
+				//if ((endpoint->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) & (LIBUSB_TRANSFER_TYPE_BULK | LIBUSB_TRANSFER_TYPE_INTERRUPT)) {
+				//	if (endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
+				//		if (!endpoint_in)
+				//			endpoint_in = endpoint->bEndpointAddress;
+				//	} else {
+				//		if (!endpoint_out)
+				//			endpoint_out = endpoint->bEndpointAddress;
+				//	}
+				//}
 				GLog.LogInfo("           max packet size: %04X", endpoint->wMaxPacketSize);
 				GLog.LogInfo("          polling interval: %02X", endpoint->bInterval);
 				libusb_get_ss_endpoint_companion_descriptor(NULL, endpoint, &ep_comp);
@@ -242,7 +249,8 @@ int libUsbTest(int fd, const char* path)
 			deviceType = DEVICE_DK1;
 			deviceFound++;
 			device = list[i];
-		} else if ((dd.idVendor == 1155 && dd.idProduct == 22336)) {
+		} else if ((dd.idVendor == 1155 && dd.idProduct == 22336) ||
+			(dd.idVendor == 949 && dd.idProduct == 1)) {
 			deviceType = DEVICE_M3D;
 			deviceFound++;
 			device = list[i];
@@ -369,6 +377,12 @@ Vector3f DeomposeData(const uint8_t * data, float scale)
 	v.z = DECOM(data + 4, scale);
 
 	return v;
+}
+
+template<class T>
+T DecodeData(const uint8_t* data)
+{
+	return (T(data[0]) << 8) | T(data[1]);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -614,6 +628,31 @@ void Dk1KeekAlive()
 	GLog.LogInfo("libusb_control_transfer %d", r);
 }
 
+
+void Fancy3DKeepAlive()
+{
+	uint8_t buffer = 0x31;
+	int reallen = 0;
+	int r = libusb_bulk_transfer(devHandle, 0x03, &buffer, 1, &readlen, 0);
+	//GLog.LogInfo("KeepAlive %d reallen %d", r, readlen);
+}
+
+
+struct TrackData
+{
+	uint16_t	timestamp;
+	int16_t		temperature;
+
+	struct gyroSample
+	{
+		uint16_t	accel[3];
+		uint16_t	gyro[3];
+	}	sample[2];
+
+	uint16_t	magnet[3];
+};
+
+
 void* UsbDeviceThread::Run()
 {	
 	uint8_t buffer[128];
@@ -621,8 +660,8 @@ void* UsbDeviceThread::Run()
 	int r = 0;
 
 	while (r == 0 && readlen >= 0){
+;
 		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
-
 
 		if (r < 0) {
 			GLog.LogError("libusb_bulk_transfer failed! %d", r);
@@ -632,7 +671,6 @@ void* UsbDeviceThread::Run()
 		if (deviceType == DEVICE_DK1) {
 			assert(readlen == 62);
 
-			Dk1KeekAlive();
 
 			TrackerSensors s;
 			s.Decode(buffer, readlen);
@@ -651,15 +689,53 @@ void* UsbDeviceThread::Run()
 			magValue.z = (float)s.MagZ;
 			magValue *= 0.0001f;
 
+			uint64_t timeStamp = GetTicksNanos();
+
+			sampleCount++;
+			if (timeStamp - lastTimeStamp > 1000000000)	{
+				float freq = ((sampleCount - lastSampleCount) * 1000000000.f) / (timeStamp - lastTimeStamp);
+				lastSampleCount = sampleCount;
+				lastTimeStamp = timeStamp;
+
+				GLog.LogInfo("freq %.2f", freq);
+				Dk1KeekAlive();
+			}
+
 		} else if (deviceType == DEVICE_M3D) {
-			assert(readlen == 20);
+			assert(readlen == sizeof(TrackData));
+			
+
+			TrackData sample;
+
+			uint8_t* data = buffer;
+
+			sample.timestamp = DecodeData<uint16_t>(data);
+			data += 2;
+
+			GLog.LogInfo("timestamp %hu", sample.timestamp);
+
+			sample.temperature = DecodeData<int16_t>(data);
+			data += 2;
+
+			float t = sample.temperature / 340.f + 36.53f;
+
+			GLog.LogInfo("temperature %.3f", t);
+
+			
+			// 量程+/-4G
+			accValue = DeomposeData(data, 4.0f);
+			// 量程 +/- 1000度/s
+			gyroValue = DeomposeData(data + 6, 1000.f * Mathf::DEG_TO_RAD);
+			data += 12;
 
 			// 量程+/-4G
-			accValue = DeomposeData(buffer, 4.0f);
+			accValue = DeomposeData(data, 4.0f);
 			// 量程 +/- 1000度/s
-			gyroValue = DeomposeData(buffer + 6, 1000.f * Mathf::DEG_TO_RAD);
+			gyroValue = DeomposeData(data + 6, 1000.f * Mathf::DEG_TO_RAD);
+			data += 12;
+
 			// 量程 +/- 0.88 Ga
-			magValue = DeomposeData(buffer + 12, 32767.f * 0.00073);
+			magValue = DeomposeData(data, 32767.f * 0.00073);
 			float y = magValue.z;
 			magValue.z = magValue.y;
 			magValue.y = y;
@@ -674,9 +750,12 @@ void* UsbDeviceThread::Run()
 				float freq = ((sampleCount - lastSampleCount) * 1000000000.f) / (timeStamp - lastTimeStamp);
 				lastSampleCount = sampleCount;
 				lastTimeStamp = timeStamp;
-				
+
 				GLog.LogInfo("freq %.2f", freq);
+
+				Fancy3DKeepAlive();
 			}
+
 		} else {
 			GLog.LogError("device type error %d", deviceType);
 			break;
@@ -687,6 +766,99 @@ void* UsbDeviceThread::Run()
 }
 
 static UsbDeviceThread deviceThread;
+
+
+
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <errno.h>
+struct usbfs_ctrltransfer {
+	/* keep in sync with usbdevice_fs.h:usbdevfs_ctrltransfer */
+	uint8_t  bmRequestType;
+	uint8_t  bRequest;
+	uint16_t wValue;
+	uint16_t wIndex;
+	uint16_t wLength;
+
+	uint32_t timeout;	/* in milliseconds */
+
+	/* pointer to data */
+	void *data;
+};
+
+struct usbfs_bulktransfer {
+	/* keep in sync with usbdevice_fs.h:usbdevfs_bulktransfer */
+	unsigned int ep;
+	unsigned int len;
+	unsigned int timeout;	/* in milliseconds */
+
+	/* pointer to data */
+	void *data;
+};
+
+
+
+#define IOCTL_USBFS_CONTROL	_IOWR('U', 0, struct usbfs_ctrltransfer)
+#define IOCTL_USBFS_BULK		_IOWR('U', 2, struct usbfs_bulktransfer)
+
+void LogSerialString()
+{
+	unsigned char buffer[255];
+
+	const uint8_t DT_STRING = 0x03;
+	
+	usbfs_ctrltransfer ctrl;
+	ctrl.bmRequestType	= 0x80;
+	ctrl.bRequest		= 0x06;		// request get descriptor
+	ctrl.wValue =		DT_STRING << 8 | 0;	// string descriptor | id
+	ctrl.wIndex			= 0;			// language id
+	ctrl.data			= buffer;
+	ctrl.wLength		= sizeof(buffer);
+	ctrl.timeout		= 1000;
+
+	int r = ioctl(devicefd, IOCTL_USBFS_CONTROL, &ctrl);
+	if (r < 0) {
+		GLog.LogError("ioctl get language id error r = %d errno %d", r, errno);
+		return;
+	}
+
+	uint16_t langid = buffer[2] | (buffer[3] << 8);
+	GLog.LogInfo("langid = %hd", langid);
+
+	ctrl.wValue = DT_STRING << 8 | 0x03;	// serial string
+	ctrl.wIndex = langid;
+
+	r = ioctl(devicefd, IOCTL_USBFS_CONTROL, &ctrl);
+	if (r < 0) {
+		GLog.LogError("ioctl get serial string error r = %d errno %d", r, errno);
+		return;
+	}
+
+	GLog.LogInfo("read serial string length r = %d len = %d", r, (int)buffer[0]);
+
+	if (buffer[0] > r || buffer[0] > ctrl.wLength) {
+		GLog.LogError("ioctl get serial string size error %d", (int)buffer[0]);
+		return;
+	}
+
+	if (buffer[1] != DT_STRING) {
+		GLog.LogError("ioctl get serial string error (buffer[1] != DT_STRING) buffer[1] = %d", (int)buffer[1]);
+		return;
+	}
+	
+	// to ascii code
+	char data[128];
+	int di = 0, si = 2;
+	for (; si < buffer[0]; si += 2) {
+		if ((buffer[si] & 0x80) || (buffer[si + 1])) /* non-ASCII */
+			data[di++] = '?';
+		else
+			data[di++] = buffer[si];
+	}
+	data[di] = 0;
+
+	GLog.LogInfo("serial string %s", data);
+}
 
 
 
@@ -701,6 +873,8 @@ extern "C"
 		const char * uspfs_path = (subPath == NULL) ? "" : env->GetStringUTFChars(subPath, 0);
 
 		devicefd = fd;
+
+		LogSerialString();
 
 		GLog.LogInfo("fd %d len %d path %s", fd, strlen, uspfs_path);
 
