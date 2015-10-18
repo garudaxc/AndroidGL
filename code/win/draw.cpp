@@ -52,7 +52,6 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 	return model;
 }
 
-int libUsbTest();
 
 void LoadResource() {
 	GGlobalVarManager->Init();
@@ -77,7 +76,6 @@ void LoadResource() {
 	//model = CreateModel("Box001.mesh", "2.png");
 	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	//Models.push_back(model);
-	libUsbTest();
 }
 
 
