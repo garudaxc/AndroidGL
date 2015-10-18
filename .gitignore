@@ -6,5 +6,6 @@ bin/*
 obj/*
 libs/*
 gen/*
+resource/*
 !libs/win32
 local.properties

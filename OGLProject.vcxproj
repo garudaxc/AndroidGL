@@ -49,6 +49,7 @@
     <ClCompile Include="code\win\MyLog.cpp" />
     <ClCompile Include="code\win\main.cpp" />
     <ClCompile Include="code\win\PlatformWin.cpp" />
+    <ClCompile Include="code\win\UsbDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="code\win\OGLProject.ico" />
@@ -107,13 +108,13 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>./code</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./code;code\thirdParty\libusb\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\libs\win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Winmm.lib;libusb-1.0_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -64,12 +64,17 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Xml Include="AndroidManifest.xml" />
+    <Xml Include="AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="build.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="jni\Android.mk" />
     <None Include="jni\Application.mk" />
+    <None Include="src\com\xvr\aurora\GL2JNILib.java" />
+    <None Include="src\com\xvr\aurora\GL2JNIView.java" />
+    <None Include="src\com\xvr\aurora\XVRActivity.java" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\android\AuroraGL.h" />
@@ -92,14 +97,16 @@
     <ClInclude Include="code\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\android\device.cpp" />
+    <ClCompile Include="code\android\jniMain.cpp" />
     <ClCompile Include="code\android\MessageQueue.cpp" />
     <ClCompile Include="code\android\Sensor.cpp" />
     <ClCompile Include="code\android\Thread.cpp" />
     <ClCompile Include="code\android\TrackDropping.cpp" />
     <ClCompile Include="code\android\draw.cpp" />
-    <ClCompile Include="code\android\main.cpp" />
     <ClCompile Include="code\android\MyLog.cpp" />
     <ClCompile Include="code\android\PlatfromAndroid.cpp" />
+    <ClCompile Include="code\android\UsbDevice.cpp" />
     <ClCompile Include="code\AurMath.cpp" />
     <ClCompile Include="code\BitmapFont.cpp" />
     <ClCompile Include="code\CommandSystem.cpp" />

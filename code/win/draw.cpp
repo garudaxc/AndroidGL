@@ -52,6 +52,7 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 	return model;
 }
 
+int libUsbTest();
 
 void LoadResource() {
 	GGlobalVarManager->Init();
@@ -60,11 +61,11 @@ void LoadResource() {
 	GShaderManager.LoadFromFile(ShaderUI, "../../assets/ShaderUI.glsl");
 	checkGlError("GShaderManager.LoadFromFile");
 
-	bitmapFont.LoadFromFile("consolas.bitmapfont");
+	bitmapFont.LoadFromFile("../../resource/consolas.bitmapfont");
 	spriteBatch.Init(128);
 
 	ModelInstance* model = NULL;
-	model = CreateModel("Plane01.mesh", "3.png");
+	model = CreateModel("../../resource/build_tower003.mesh", "../../resource/2.png");
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 
@@ -76,6 +77,7 @@ void LoadResource() {
 	//model = CreateModel("Box001.mesh", "2.png");
 	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	//Models.push_back(model);
+	libUsbTest();
 }
 
 

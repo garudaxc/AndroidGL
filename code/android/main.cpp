@@ -243,7 +243,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 				setupGraphics(engine->width, engine->height);
 
 				InitSensor();
-
+				
                 engine_draw_frame(engine);
             }
             break;

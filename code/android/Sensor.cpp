@@ -1,6 +1,6 @@
 #include <android/sensor.h>
 #include <android/looper.h>
-#include <android_native_app_glue.h>
+//#include <android_native_app_glue.h>
 #include <vector>
 #include "AurMath.h"
 #include "Platfrom.h"
@@ -204,10 +204,10 @@ Matrix4f SensorFuse::GetViewMatrix()
 
 SensorFuse sensorFuse;
 
-Matrix4f _GetDeviceRotationMatrix()
-{
-	return sensorFuse.GetViewMatrix();
-}
+//Matrix4f _GetDeviceRotationMatrix()
+//{
+//	return sensorFuse.GetViewMatrix();
+//}
 
 
 struct SensorObj
@@ -603,13 +603,13 @@ void InitSensor()
 {
 	messageQueue_ = new MessageQueue(10);
 
-	GLog.LogInfo("Create scesor thread %d", GetTicksMS());
+	GLog.LogInfo("Create sensor thread %d", GetTicksMS());
 	bool r = sensorThread.Create();
 	if (!r) {
 		GLog.LogError("sensorThread.Create() failed!");
 	}
 
-	GLog.LogInfo("Create scesor thread done ! %d", GetTicksMS());
+	GLog.LogInfo("Create sensor thread done ! %d", GetTicksMS());
 
 	messageQueue_->SendString(COMMAND_INIT);
 }

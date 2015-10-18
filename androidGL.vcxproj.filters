@@ -18,6 +18,9 @@
     <Filter Include="Source files\thirdParty">
       <UniqueIdentifier>{4a31e3fa-e66a-4ae3-9858-b0a18ad41406}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\java">
+      <UniqueIdentifier>{998a92e1-cc1f-4a21-9ecc-aa62b16333b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="jni\Android.mk">
@@ -25,6 +28,15 @@
     </None>
     <None Include="jni\Application.mk">
       <Filter>config</Filter>
+    </None>
+    <None Include="src\com\xvr\aurora\GL2JNILib.java">
+      <Filter>Source files\java</Filter>
+    </None>
+    <None Include="src\com\xvr\aurora\GL2JNIView.java">
+      <Filter>Source files\java</Filter>
+    </None>
+    <None Include="src\com\xvr\aurora\XVRActivity.java">
+      <Filter>Source files\java</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -93,9 +105,6 @@
     <ClCompile Include="code\ShaderManager.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="code\android\main.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
     <ClCompile Include="code\android\MyLog.cpp">
       <Filter>Source files\android</Filter>
     </ClCompile>
@@ -143,6 +152,15 @@
     </ClCompile>
     <ClCompile Include="code\SpriteBatch.cpp">
       <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\device.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\jniMain.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\UsbDevice.cpp">
+      <Filter>Source files\android</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

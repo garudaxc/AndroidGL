@@ -21,7 +21,7 @@ struct MeshData
 
 	vector<int>			index_;
 
-	vector<int>			elements_;		// index count for every element
+	vector<int>			elements_;		// polygon count for every element
 
 	int		vertexCount_;
 
@@ -83,6 +83,11 @@ bool MeshData::SaveToFile(const char* fileName)
 
 	WriteMagic(MAGIC_STR("INDX"));
 	fwrite(&index_[0], sizeof(int), index_.size(), OutFile);
+
+	WriteMagic(MAGIC_STR("ELEM"));
+	int n = elements_.size();
+	fwrite(&n, sizeof(int), 1, OutFile);
+	fwrite(&elements_[0], sizeof(int), elements_.size(), OutFile);
 
 	fclose(OutFile);
 	OutFile = NULL;
@@ -492,8 +497,8 @@ void RemapIndex(int* index, int indexCount, int* mapper)
 
 // reorder index according to polygon attribute
 // polygon with same attribute should be grouped together
-// return index count for every group
-vector<int> ReorderIndex(int* index, int* polygonAttri, int polygonCount)
+// return index count for every group, remap attributes in places
+vector<int> ReorderIndexByAttribute(int* index, int* polygonAttri, int polygonCount)
 {
 	vector<int> groups;
 	
@@ -514,17 +519,29 @@ vector<int> ReorderIndex(int* index, int* polygonAttri, int polygonCount)
 		sortBuffer[i].index = i;
 	}
 
+	// sort by polygon attribute
 	sort(sortBuffer.begin(), sortBuffer.end());
 
-	int arrti = -1;
+	int attri = sortBuffer[0].attri;
+	int attriCount = 0;
 	vector<int> newIndex(polygonCount * 3);
 	for (int i = 0; i < polygonCount; i++){
-
-		if (sortBuffer[i].attri != arrti){
+		if (sortBuffer[i].attri != attri){
+			groups.push_back(attriCount);
+			attri = sortBuffer[i].attri;
+			attriCount = 1;
+		} else {
+			attriCount++;
 		}
-		printf("%d %d\t", sortBuffer[i].attri, sortBuffer[i].index);
-	}
 
+		// remap index and attribute
+		memcpy(&newIndex[i * 3], &index[sortBuffer[i].index * 3], sizeof(int)* 3);
+		polygonAttri[i] = attri;
+	}
+	groups.push_back(attriCount);
+
+	memcpy(index, &newIndex[0], sizeof(int)* polygonCount * 3);
+	
 	return groups;
 }
 
@@ -696,24 +713,19 @@ void ConvertMesh(FbxMesh* mesh)
 	int nNumMeshVert = expVertIdx;
 	printf("final vertex count %d\n", nNumMeshVert);
 
-
+	// get material id
 	FbxLayerElementArrayTemplate<int>* arrayMaterial = NULL;
 	bRes = mesh->GetMaterialIndices(&arrayMaterial);
 	if (!bRes){
 		FBXSDK_printf("Error! GetMaterialIndices failed\n");
 		return;
 	}
-
 	vector<int> materialIndex(polygonCount);
-	FBXSDK_printf("GetMaterialIndices %d : \n", arrayMaterial->GetCount());
 	for (int i = 0; i < arrayMaterial->GetCount(); i++){
 		materialIndex[i] = arrayMaterial->GetAt(i);
-		FBXSDK_printf("%d ", arrayMaterial->GetAt(i));
 	}
-	FBXSDK_printf("\n");
 
-	ReorderIndex(&meshIndex[0], &materialIndex[0], polygonCount);
-
+	vector<int> meshGroup = ReorderIndexByAttribute(&meshIndex[0], &materialIndex[0], polygonCount);
 
 	MeshData meshData;
 	meshData.Alloc(nNumMeshVert, polygonCount * 3);
@@ -723,6 +735,7 @@ void ConvertMesh(FbxMesh* mesh)
 	CopyVertexBuffer(&meshData.uv0_[0], 2, &texcoordData[0], 2, 2, vertexMap);
 
 	meshData.index_ = meshIndex;
+	meshData.elements_ = meshGroup;
 
 	if (Args.convertAxis){
 		ConvertCoordinateSystem(&meshData.position_[0], nNumMeshVert);
@@ -747,7 +760,7 @@ void ConvertMesh(FbxMesh* mesh)
 		}
 
 		vector<uint32_t> faceRemap(polygonCount);
-		if (FAILED(DirectX::OptimizeFaces((unsigned int*)&meshData.index_[0], polygonCount, &adj[0], &faceRemap[0]))){
+		if (FAILED(DirectX::OptimizeFacesEx((unsigned int*)&meshData.index_[0], polygonCount, &adj[0], (const uint32_t*)&materialIndex[0], & faceRemap[0]))){
 			printf("OptimizeFaces failed\n");
 			return;
 		}
