@@ -11,61 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="code\AurMath.h" />
-    <ClInclude Include="code\BitmapFont.h" />
-    <ClInclude Include="code\CommandSystem.h" />
-    <ClInclude Include="code\FileSystem.h" />
-    <ClInclude Include="code\GlobalVar.h" />
-    <ClInclude Include="code\glUtil.h" />
-    <ClInclude Include="code\Model.h" />
-    <ClInclude Include="code\MyLog.h" />
-    <ClInclude Include="code\ShaderManager.h" />
-    <ClInclude Include="code\SpriteBatch.h" />
-    <ClInclude Include="code\Texture.h" />
-    <ClInclude Include="code\thirdParty\stb\stb_image.h" />
-    <ClInclude Include="code\Timer.h" />
-    <ClInclude Include="code\win\AuroraGL.h" />
-    <ClInclude Include="code\win\glew.h" />
-    <ClInclude Include="code\win\glxew.h" />
-    <ClInclude Include="code\win\Resource.h" />
-    <ClInclude Include="code\win\stdafx.h" />
-    <ClInclude Include="code\win\wglew.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="code\BitmapFont.cpp" />
-    <ClCompile Include="code\CommandSystem.cpp" />
-    <ClCompile Include="code\FileSystem.cpp" />
-    <ClCompile Include="code\GlobalVar.cpp" />
-    <ClCompile Include="code\glUtil.cpp" />
-    <ClCompile Include="code\AurMath.cpp" />
-    <ClCompile Include="code\Model.cpp" />
-    <ClCompile Include="code\ShaderManager.cpp" />
-    <ClCompile Include="code\SpriteBatch.cpp" />
-    <ClCompile Include="code\Texture.cpp" />
-    <ClCompile Include="code\thirdParty\stb\stb_image.c" />
-    <ClCompile Include="code\Timer.cpp" />
-    <ClCompile Include="code\win\draw.cpp" />
-    <ClCompile Include="code\win\GLInit.cpp" />
-    <ClCompile Include="code\win\MyLog.cpp" />
-    <ClCompile Include="code\win\main.cpp" />
-    <ClCompile Include="code\win\PlatformWin.cpp" />
-    <ClCompile Include="code\win\UsbDevice.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="code\win\OGLProject.ico" />
-    <Image Include="code\win\small.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="code\win\OGLProject.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\shader330.glsl" />
-    <None Include="assets\ShaderUI.glsl" />
+    <ClCompile Include="code\TestCase\TestCase.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{27D13C93-5F89-4977-A339-0AE47D16475A}</ProjectGuid>
+    <ProjectGuid>{66CC15EE-26C3-4E6B-BD92-E314E3E30BCE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>OGLProject</RootNamespace>
+    <RootNamespace>TestCase</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -95,43 +46,39 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\win\</OutDir>
     <IntDir>intermediate\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>intermediate\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\win\</OutDir>
+    <IntDir>intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>./code;code\thirdParty\libusb\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\libs\win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Winmm.lib;libusb-1.0_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>

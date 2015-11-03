@@ -7,5 +7,6 @@ obj/*
 libs/*
 gen/*
 resource/*
+intermediate/*
 !libs/win32
 local.properties
