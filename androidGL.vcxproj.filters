@@ -94,6 +94,9 @@
     <ClInclude Include="code\SpriteBatch.h">
       <Filter>Source files</Filter>
     </ClInclude>
+    <ClInclude Include="code\RingBuffer.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -161,6 +164,9 @@
     </ClCompile>
     <ClCompile Include="code\android\UsbDevice.cpp">
       <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Calibration.cpp">
+      <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

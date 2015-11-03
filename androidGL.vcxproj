@@ -90,6 +90,7 @@
     <ClInclude Include="code\Model.h" />
     <ClInclude Include="code\MyLog.h" />
     <ClInclude Include="code\Platfrom.h" />
+    <ClInclude Include="code\RingBuffer.h" />
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
@@ -109,6 +110,7 @@
     <ClCompile Include="code\android\UsbDevice.cpp" />
     <ClCompile Include="code\AurMath.cpp" />
     <ClCompile Include="code\BitmapFont.cpp" />
+    <ClCompile Include="code\Calibration.cpp" />
     <ClCompile Include="code\CommandSystem.cpp" />
     <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\GlobalVar.cpp" />
