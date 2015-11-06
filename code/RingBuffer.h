@@ -1,34 +1,38 @@
 #pragma once
 #include <assert.h>
 #include <malloc.h>
+#include <new>
 
 template<typename T>
 class RingBuffer
 {
 public:
 
-	typedef typename T value_type;
-	typedef typename size_t size_type;
-	typedef typename T* pointer;
-	typedef typename const T* const_pointer;
-	typedef typename T& reference;
-	typedef typename const T& const_reference;
+	typedef T value_type;
+	typedef size_t size_type;
+	typedef T* pointer;
+	typedef const T* const_pointer;
+	typedef T& reference;
+	typedef const T& const_reference;
 	
 	RingBuffer() :capacity_(0), size_(0), first_(0), data_(NULL)
 	{
-
 	}
 
 	RingBuffer(size_type capacity) :capacity_(0), size_(0), first_(0), data_(NULL)
 	{
-		Alloc(capacity);
+		Realloc(capacity);
 	}
 
-	~RingBuffer()
-	{
-
+	~RingBuffer() {
+		clear();
+		Realloc(0);
 	}
 
+	void reserve(size_type capacity) {
+		clear();
+		Realloc(capacity);
+	}
 	
 	size_type size() const {
 		return size_;
@@ -45,10 +49,11 @@ public:
 	bool full() const {
 		return (size_ == capacity_);
 	}
-
 	
 	void clear() {
-
+		while (!empty()) {
+			pop_front();
+		}
 	}
 
 	const_reference front() const {
@@ -70,16 +75,19 @@ public:
 		}
 
 		size_type i = (first_ + size_) % capacity_;
-		new(data_ + i)(v);
+		::new(data_ + i) value_type(v);
 		size_++;
 	}
 
 	void pop_front() {
 		assert(!empty());
 		
+		data_[first_].~value_type();
+		first_ = ++first_ % capacity_;
+		size_--;
 	}
 
-	const_reference at(size_t index) {
+	const_reference at(size_t index) const {
 		assert(!empty() && index < size());
 
 		size_type i = (first_ + index) % capacity_;
@@ -88,17 +96,21 @@ public:
 	
 private:
 
-	template<typename T>
+	// ring buffer should not copy to each other
 	RingBuffer(const RingBuffer<T>& other)	{}
-
-	template<typename T>
 	const RingBuffer<T>& operator = (const RingBuffer<T>& other)	{ return *this; }
 
-	void Alloc(size_type count)
+	void Realloc(size_type count)
 	{
-		assert(data_ == NULL);
+		if (data_ != NULL) {
+			::free(data_);
+			data_ = NULL;
+		}
+
+		if (count > 0) {
+			data_ = (pointer)malloc(sizeof(value_type)* count);
+		}
 		
-		data_ = (pointer)malloc(sizeof(value_type) * count);
 		first_	= 0;
 		size_	= 0;
 		capacity_ = count;

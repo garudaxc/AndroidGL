@@ -12,6 +12,8 @@
 
 #include "AurMath.h"
 #include "Platfrom.h"
+#include "SensorDevice.h"
+#include "Calibration.h"
 
 using namespace Aurora;
 
@@ -295,6 +297,19 @@ UsbDeviceThread::UsbDeviceThread()
 {
 }
 
+struct SensorDeviceSample
+{
+	uint16_t	timestamp;
+	int16_t		temperature;
+
+	struct gyroSample
+	{
+		uint16_t	accel[3];
+		uint16_t	gyro[3];
+	}	sample[2];
+
+	uint16_t	magnet[3];
+};
 
 
 
@@ -353,10 +368,7 @@ static int sampleCount = 0;
 static int lastSampleCount = 0;
 static uint64_t lastTimeStamp = 0;
 
-Vector3f accValue;
-Vector3f gyroValue;
-Vector3f magValue;
-uint8_t vvv[6];
+
 int readlen = 0;
 
 //////////////////////////////////////////////////////////////////////////
@@ -443,7 +455,7 @@ static void UnpackSensor(const UByte* buffer, SInt32* x, SInt32* y, SInt32* z)
 
 
 
-struct TrackerSample
+struct DK1TrackerSample
 {
 	SInt32 AccelX, AccelY, AccelZ;
 	SInt32 GyroX, GyroY, GyroZ;
@@ -457,7 +469,7 @@ struct TrackerSensors
 	UInt16	LastCommandID;
 	SInt16	Temperature;
 
-	TrackerSample Samples[3];
+	DK1TrackerSample Samples[3];
 
 	SInt16	MagX, MagY, MagZ;
 
@@ -637,21 +649,7 @@ void Fancy3DKeepAlive()
 	//GLog.LogInfo("KeepAlive %d reallen %d", r, readlen);
 }
 
-
-struct TrackData
-{
-	uint16_t	timestamp;
-	int16_t		temperature;
-
-	struct gyroSample
-	{
-		uint16_t	accel[3];
-		uint16_t	gyro[3];
-	}	sample[2];
-
-	uint16_t	magnet[3];
-};
-
+void DrawTrackSample(const TrackerSample& sample);
 
 void* UsbDeviceThread::Run()
 {	
@@ -671,23 +669,27 @@ void* UsbDeviceThread::Run()
 		if (deviceType == DEVICE_DK1) {
 			assert(readlen == 62);
 
+			TrackerSample sample;
 
 			TrackerSensors s;
 			s.Decode(buffer, readlen);
-			accValue.x = (float)s.Samples[0].AccelX;
-			accValue.y = (float)s.Samples[0].AccelY;
-			accValue.z = (float)s.Samples[0].AccelZ;
-			accValue *= 0.0001f;
+			sample.accelerate.x = (float)s.Samples[0].AccelX;
+			sample.accelerate.y = (float)s.Samples[0].AccelY;
+			sample.accelerate.z = (float)s.Samples[0].AccelZ;
+			sample.accelerate *= 0.0001f;
 			
-			gyroValue.x = (float)s.Samples[0].GyroX;
-			gyroValue.y = (float)s.Samples[0].GyroY;
-			gyroValue.z = (float)s.Samples[0].GyroZ;
-			gyroValue *= 0.0001f;
+			sample.gyro.x = (float)s.Samples[0].GyroX;
+			sample.gyro.y = (float)s.Samples[0].GyroY;
+			sample.gyro.z = (float)s.Samples[0].GyroZ;
+			sample.gyro *= 0.0001f;
 
-			magValue.x = (float)s.MagX;
-			magValue.y = (float)s.MagY;
-			magValue.z = (float)s.MagZ;
-			magValue *= 0.0001f;
+			sample.magnet.x = (float)s.MagX;
+			sample.magnet.y = (float)s.MagY;
+			sample.magnet.z = (float)s.MagZ;
+			sample.magnet *= 0.0001f;
+
+			sample.timestamp = s.Timestamp;
+			sample.temperature = s.Temperature;
 
 			uint64_t timeStamp = GetTicksNanos();
 
@@ -702,48 +704,52 @@ void* UsbDeviceThread::Run()
 			}
 
 		} else if (deviceType == DEVICE_M3D) {
-			assert(readlen == sizeof(TrackData));
-			
+			assert(readlen == sizeof(SensorDeviceSample));
 
-			TrackData sample;
+			//SensorDeviceSample sample;
 
 			uint8_t* data = buffer;
 
-			sample.timestamp = DecodeData<uint16_t>(data);
+			uint16_t timestamp = DecodeData<uint16_t>(data);
 			data += 2;
-
-			GLog.LogInfo("timestamp %hu", sample.timestamp);
-
-			sample.temperature = DecodeData<int16_t>(data);
-			data += 2;
-
-			float t = sample.temperature / 340.f + 36.53f;
-
-			GLog.LogInfo("temperature %.3f", t);
-
 			
+			int16_t temperature = DecodeData<int16_t>(data) / 340.f + 36.53f;
+			data += 2;
+			
+			TrackerSample sample[2];
+			sample[0].timestamp = timestamp;
+			sample[0].temperature = temperature;
+
 			// 量程+/-4G
-			accValue = DeomposeData(data, 4.0f);
+			sample[0].accelerate = DeomposeData(data, 4.0f);
 			// 量程 +/- 1000度/s
-			gyroValue = DeomposeData(data + 6, 1000.f * Mathf::DEG_TO_RAD);
+			sample[0].gyro = DeomposeData(data + 6, 1000.f * Mathf::DEG_TO_RAD);
 			data += 12;
 
+			sample[1].timestamp = timestamp + 1;
+			sample[1].temperature = temperature;
 			// 量程+/-4G
-			accValue = DeomposeData(data, 4.0f);
+			sample[1].accelerate = DeomposeData(data, 4.0f);
 			// 量程 +/- 1000度/s
-			gyroValue = DeomposeData(data + 6, 1000.f * Mathf::DEG_TO_RAD);
+			sample[1].gyro = DeomposeData(data + 6, 1000.f * Mathf::DEG_TO_RAD);
 			data += 12;
 
 			// 量程 +/- 0.88 Ga
-			magValue = DeomposeData(data, 32767.f * 0.00073);
+			Vector3f magValue = DeomposeData(data, 32767.f * 0.00073);
 			float y = magValue.z;
 			magValue.z = magValue.y;
 			magValue.y = y;
 
-			memcpy(vvv, buffer + 12, 6);
+			sample[0].magnet = sample[1].magnet = magValue;
+
+			GCalibration.Apply(sample[0]);
+			GCalibration.Apply(sample[1]);
+
+			DrawTrackSample(sample[0]);
 
 			uint64_t timeStamp = GetTicksNanos();
-			UpdateGyroScope(gyroValue, timeStamp);
+			UpdateGyroScope(sample[0].gyro, timeStamp);
+
 
 			sampleCount++;
 			if (timeStamp - lastTimeStamp > 1000000000)	{

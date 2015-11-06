@@ -77,6 +77,12 @@
     <ClInclude Include="code\SpriteBatch.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="code\Thread.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Calibration.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\win\MyLog.cpp">
@@ -132,6 +138,12 @@
     </ClCompile>
     <ClCompile Include="code\win\UsbDevice.cpp">
       <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\Thread.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Calibration.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

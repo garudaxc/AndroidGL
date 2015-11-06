@@ -15,6 +15,7 @@
 #include "GlobalVar.h"
 #include "BitmapFont.h"
 #include "SpriteBatch.h"
+#include "Calibration.h"
 
 using namespace std;
 using namespace Aurora;
@@ -64,7 +65,7 @@ int setupGraphics(int w, int h) {
 	GShaderManager.LoadFromFile(ShaderUI, "/sdcard/MyTest/ShaderUI.glsl");
 
 	bitmapFont.LoadFromFile("/sdcard/MyTest/consolas.bitmapfont");
-	spriteBatch.Init(128);
+	spriteBatch.Init(256);
 
 	ModelInstance* model = NULL;
 	//model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/1.png");
@@ -93,10 +94,14 @@ int setupGraphics(int w, int h) {
 
 Matrix4f _GetDeviceRotationMatrix();
 
-extern Vector3f accValue;
-extern Vector3f gyroValue;
-extern Vector3f magValue;
-extern uint8_t vvv[6];
+TrackerSample drawSample;
+
+void DrawTrackSample(const TrackerSample& sample)
+{
+	drawSample = sample;
+}
+
+
 extern int readlen;
 
 void DrawView(int x, int y, int w, int h, float eyeOffset)
@@ -147,31 +152,39 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		//}
 	}
 	
-	char buff[256];
+	char buff[256];	
+
 	/*
 	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(100.f, h - 100.f, 0.f));
 	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
 	Vector3f n = -Vector3f::UNIT_Y * mWorld;*/
-	//sprintf(buff, "%.2f", Time.GetFPS());
-	sprintf(buff, "%.2f %.2f %.2f", accValue.x, accValue.y, accValue.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	sprintf(buff, "fps %.2f", Time.GetFPS());
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, -5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	sprintf(buff, "samples %d", GCalibration.GetNumSamples());
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	sprintf(buff, "%.3f %.3f %.3f", drawSample.gyro.x, drawSample.gyro.y, drawSample.gyro.z);
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::GREEN);
+
+	if (GCalibration.IsCalibrated()){
+		Vector3f offset = GCalibration.GetOffest();
+		sprintf(buff, "%.2f (%.3f %.3f %.3f)",GCalibration.GetTemperature(), offset.x, offset.y, offset.z);
+		bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 10.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+
+	}
 	Matrix4f vp = mView * mProj;
 	spriteBatch.Commit(w, h, vp);
-	
-	sprintf(buff, "%.2f %.2f %.2f", gyroValue.x, gyroValue.y, gyroValue.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
+	//
+	//sprintf(buff, "%.2f %.2f %.2f", gyroValue.x, gyroValue.y, gyroValue.z);
+	//bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	//vp = mView * mProj;
+	//spriteBatch.Commit(w, h, vp);
 
-	sprintf(buff, "%.2f %.2f %.2f", magValue.x, magValue.y, magValue.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, -5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
+	//sprintf(buff, "%.2f %.2f %.2f", magValue.x, magValue.y, magValue.z);
+	//bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, -5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
+	//vp = mView * mProj;
+	//spriteBatch.Commit(w, h, vp);
 
-	sprintf(buff, "%d [%d %d %d %d %d %d]", readlen, (int)vvv[0], (int)vvv[1], (int)vvv[2], (int)vvv[3], (int)vvv[4], (int)vvv[5]);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 8.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
+
 }
 
 

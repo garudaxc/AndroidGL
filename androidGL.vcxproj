@@ -79,9 +79,9 @@
   <ItemGroup>
     <ClInclude Include="code\android\AuroraGL.h" />
     <ClInclude Include="code\android\MessageQueue.h" />
-    <ClInclude Include="code\android\Thread.h" />
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\BitmapFont.h" />
+    <ClInclude Include="code\Calibration.h" />
     <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\GlobalVar.h" />
@@ -91,10 +91,12 @@
     <ClInclude Include="code\MyLog.h" />
     <ClInclude Include="code\Platfrom.h" />
     <ClInclude Include="code\RingBuffer.h" />
+    <ClInclude Include="code\SensorDevice.h" />
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
+    <ClInclude Include="code\Thread.h" />
     <ClInclude Include="code\Timer.h" />
   </ItemGroup>
   <ItemGroup>

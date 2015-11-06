@@ -68,7 +68,7 @@ void Log::LogInfo(const char* str, ...) {
 	AutoLock lock(mutex_);
 	__android_log_write(ANDROID_LOG_INFO, LOG_TAG, buff);
 
-	fprintf(pfLog, "info tid(%X): %s\n", (uint32_t)pthread_self(), buff);
+	fprintf(pfLog, "info tid(%X): %s\n", Thread::CurrentThreadId(), buff);
 	fflush(pfLog);
 }
 

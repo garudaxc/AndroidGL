@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\BitmapFont.h" />
+    <ClInclude Include="code\Calibration.h" />
     <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\GlobalVar.h" />
@@ -23,6 +24,7 @@
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
+    <ClInclude Include="code\Thread.h" />
     <ClInclude Include="code\Timer.h" />
     <ClInclude Include="code\win\AuroraGL.h" />
     <ClInclude Include="code\win\glew.h" />
@@ -33,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\BitmapFont.cpp" />
+    <ClCompile Include="code\Calibration.cpp" />
     <ClCompile Include="code\CommandSystem.cpp" />
     <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\GlobalVar.cpp" />
@@ -49,6 +52,7 @@
     <ClCompile Include="code\win\MyLog.cpp" />
     <ClCompile Include="code\win\main.cpp" />
     <ClCompile Include="code\win\PlatformWin.cpp" />
+    <ClCompile Include="code\win\Thread.cpp" />
     <ClCompile Include="code\win\UsbDevice.cpp" />
   </ItemGroup>
   <ItemGroup>

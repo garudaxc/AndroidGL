@@ -82,9 +82,6 @@
     <ClInclude Include="code\GlobalVar.h">
       <Filter>Source files</Filter>
     </ClInclude>
-    <ClInclude Include="code\android\Thread.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
     <ClInclude Include="code\android\MessageQueue.h">
       <Filter>Source files</Filter>
     </ClInclude>
@@ -95,6 +92,15 @@
       <Filter>Source files</Filter>
     </ClInclude>
     <ClInclude Include="code\RingBuffer.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Calibration.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\SensorDevice.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Thread.h">
       <Filter>Source files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -141,9 +147,6 @@
     <ClCompile Include="code\android\Sensor.cpp">
       <Filter>Source files\android</Filter>
     </ClCompile>
-    <ClCompile Include="code\android\Thread.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
     <ClCompile Include="code\AurMath.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
@@ -167,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="code\Calibration.cpp">
       <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\Thread.cpp">
+      <Filter>Source files\android</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

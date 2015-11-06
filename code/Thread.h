@@ -1,5 +1,4 @@
-#include <pthread.h>
-
+#include "Platfrom.h"
 
 class Mutex
 {
@@ -12,9 +11,8 @@ public:
 	bool	TryLock();
 
 private:
-	pthread_mutex_t		lock_;
+	struct MutexImpl*	impl_;
 };
-
 
 class AutoLock
 {
@@ -35,19 +33,21 @@ private:
 };
 
 
-
-
 class Thread
 {
 public:
 	Thread();
 	virtual ~Thread();
 
+	static	uint32_t  CurrentThreadId();
+
+	uint32_t	Id() const;
+
 	bool	Create();
 
 	virtual void*		Run() = 0;
 
 private:
+	struct ThreadImpl* impl_;
 
-	pthread_t	pid_;
 };

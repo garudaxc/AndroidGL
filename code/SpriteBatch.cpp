@@ -117,6 +117,11 @@ void SpriteBatch::Draw(GLuint texture, const rect_t& uvRect, uint32_t texWidth, 
 	const Vector3f& pos, const Quaternionf& rot,
 	float scale, const Vector4f& color, bool is3d)
 {
+	if (spriteCount_ == sprites_.size()) {
+		GLog.LogInfo("sprite buffer is full");
+		return;
+	}
+
 	Sprite& sprite = sprites_[spriteCount_++];
 
 	float invTexW = 1.f / texWidth;
@@ -155,7 +160,7 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 {
 	Vector3f invViewPort(2.f / viewWidth, 2.f / viewHeight, 1.f);
 
-	vector<TextVert> vert(sprites_.size());
+	vector<TextVert> vert(sprites_.size() * 4);
 
 	TextVert* vertex = &vert[0];
 	// 2d text

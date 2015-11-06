@@ -125,6 +125,13 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	char buff[64];
 	sprintf(buff, "%.2f", Time.GetFPS());
 	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(10.f, h - 10.f, 0.f));
+	
+
+	Vector3f v;
+	sprintf(buff, "%.3f %.3f %.3f", v.x, v.y, v.z);
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::GREEN);
+
+	
 	Matrix4f vp = mView * mProj;
 	spriteBatch.Commit(w, h, vp);
 
