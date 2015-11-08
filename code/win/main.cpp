@@ -40,12 +40,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	LoadString(hInstance, IDC_OGLPROJECT, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
+	PlatfromInit();
 	// 执行应用程序初始化: 
 	if (!InitInstance (hInstance, nCmdShow))
 	{
 		return FALSE;
 	}
-	PlatfromInit();
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_OGLPROJECT));
 
@@ -70,6 +70,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 
+	UnloadResource();
 	PlatfromShutDown();
 	return (int) msg.wParam;
 }

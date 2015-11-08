@@ -17,3 +17,4 @@ bool InitOpenGL(HINSTANCE hInstance, HWND hWnd);
 void DrawFrame();
 
 void LoadResource();
+void UnloadResource();

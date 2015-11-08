@@ -303,6 +303,13 @@ struct ThreadImpl
 {
 	HANDLE	hThread;
 	DWORD	threadId;
+	bool	toStop;
+	ManualResetEvent	event;
+
+	ThreadImpl() :hThread(NULL), threadId(0), toStop(false)
+	{
+		event.Signal();
+	}
 };
 
 static DWORD WINAPI ThreadFunc_s(LPVOID arg)
@@ -333,6 +340,45 @@ uint32_t Thread::CurrentThreadId()
 uint32_t Thread::Id() const
 {
 	return (uint32_t)impl_->threadId;
+}
+
+void Thread::Suspend()
+{
+	impl_->event.Reset();
+}
+
+void Thread::Resume()
+{
+	impl_->event.Signal();
+}
+
+void Thread::Stop()
+{
+	impl_->toStop = true;
+	Resume();
+
+	if (impl_->hThread != NULL) {
+		uint32_t result = WaitForSingleObject(impl_->hThread, INFINITE);
+		if (result != WAIT_OBJECT_0) {
+			GLog.LogError("stop thread error! id %d", impl_->threadId);
+		}
+
+		CloseHandle(impl_->hThread);
+		impl_->hThread = NULL;
+		impl_->threadId = 0;
+		impl_->toStop = false;
+	}
+}
+
+bool Thread::Check()
+{
+	impl_->event.WaitOn(0);
+
+	if (impl_->toStop) {
+		return false;
+	}
+
+	return true;
 }
 
 bool Thread::Create()

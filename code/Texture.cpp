@@ -2,8 +2,10 @@
 #include "MyLog.h"
 #include "glUtil.h"
 #include "thirdParty/stb/stb_image.h"
+#include "FileSystem.h"
+#include <vector>
 
-
+using namespace std;
 
 
 /*
@@ -201,13 +203,23 @@ bool Texture::Load(const char* fileName)
 	//LoadTextureKTX(fileName, buffer, size, false, true, w, h);
 	//return true;
 
-	stbi_uc * t = stbi_load(fileName, &w, &h, &comp, 0);
+	File* file = GFileSys->OpenFile(fileName);
+	if (file == NULL) {
+		return false;
+	}
+
+	vector<ubyte_t> buffer(file->Size());
+	file->Read(&buffer[0], file->Size());
+	file->Close();
+
+	//stbi_uc * t = stbi_load(fileName, &w, &h, &comp, 0);
+	stbi_uc* t = stbi_load_from_memory(&buffer[0], buffer.size(), &w, &h, &comp, 0);
 	if (t == NULL){
 		GLog.LogError("Load texture %s failed! : %s", fileName, stbi_failure_reason());
 		return false;
 	}
 	GLog.LogInfo("texture %s info, w %d h %d component %d", fileName, w, h, comp);
-
+	
 	if (comp < 3){
 		GLog.LogError("texture %s format not support!", fileName);
 		return false;

@@ -24,6 +24,23 @@
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
+    <ClInclude Include="code\thirdParty\zip\crc32.h" />
+    <ClInclude Include="code\thirdParty\zip\crypt.h" />
+    <ClInclude Include="code\thirdParty\zip\deflate.h" />
+    <ClInclude Include="code\thirdParty\zip\gzguts.h" />
+    <ClInclude Include="code\thirdParty\zip\inffast.h" />
+    <ClInclude Include="code\thirdParty\zip\inffixed.h" />
+    <ClInclude Include="code\thirdParty\zip\inflate.h" />
+    <ClInclude Include="code\thirdParty\zip\inftrees.h" />
+    <ClInclude Include="code\thirdParty\zip\ioapi.h" />
+    <ClInclude Include="code\thirdParty\zip\iowin32.h" />
+    <ClInclude Include="code\thirdParty\zip\mztools.h" />
+    <ClInclude Include="code\thirdParty\zip\trees.h" />
+    <ClInclude Include="code\thirdParty\zip\unzip.h" />
+    <ClInclude Include="code\thirdParty\zip\zconf.h" />
+    <ClInclude Include="code\thirdParty\zip\zip.h" />
+    <ClInclude Include="code\thirdParty\zip\zlib.h" />
+    <ClInclude Include="code\thirdParty\zip\zutil.h" />
     <ClInclude Include="code\Thread.h" />
     <ClInclude Include="code\Timer.h" />
     <ClInclude Include="code\win\AuroraGL.h" />
@@ -46,6 +63,26 @@
     <ClCompile Include="code\SpriteBatch.cpp" />
     <ClCompile Include="code\Texture.cpp" />
     <ClCompile Include="code\thirdParty\stb\stb_image.c" />
+    <ClCompile Include="code\thirdParty\zip\adler32.c" />
+    <ClCompile Include="code\thirdParty\zip\compress.c" />
+    <ClCompile Include="code\thirdParty\zip\crc32.c" />
+    <ClCompile Include="code\thirdParty\zip\deflate.c" />
+    <ClCompile Include="code\thirdParty\zip\gzclose.c" />
+    <ClCompile Include="code\thirdParty\zip\gzlib.c" />
+    <ClCompile Include="code\thirdParty\zip\gzread.c" />
+    <ClCompile Include="code\thirdParty\zip\gzwrite.c" />
+    <ClCompile Include="code\thirdParty\zip\infback.c" />
+    <ClCompile Include="code\thirdParty\zip\inffast.c" />
+    <ClCompile Include="code\thirdParty\zip\inflate.c" />
+    <ClCompile Include="code\thirdParty\zip\inftrees.c" />
+    <ClCompile Include="code\thirdParty\zip\ioapi.c" />
+    <ClCompile Include="code\thirdParty\zip\iowin32.c" />
+    <ClCompile Include="code\thirdParty\zip\mztools.c" />
+    <ClCompile Include="code\thirdParty\zip\trees.c" />
+    <ClCompile Include="code\thirdParty\zip\uncompr.c" />
+    <ClCompile Include="code\thirdParty\zip\unzip.c" />
+    <ClCompile Include="code\thirdParty\zip\zip.c" />
+    <ClCompile Include="code\thirdParty\zip\zutil.c" />
     <ClCompile Include="code\Timer.cpp" />
     <ClCompile Include="code\win\draw.cpp" />
     <ClCompile Include="code\win\GLInit.cpp" />
@@ -113,8 +150,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>./code;code\thirdParty\libusb\src</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996;4200</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>./code;code\thirdParty\libusb\src;code\thirdParty\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

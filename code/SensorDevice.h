@@ -5,13 +5,15 @@
 using namespace Aurora;
 
 
-
 struct TrackerSample
 {
 	uint32_t	timestamp;
-	int			temperature;
+	float		temperature;
 	
 	Vector3f	accelerate;
 	Vector3f	gyro;
 	Vector3f	magnet;
 };
+
+int libUsbTest();
+void StopTrackerThread();

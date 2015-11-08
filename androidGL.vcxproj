@@ -96,6 +96,8 @@
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
+    <ClInclude Include="code\thirdParty\zip\ioapi.h" />
+    <ClInclude Include="code\thirdParty\zip\unzip.h" />
     <ClInclude Include="code\Thread.h" />
     <ClInclude Include="code\Timer.h" />
   </ItemGroup>
@@ -122,6 +124,8 @@
     <ClCompile Include="code\SpriteBatch.cpp" />
     <ClCompile Include="code\Texture.cpp" />
     <ClCompile Include="code\thirdParty\stb\stb_image.c" />
+    <ClCompile Include="code\thirdParty\zip\ioapi.c" />
+    <ClCompile Include="code\thirdParty\zip\unzip.c" />
     <ClCompile Include="code\Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

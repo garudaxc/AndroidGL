@@ -14,6 +14,9 @@
 #include "GlobalVar.h"
 #include "BitmapFont.h"
 #include "SpriteBatch.h"
+#include "SensorDevice.h"
+#include "Calibration.h"
+#include "FileSystem.h"
 
 using namespace std;
 using namespace Aurora;
@@ -52,25 +55,28 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 	return model;
 }
 
-int libUsbTest();
+
 
 void LoadResource() {
 	GGlobalVarManager->Init();
+
+	GFileSys->SetRootPath("../../resource/", true);
+	GFileSys->AddPakFile("1.zip");
 
 	GShaderManager.LoadFromFile(ShaderDiffuse, "../../assets/shader330.glsl");
 	GShaderManager.LoadFromFile(ShaderUI, "../../assets/ShaderUI.glsl");
 	checkGlError("GShaderManager.LoadFromFile");
 
-	bitmapFont.LoadFromFile("../../resource/consolas.bitmapfont");
+	bitmapFont.LoadFromFile("consolas.bitmapfont");
 	spriteBatch.Init(128);
 
 	ModelInstance* model = NULL;
-	model = CreateModel("../../resource/build_tower003.mesh", "../../resource/2.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
+	model = CreateModel("build_tower003.mesh", "2.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 10.0f, 0.0f));
 	Models.push_back(model);
 
-	//model = CreateModel("build_tower003.mesh", "2.png");
-	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
+	//model = CreateModel("build_house008.mesh", "1.png");
+	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 10.0f, 0.0f));
 	//Models.push_back(model);
 
 
@@ -80,12 +86,26 @@ void LoadResource() {
 	libUsbTest();
 }
 
+void UnloadResource()
+{
+	StopTrackerThread();
+}
+
+TrackerSample drawSample;
+
+void DrawTrackSample(const TrackerSample& sample)
+{
+	drawSample = sample;
+}
+
+
+extern int sampleCount;
 
 void DrawView(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
-	
-	Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
+
+	Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
 	mView *= Matrix4f::Translate(Vector3f(eyeOffset, 0.f, 0.f));
 
 
@@ -122,15 +142,22 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		}
 	}
 
+	float size = 0.003f;
 	char buff[64];
 	sprintf(buff, "%.2f", Time.GetFPS());
 	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(10.f, h - 10.f, 0.f));
 	
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-1.f, 0.f, -0.2f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, size, Vector4f::RED);
+	sprintf(buff, "samples %d", GCalibration.GetNumSamples());
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-1.f, 0.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, size, Vector4f::RED);
+	sprintf(buff, "%+.4f %+.4f %+.4f", drawSample.gyro.x, drawSample.gyro.y, drawSample.gyro.z);
+	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-1.f, 0.f, 0.2f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, size, Vector4f::GREEN);
 
-	Vector3f v;
-	sprintf(buff, "%.3f %.3f %.3f", v.x, v.y, v.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::GREEN);
-
+	if (GCalibration.IsCalibrated()){
+		Vector3f offset = GCalibration.GetOffest();
+		sprintf(buff, "%.2f (%.3f %.3f %.3f)", GCalibration.GetTemperature(), offset.x, offset.y, offset.z);
+		bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-1.f, 0.f, 0.4f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, size, Vector4f::RED);
+	}
 	
 	Matrix4f vp = mView * mProj;
 	spriteBatch.Commit(w, h, vp);

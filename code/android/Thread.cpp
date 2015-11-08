@@ -81,6 +81,26 @@ uint32_t Thread::Id() const
 	return (uint32_t)impl_->pid;
 }
 
+void Thread::Suspend()
+{
+
+}
+
+void Thread::Resume()
+{
+
+}
+
+void Thread::Stop()
+{
+
+}
+
+bool Thread::Check()
+{
+	return true;
+}
+
 bool Thread::Create()
 {
 	int err = pthread_create(&impl_->pid, NULL, ThreadFunc_s, this);

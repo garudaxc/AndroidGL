@@ -62,38 +62,38 @@ bool Model::Load(const char* filename)
 	glBindVertexArray(vao_);
 #endif
 
-	File file;
-	if (!file.Open(filename)){
+	File* file = GFileSys->OpenFile(filename);
+	if (file ==  NULL){
 		GLog.LogError("Model::Load failed! %s", filename);
 		return false;
 	}
 	
 	unsigned int magic = 0;
-	file.Read(magic);
+	file->Read(magic);
 	if (magic != MAGIC_STR("MESH")){
 		GLog.LogError("file %s is not a mesh file!", filename);
 		return false;
 	}
 
 	int numVertex, numIndex;
-	file.Read(numVertex);
-	file.Read(numIndex);
+	file->Read(numVertex);
+	file->Read(numIndex);
 
 	vector<float> pos(numVertex * 3);
 	vector<float> normal(numVertex * 3);
 	vector<float> uv0(numVertex * 2);
 
-	file.Read(magic);
+	file->Read(magic);
 	assert(magic == MAGIC_STR("POSI"));
-	file.ReadArray(&pos[0], pos.size());
+	file->ReadArray(&pos[0], pos.size());
 
-	file.Read(magic);
+	file->Read(magic);
 	assert(magic == MAGIC_STR("NORM"));
-	file.ReadArray(&normal[0], normal.size());
+	file->ReadArray(&normal[0], normal.size());
 
-	file.Read(magic);
+	file->Read(magic);
 	assert(magic == MAGIC_STR("TEX0"));
-	file.ReadArray(&uv0[0], uv0.size());
+	file->ReadArray(&uv0[0], uv0.size());
 
 	vector<DrawVertex> vertexes(numVertex);
 	CopyVertexData(vertexes[0].pos, sizeof(DrawVertex), &pos[0], sizeof(float)* 3, numVertex);
@@ -101,20 +101,20 @@ bool Model::Load(const char* filename)
 	CopyVertexData(vertexes[0].uv, sizeof(DrawVertex), &uv0[0], sizeof(float)* 2, numVertex);
 
 	vector<int> indexData(numIndex);
-	file.Read(magic);
+	file->Read(magic);
 	assert(magic == MAGIC_STR("INDX"));
-	file.ReadArray(&indexData[0], indexData.size());
+	file->ReadArray(&indexData[0], indexData.size());
 	vector<unsigned short> index(numIndex);
 	for (int i = 0; i < numIndex; i++) {
 		index[i] = (unsigned short)indexData[i];
 	}
 
-	if (file.Read(magic)) {
+	if (file->Read(magic)) {
 		assert(magic == MAGIC_STR("ELEM"));
 		int numMeshGroup = 0;
-		file.Read(numMeshGroup);
+		file->Read(numMeshGroup);
 		vector<int> meshGroup(numMeshGroup);
-		file.ReadArray(&meshGroup[0], numMeshGroup);
+		file->ReadArray(&meshGroup[0], numMeshGroup);
 
 		int indexOffset = 0;
 		for (size_t i = 0; i < meshGroup.size(); i++) {
@@ -128,9 +128,7 @@ bool Model::Load(const char* filename)
 		}
 	}
 
-
-	file.Close();
-
+	file->Close();
 	
 	glGenBuffers(1, &vbo_);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_);

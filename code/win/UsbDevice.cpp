@@ -61,7 +61,7 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 	struct libusb_config_descriptor *conf_desc;
 	const struct libusb_endpoint_descriptor *endpoint;
 	int i, j, k, r;
-	int iface, nb_ifaces, first_iface = -1;
+	int nb_ifaces, first_iface = -1;
 	struct libusb_device_descriptor dev_desc;
 	const char* speed_name[5] = { "Unknown", "1.5 Mbit/s (USB LowSpeed)", "12 Mbit/s (USB FullSpeed)",
 		"480 Mbit/s (USB HighSpeed)", "5000 Mbit/s (USB SuperSpeed)"};
@@ -117,8 +117,7 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 		if (libusb_get_string_descriptor_ascii(handle, string_index[i], (unsigned char*)string, 128) >= 0) {
 			GLog.LogInfo("   String (0x%02X): \"%s\"", string_index[i], string);
 		}
-	}
-	
+	}	
 
 	GLog.LogInfo("\nReading first configuration descriptor:");
 	CALL_CHECK(libusb_get_config_descriptor(dev, 0, &conf_desc));
@@ -169,38 +168,56 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 		}
 	}
 	libusb_free_config_descriptor(conf_desc);
+	
+	return 1;
+}
 
-	endpoint_in = 0x81;
-	GLog.LogInfo("first interface %d endporint in 0x%x", first_iface, (uint32_t)endpoint_in);
+void StartTrackerThread();
 
 
-	if (libusb_kernel_driver_active(handle, first_iface) == 1) {
+
+void Fancy3DKeepAlive()
+{
+	uint8_t buffer = 0x31;
+	int readlen = 0;
+	int r = libusb_bulk_transfer(devHandle, 0x03, &buffer, 1, &readlen, 0);
+	//GLog.LogInfo("KeepAlive %d reallen %d", r, readlen);
+}
+
+int OpenTrackerDevice(libusb_device_handle *handle)
+{
+	int interface = 1;
+	int endpoint_in = 0x81;
+	GLog.LogInfo("first interface %d endporint in 0x%x", interface, (uint32_t)endpoint_in);
+
+	if (libusb_kernel_driver_active(handle, interface) == 1) {
 
 		GLog.LogInfo("driver is active");
 
-		if (!libusb_detach_kernel_driver(handle, first_iface)) {
+		if (!libusb_detach_kernel_driver(handle, interface)) {
 			GLog.LogInfo("Detached kernel driver");
-		} else {
+		}
+		else {
 			GLog.LogInfo("Detaching kernel driver failed!");
 			return -1;
 		}
 	}
-	
-	r = libusb_claim_interface(handle, first_iface);
+
+	int r = libusb_claim_interface(handle, interface);
 	if (r != LIBUSB_SUCCESS) {
 		GLog.LogInfo(" libusb_claim_interface Failed. %d", r);
 		return -1;
 	}
 	
-	uint8_t buffer[128];
-	int readLen = 0;
-	r = libusb_bulk_transfer(handle, endpoint_in, buffer, 128, &readLen, 0);
-	GLog.LogInfo("read r = %d length %d", r, readLen);
+	//uint8_t buffer[128];
+	//int readLen = 0;
+	//r = libusb_bulk_transfer(handle, endpoint_in, buffer, 128, &readLen, 0);
+	//GLog.LogInfo("read r = %d length %d", r, readLen);
 
-	return 1;
+	return 0;
 }
 
-void StartTrackerThread();
+
 
 int libUsbTest()
 {
@@ -258,9 +275,12 @@ int libUsbTest()
 
 	devHandle = handle;
 	devEndPoint = 0x81;
-	StartTrackerThread();
 
-	//libusb_close(handle);
+	if (OpenTrackerDevice(handle) < 0) {
+		libusb_close(handle);
+	} else {
+		StartTrackerThread();
+	}
 
 	return 0;
 }
@@ -286,7 +306,7 @@ TrackerThread::~TrackerThread()
 {
 }
 
-static int sampleCount = 0;
+int sampleCount = 0;
 static int lastSampleCount = 0;
 static uint64_t lastTimeStamp = 0;
 
@@ -319,23 +339,17 @@ T DecodeData(const uint8_t* data)
 	return (T(data[0]) << 8) | T(data[1]);
 }
 
-void Fancy3DKeepAlive()
-{
-	uint8_t buffer = 0x31;
-	int reallen = 0;
-	int r = libusb_bulk_transfer(devHandle, 0x03, &buffer, 1, &readlen, 0);
-	//GLog.LogInfo("KeepAlive %d reallen %d", r, readlen);
-}
-
+void DrawTrackSample(const TrackerSample& sample);
 
 void* TrackerThread::Run()
 {
-
 	uint8_t buffer[128];
 	//int readLen = 0;
 	int r = 0;
+	
+	Fancy3DKeepAlive();
 
-	while (r == 0 && readlen >= 0){
+	while (r == 0 && readlen >= 0 && Check()){
 
 		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
 
@@ -343,7 +357,6 @@ void* TrackerThread::Run()
 			GLog.LogError("libusb_bulk_transfer failed! %d", r);
 			break;
 		}
-
 
 		//assert(readlen == sizeof(SensorDeviceSample));
 		//SensorDeviceSample sample;
@@ -353,7 +366,7 @@ void* TrackerThread::Run()
 		uint16_t timestamp = DecodeData<uint16_t>(data);
 		data += 2;
 
-		int16_t temperature = DecodeData<int16_t>(data) / 340.f + 36.53f;
+		float temperature = DecodeData<int16_t>(data) / 340.f + 36.53f;
 		data += 2;
 
 		TrackerSample sample[2];
@@ -375,7 +388,7 @@ void* TrackerThread::Run()
 		data += 12;
 
 		// Á¿³Ì +/- 0.88 Ga
-		Vector3f magValue = DeomposeData(data, 32767.f * 0.00073);
+		Vector3f magValue = DeomposeData(data, 32767.f * 0.00073f);
 		float y = magValue.z;
 		magValue.z = magValue.y;
 		magValue.y = y;
@@ -385,11 +398,10 @@ void* TrackerThread::Run()
 		GCalibration.Apply(sample[0]);
 		GCalibration.Apply(sample[1]);
 
-		//DrawTrackSample(sample[0]);
+		DrawTrackSample(sample[0]);
 
 		uint64_t timeStamp = GetTicksNanos();
 		//UpdateGyroScope(sample[0].gyro, timeStamp);
-
 
 		sampleCount++;
 		if (timeStamp - lastTimeStamp > 1000000000)	{
@@ -405,7 +417,6 @@ void* TrackerThread::Run()
 	}
 
 	return NULL;
-
 }
 
 
@@ -417,5 +428,11 @@ static void StartTrackerThread()
 	if (!trackerThread.Create()) {
 		GLog.LogError("create tracker thread failed!");
 	}
+
+}
+
+void StopTrackerThread()
+{
+	trackerThread.Stop();
 
 }

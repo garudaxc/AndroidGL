@@ -21,6 +21,12 @@
     <Filter Include="Source files\java">
       <UniqueIdentifier>{998a92e1-cc1f-4a21-9ecc-aa62b16333b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\thirdParty\stb_image">
+      <UniqueIdentifier>{73db7d5f-4756-4ff4-9db7-efdfb8c7a9ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\thirdParty\zip">
+      <UniqueIdentifier>{77ba04e5-fde2-4348-bcab-0cd1b86a2116}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="jni\Android.mk">
@@ -70,9 +76,6 @@
     <ClInclude Include="code\Texture.h">
       <Filter>Source files</Filter>
     </ClInclude>
-    <ClInclude Include="code\thirdParty\stb\stb_image.h">
-      <Filter>Source files\thirdParty</Filter>
-    </ClInclude>
     <ClInclude Include="code\Timer.h">
       <Filter>Source files</Filter>
     </ClInclude>
@@ -103,6 +106,15 @@
     <ClInclude Include="code\Thread.h">
       <Filter>Source files</Filter>
     </ClInclude>
+    <ClInclude Include="code\thirdParty\stb\stb_image.h">
+      <Filter>Source files\thirdParty\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\unzip.h">
+      <Filter>Source files\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\ioapi.h">
+      <Filter>Source files\thirdParty\zip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -131,9 +143,6 @@
     </ClCompile>
     <ClCompile Include="code\Texture.cpp">
       <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\thirdParty\stb\stb_image.c">
-      <Filter>Source files\thirdParty</Filter>
     </ClCompile>
     <ClCompile Include="code\Timer.cpp">
       <Filter>Source files</Filter>
@@ -173,6 +182,15 @@
     </ClCompile>
     <ClCompile Include="code\android\Thread.cpp">
       <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\stb\stb_image.c">
+      <Filter>Source files\thirdParty\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\unzip.c">
+      <Filter>Source files\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\ioapi.c">
+      <Filter>Source files\thirdParty\zip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

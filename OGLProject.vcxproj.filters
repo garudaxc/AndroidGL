@@ -18,6 +18,12 @@
     <Filter Include="源文件\thirdParty">
       <UniqueIdentifier>{060b1128-630c-4ae8-8bc7-a6ccb0746ec4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\thirdParty\zip">
+      <UniqueIdentifier>{142661a0-9411-48a3-ac25-d2099fbe975a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thirdParty\stb_image">
+      <UniqueIdentifier>{d35edbc5-97d8-4680-b2df-a21f397abba6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\win\AuroraGL.h">
@@ -56,9 +62,6 @@
     <ClInclude Include="code\FileSystem.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="code\thirdParty\stb\stb_image.h">
-      <Filter>源文件\thirdParty</Filter>
-    </ClInclude>
     <ClInclude Include="code\Texture.h">
       <Filter>源文件</Filter>
     </ClInclude>
@@ -82,6 +85,60 @@
     </ClInclude>
     <ClInclude Include="code\Calibration.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\stb\stb_image.h">
+      <Filter>源文件\thirdParty\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\zlib.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\zutil.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\crc32.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\crypt.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\deflate.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\gzguts.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\inffast.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\inffixed.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\inflate.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\inftrees.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\ioapi.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\iowin32.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\mztools.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\trees.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\unzip.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\zconf.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\zip.h">
+      <Filter>源文件\thirdParty\zip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -112,9 +169,6 @@
     <ClCompile Include="code\FileSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="code\thirdParty\stb\stb_image.c">
-      <Filter>源文件\thirdParty</Filter>
-    </ClCompile>
     <ClCompile Include="code\Texture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -144,6 +198,69 @@
     </ClCompile>
     <ClCompile Include="code\Calibration.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\stb\stb_image.c">
+      <Filter>源文件\thirdParty\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\zutil.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\adler32.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\compress.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\crc32.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\deflate.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\gzclose.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\gzlib.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\gzread.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\gzwrite.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\infback.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\inffast.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\inflate.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\inftrees.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\ioapi.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\iowin32.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\mztools.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\trees.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\uncompr.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\unzip.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\zip.c">
+      <Filter>源文件\thirdParty\zip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -52,9 +52,9 @@ void Calibration::Apply(TrackerSample& sample)
 		offset_ = MeanValue(samples_);
 		temperature_ = sample.temperature;
 		calibrated_ = true;
-
-		sample.gyro -= offset_;
 	}
+
+	sample.gyro -= offset_;
 }
 
 Calibration GCalibration;

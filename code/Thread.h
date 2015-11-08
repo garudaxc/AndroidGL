@@ -45,9 +45,19 @@ public:
 
 	bool	Create();
 
+	void	Suspend();
+	void	Resume();
+	void	Stop();
+
 	virtual void*		Run() = 0;
 
-private:
-	struct ThreadImpl* impl_;
+protected:
+	// thread should call this function in looping
+	// it will be blocked when thread is suspended
+	// when it return false loop should break and thread will stop
+	bool	Check();
 
+private:
+
+	struct ThreadImpl* impl_;
 };
