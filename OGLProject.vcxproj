@@ -44,6 +44,7 @@
     <ClInclude Include="code\Thread.h" />
     <ClInclude Include="code\Timer.h" />
     <ClInclude Include="code\win\AuroraGL.h" />
+    <ClInclude Include="code\win\dirent.h" />
     <ClInclude Include="code\win\glew.h" />
     <ClInclude Include="code\win\glxew.h" />
     <ClInclude Include="code\win\Resource.h" />
@@ -84,6 +85,7 @@
     <ClCompile Include="code\thirdParty\zip\zip.c" />
     <ClCompile Include="code\thirdParty\zip\zutil.c" />
     <ClCompile Include="code\Timer.cpp" />
+    <ClCompile Include="code\win\dirent.c" />
     <ClCompile Include="code\win\draw.cpp" />
     <ClCompile Include="code\win\GLInit.cpp" />
     <ClCompile Include="code\win\MyLog.cpp" />
@@ -151,7 +153,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DisableSpecificWarnings>4996;4200</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>./code;code\thirdParty\libusb\src;code\thirdParty\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./code;code\thirdParty\libusb\src;code\thirdParty\;code\win</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

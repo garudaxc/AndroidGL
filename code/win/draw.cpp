@@ -61,7 +61,6 @@ void LoadResource() {
 	GGlobalVarManager->Init();
 
 	GFileSys->SetRootPath("../../resource/", true);
-	GFileSys->AddPakFile("1.zip");
 
 	GShaderManager.LoadFromFile(ShaderDiffuse, "../../assets/shader330.glsl");
 	GShaderManager.LoadFromFile(ShaderUI, "../../assets/ShaderUI.glsl");

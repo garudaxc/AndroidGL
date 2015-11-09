@@ -16,6 +16,7 @@
 #include "BitmapFont.h"
 #include "SpriteBatch.h"
 #include "Calibration.h"
+#include "FileSystem.h"
 
 using namespace std;
 using namespace Aurora;
@@ -57,6 +58,8 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 int setupGraphics(int w, int h) {
 	GGlobalVarManager->Init();
 
+	GFileSys->SetRootPath("/sdcard/MyTest/", true);
+
 	glState.width = w;
 	glState.height = h;
 
@@ -64,24 +67,24 @@ int setupGraphics(int w, int h) {
 	GShaderManager.LoadFromFile(ShaderDiffuse, "/sdcard/MyTest/shader.glsl");
 	GShaderManager.LoadFromFile(ShaderUI, "/sdcard/MyTest/ShaderUI.glsl");
 
-	bitmapFont.LoadFromFile("/sdcard/MyTest/consolas.bitmapfont");
+	bitmapFont.LoadFromFile("consolas.bitmapfont");
 	spriteBatch.Init(256);
 
 	ModelInstance* model = NULL;
-	//model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/1.png");
+	//model = CreateModel("build_tower003.mesh", "1.png");
 	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
 	//Models.push_back(model);
 
-	//model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/1.png");
+	//model = CreateModel("build_house008.mesh", "1.png");
 	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
 	//Models.push_back(model);
 
 #if TEST_MODEL
-	model = CreateModel("/sdcard/MyTest/Box01.mesh", "/sdcard/MyTest/2.png");
+	model = CreateModel("Box01.mesh", "2.png");
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 #else
-	model = CreateModel("/sdcard/MyTest/Box001.mesh", "/sdcard/MyTest/2.png");
+	model = CreateModel("Box001.mesh", "2.png");
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	Models.push_back(model);
 #endif

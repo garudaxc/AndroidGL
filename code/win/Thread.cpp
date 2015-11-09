@@ -71,7 +71,7 @@ void Mutex::Unlock()
 
 bool Mutex::TryLock()
 {
-	DWORD obj = WaitForSingleObject(impl_->mutex, INFINITE);
+	DWORD obj = WaitForSingleObject(impl_->mutex, 0);
 	if (obj == WAIT_FAILED) {
 		GLog.LogError("WaitForSingleObject failed %d", GetLastError());
 	}

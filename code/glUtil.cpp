@@ -50,6 +50,7 @@ void LogGLInfo() {
 	//wglGetExtensionsStringARB
 	//wglGetExtensionsStringEXT
 
+	GLint numExtensions = 0;
 	GLog.LogInfo("GL extensions : ");
 	string ext;
 	if (glGetString(GL_EXTENSIONS) != NULL){
@@ -62,17 +63,19 @@ void LogGLInfo() {
 			}
 			string s = ext.substr(off, pos - off);
 			off = pos + 1;
-			GLog.LogInfo(s.c_str());
+			//GLog.LogInfo(s.c_str());
+			numExtensions++;
 		}
 	} else {
 #ifdef WIN32
-		GLint numExtensions = 0;
 		glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 		for (int i = 0; i < numExtensions; i++)	{
-			GLog.LogInfo((const char*)glGetStringi(GL_EXTENSIONS, i));
+			//GLog.LogInfo((const char*)glGetStringi(GL_EXTENSIONS, i));
 		}
 #endif
 	}
+
+	GLog.LogInfo("number of GL_EXTENSIONS: %d", numExtensions);
 }
 
 

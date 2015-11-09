@@ -140,6 +140,9 @@
     <ClInclude Include="code\thirdParty\zip\zip.h">
       <Filter>源文件\thirdParty\zip</Filter>
     </ClInclude>
+    <ClInclude Include="code\win\dirent.h">
+      <Filter>源文件\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\win\MyLog.cpp">
@@ -261,6 +264,9 @@
     </ClCompile>
     <ClCompile Include="code\thirdParty\zip\zip.c">
       <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\dirent.c">
+      <Filter>源文件\win</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

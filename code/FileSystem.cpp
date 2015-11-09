@@ -1,7 +1,9 @@
+#include "Platfrom.h"
 #include "FileSystem.h"
 #include "MyLog.h"
 #include "zip/unzip.h"
 #include <vector>
+#include <dirent.h>
 
 class FileLocal : public File
 {
@@ -149,6 +151,8 @@ public:
 	virtual bool FileExist(const string& pathname);
 
 private:
+	void	NormalizeName(string& fullname, string& name, const string& _rawPath);
+
 	string	rootPath_;
 	vector<unzFile>	paks_;	
 };
@@ -179,8 +183,26 @@ void FileSystemLocal::SetRootPath(const string& path, bool addPak)
 		rootPath_ += '/';
 	}
 
-	// todo
 	if (addPak) {
+		DIR* dir = opendir(path.c_str());
+		if (dir == NULL) {
+			GLog.LogError("FileSystem open dir failed! %s", path.c_str());
+			return;
+		}
+
+		while (true) {
+			dirent* entry = readdir(dir);
+			if (entry == NULL) {
+				break;
+			}
+
+			if (strstr(entry->d_name, ".zip") != NULL ||
+				strstr(entry->d_name, ".pak") != NULL) {
+				AddPakFile(entry->d_name);
+			}
+		}
+
+		closedir(dir);
 	}
 }
 
@@ -199,19 +221,33 @@ bool FileSystemLocal::AddPakFile(const string& pathname)
 	}
 
 	paks_.push_back(pakfile);
+	GLog.LogInfo("FileSystem add pak %s", pathname.c_str());
+
 	return true;
+}
+
+void FileSystemLocal::NormalizeName(string& fullname, string& name, const string& _rawPath)
+{
+	string rawPath = _rawPath;
+	for (size_t i = 0; i < rawPath.size(); i++) {
+		if (rawPath[i] == '\\') {
+			rawPath[i] = '/';
+		}
+	}
+
+	if (rawPath.find(rootPath_) == 0) {
+		fullname = rawPath;
+		name = fullname.substr(rootPath_.length());
+	} else {
+		fullname = rootPath_ + rawPath;
+		name = rawPath;
+	}
 }
 
 File* FileSystemLocal::OpenFile(const string& pathname)
 {
 	string name, fullname;
-	if (pathname.find(rootPath_) == 0) {
-		fullname = pathname;
-		name = fullname.substr(rootPath_.length());
-	} else {
-		fullname = rootPath_ + pathname;
-		name = pathname;
-	}
+	NormalizeName(fullname, name, pathname);
 	
 	FILE* pf = fopen(fullname.c_str(), "rb");
 	if (pf != NULL){
@@ -253,20 +289,27 @@ File* FileSystemLocal::OpenFile(const string& pathname)
 		return file;
 	}
 
-	GLog.LogError("FileSystem::OpenFile! %s", pathname.c_str());
+	GLog.LogError("FileSystem::OpenFile failed! %s", pathname.c_str());
 
 	return NULL;
 }
 
 bool FileSystemLocal::FileExist(const string& pathname)
 {
-	// todo : native file
+	string name, fullname;
+	NormalizeName(fullname, name, pathname);
+
+	if (access(fullname.c_str(), 0) != -1) {
+		return true;
+	}
+
 	for (auto it = paks_.begin(); it != paks_.end(); ++it) {
-		if (unzLocateFile(*it, pathname.c_str(), 0) == UNZ_OK) {
+		if (unzLocateFile(*it, name.c_str(), 0) == UNZ_OK) {
 			return true;
 		}
 	}
-	return true;
+
+	return false;
 }
 
 

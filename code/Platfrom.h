@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef WIN32
+#include <io.h>
 #include "win/glew.h"
 #include "win/wglew.h"
 
@@ -14,6 +15,7 @@ typedef unsigned long long uint64_t;
 #include <EGL/eglext.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <unistd.h>
 
 typedef unsigned char ubyte_t;
 
