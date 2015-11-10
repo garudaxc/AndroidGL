@@ -293,7 +293,7 @@ private:
 };
 
 
-UsbDeviceThread::UsbDeviceThread()
+UsbDeviceThread::UsbDeviceThread() :Thread("UsbDeviceThread")
 {
 }
 
@@ -657,7 +657,7 @@ void* UsbDeviceThread::Run()
 	//int readLen = 0;
 	int r = 0;
 
-	while (r == 0 && readlen >= 0){
+	while (r == 0 && readlen >= 0 && Check()){
 ;
 		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
 
@@ -892,5 +892,21 @@ extern "C"
 
 	}
 
+}
+
+
+void SuspendSensorThread()
+{
+	deviceThread.Suspend();
+}
+
+void ResumeSensorThread()
+{
+	deviceThread.Resume();
+}
+
+void StopSensorThread()
+{
+	deviceThread.Stop();
 }
 

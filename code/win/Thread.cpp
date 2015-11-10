@@ -83,82 +83,56 @@ bool Mutex::TryLock()
 
 //////////////////////////////////////////////////////////////////////////
 
-enum
+
+
+struct EventImpl
 {
-	H3D_WAIT_NONE = 0,
-	H3D_WAIT_TIMEOUT,
-	H3D_WAIT_SIGNALED,
+	HANDLE	hEvent;	
 };
 
-
-class Event
+Event::Event()
 {
-public:
+	impl_ = new struct EventImpl();
+	impl_->hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+}
 
-	Event() :m_hEvent(NULL)	{}
-	virtual ~Event()	{}
-
-	inline HANDLE	GetHandle() const;
-
-protected:
-	HANDLE	m_hEvent;
-
-};
-
-HANDLE Event::GetHandle() const
+Event::~Event()
 {
-	return m_hEvent;
+	CloseHandle(impl_->hEvent);
+	delete impl_;
 }
 
 
-
-class ManualResetEvent : public Event
+void Event::Signal()
 {
-public:
-	ManualResetEvent()
-	{
-		m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-		assert(m_hEvent);
-	}
-
-	virtual ~ManualResetEvent()
-	{
-		CloseHandle(m_hEvent);
-	}
-
-	inline void		Signal();
-	inline void		Reset();
-	inline int		WaitOn(int timeOut);
-};
-
-
-void ManualResetEvent::Signal()
-{
-	SetEvent(m_hEvent);
+	SetEvent(impl_->hEvent);
 }
 
-void ManualResetEvent::Reset()
+void Event::Reset()
 {
-	ResetEvent(m_hEvent);
+	ResetEvent(impl_->hEvent);
 }
 
-int ManualResetEvent::WaitOn(int timeOut)
+int Event::WaitOn(int timeOut)
 {
-	uint32_t result = WaitForSingleObject(m_hEvent, timeOut == 0 ? INFINITE : timeOut);
+	uint32_t result = WaitForSingleObject(impl_->hEvent, timeOut == 0 ? INFINITE : timeOut);
 
 	if (result == WAIT_TIMEOUT)
 	{
-		return (int)H3D_WAIT_TIMEOUT;
+		return (int)MY_WAIT_TIMEOUT;
 	}
 
 	if (result == WAIT_OBJECT_0)
 	{
-		return (int)H3D_WAIT_SIGNALED;
+		return (int)MY_WAIT_SIGNALED;
 	}
 
-	return (int)H3D_WAIT_NONE;
+	return (int)MY_WAIT_NONE;
 }
 
+
+
+#if 0
 
 
 class AutoResetEvent : public Event
@@ -296,17 +270,20 @@ int EventPool::WaitAny(int nMilliseconds)
 	return (int)H3D_WAIT_NONE;
 }
 
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 
 
 struct ThreadImpl
 {
+	string	name;
 	HANDLE	hThread;
 	DWORD	threadId;
 	bool	toStop;
-	ManualResetEvent	event;
+	Event	event;
 
-	ThreadImpl() :hThread(NULL), threadId(0), toStop(false)
+	ThreadImpl(const string& _name) :name(_name), hThread(NULL), threadId(0), toStop(false)
 	{
 		event.Signal();
 	}
@@ -322,9 +299,9 @@ static DWORD WINAPI ThreadFunc_s(LPVOID arg)
 }
 
 
-Thread::Thread()
+Thread::Thread(const string& name)
 {
-	impl_ = new ThreadImpl;
+	impl_ = new ThreadImpl(name);
 }
 
 Thread::~Thread()

@@ -1,4 +1,15 @@
 #include "Platfrom.h"
+#include <string>
+
+using namespace std;
+
+enum
+{
+	MY_WAIT_NONE = 0,
+	MY_WAIT_TIMEOUT,
+	MY_WAIT_SIGNALED,
+};
+
 
 class Mutex
 {
@@ -33,10 +44,25 @@ private:
 };
 
 
+class Event
+{
+public:
+	Event();
+	~Event();
+
+	void	Reset();
+	void	Signal();
+	int		WaitOn(int timeout);
+
+private:
+	struct EventImpl* impl_;
+};
+
+
 class Thread
 {
 public:
-	Thread();
+	Thread(const string& name = "");
 	virtual ~Thread();
 
 	static	uint32_t  CurrentThreadId();

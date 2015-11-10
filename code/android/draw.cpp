@@ -209,7 +209,7 @@ void renderFrame() {
 	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
 
 	if (Time.GetTime() - lastTime > 1.f) {
-		GLog.LogInfo("%f %f", Time.GetFPS(), Time.GetTime());
+		GLog.LogInfo("fps %f time %f", Time.GetFPS(), Time.GetTime());
 		lastTime = Time.GetTime();
 	}
 	

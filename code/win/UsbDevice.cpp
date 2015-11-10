@@ -298,7 +298,7 @@ private:
 
 };
 
-TrackerThread::TrackerThread()
+TrackerThread::TrackerThread() :Thread("TrackerThread")
 {
 }
 

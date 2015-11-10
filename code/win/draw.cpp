@@ -61,7 +61,7 @@ void LoadResource() {
 	GGlobalVarManager->Init();
 
 	GFileSys->SetRootPath("../../resource/", true);
-
+	
 	GShaderManager.LoadFromFile(ShaderDiffuse, "../../assets/shader330.glsl");
 	GShaderManager.LoadFromFile(ShaderUI, "../../assets/ShaderUI.glsl");
 	checkGlError("GShaderManager.LoadFromFile");
@@ -165,9 +165,6 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 }
 
-
-float time = 0.f;
-
 void DrawFrame() {
 	
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
@@ -186,10 +183,6 @@ void DrawFrame() {
 	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
 	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
 
-	if (Time.GetTime()  - time > 1.f) {
-		GLog.LogInfo("%f %f %d", Time.GetFPS(), Time.GetTime(), timeGetTime());
-		time = Time.GetTime();
-	}
 
 	glFlush();
 	glFinish();

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include "time.h"
 
 
 #define  LOG_TAG    "androidGL"
@@ -13,8 +14,20 @@
 #define LOGW(...)	((void)__android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__))
 #define LOGE(...)	((void)__android_log_print(ANDROID_LOG_ERROR,LOG_TAG, __VA_ARGS__))
 
+struct LogImpl
+{
+	FILE*	pf;
+	Mutex	mutex;
 
-Log::Log() :pfLog(NULL), mutex_(NULL){
+	LogImpl() :pf(NULL)
+	{
+	}
+};
+
+
+Log::Log(){
+	impl_ = new LogImpl;
+
 	const char* path = "/sdcard/mytest";
 	int r = access(path, F_OK);
 	if (r < 0){
@@ -37,58 +50,70 @@ Log::Log() :pfLog(NULL), mutex_(NULL){
 	}
 
 	LOGI("create log file %s", logfile);
-	pfLog = pf;
-	
-	mutex_ = new Mutex();
+	impl_->pf = pf;
 }
 
 Log::~Log() {
-	if (pfLog) {
-		fclose(pfLog);
-		pfLog = NULL;
+	if (impl_->pf) {
+		fclose(impl_->pf);
 	}	
 
-	delete mutex_;
-	mutex_ = NULL;
+	delete impl_;
+}
+
+void GetTimeString(char* buff, int size)
+{
+	time_t t;
+	struct tm *tmp;
+	time(&t);
+	tmp = localtime(&t);
+	strftime(buff, size, "%H:%M:%S", tmp);
 }
 
 void Log::LogInfo(const char* str, ...) {
 
-	char buff[256];
 	int len = strlen(str);
 	if (len == 0) {
 		return;
 	}
+	char buff[1024];
 
 	va_list argptr;
 	va_start(argptr, str);
 	vsnprintf(buff, sizeof(buff)-1, str, argptr);
 	va_end(argptr);
 
-	AutoLock lock(mutex_);
+	char time[16];
+	GetTimeString(time, sizeof(time));
+
+	AutoLock lock(&impl_->mutex);
 	__android_log_write(ANDROID_LOG_INFO, LOG_TAG, buff);
 
-	fprintf(pfLog, "info tid(%X): %s\n", Thread::CurrentThreadId(), buff);
-	fflush(pfLog);
+	fprintf(impl_->pf, "info (%s): %s\n", time, buff);
+	fflush(impl_->pf);
 }
 
 void Log::LogError(const char* str, ...) {
 
-	char buff[256];
 	int len = strlen(str);
 	if (len == 0) {
 		return;
 	}
+	char buff[1024];
 
 	va_list argptr;
 	va_start(argptr, str);
 	vsnprintf(buff, sizeof(buff)-1, str, argptr);
 	va_end(argptr);
 
-	AutoLock lock(mutex_);
+	char time[16];
+	GetTimeString(time, sizeof(time));
+
+	AutoLock lock(&impl_->mutex);
 	__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, buff);
-	fprintf(pfLog, "error : %s\n", buff);
-	fflush(pfLog);
+
+	fprintf(impl_->pf, "error (%s): %s\n", time, buff);
+	fflush(impl_->pf);
 }
 
 void Log::LogConsole(const char* str, ...){
