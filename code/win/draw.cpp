@@ -92,9 +92,14 @@ void UnloadResource()
 
 TrackerSample drawSample;
 
+Vector3f smoothAccel_;
+
 void DrawTrackSample(const TrackerSample& sample)
 {
 	drawSample = sample;
+
+	float alpha = 0.01f;
+	smoothAccel_ = sample.accelerate * alpha + smoothAccel_ * (1.0f - alpha);
 }
 
 
@@ -141,29 +146,52 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		}
 	}
 
-	float size = 0.003f;
-	char buff[64];
-	sprintf(buff, "%.2f", Time.GetFPS());
-	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(10.f, h - 10.f, 0.f));
-	
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-1.f, 0.f, -0.2f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, size, Vector4f::RED);
-	sprintf(buff, "samples %d", GCalibration.GetNumSamples());
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-1.f, 0.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, size, Vector4f::RED);
-	sprintf(buff, "%+.4f %+.4f %+.4f", drawSample.gyro.x, drawSample.gyro.y, drawSample.gyro.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-1.f, 0.f, 0.2f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, size, Vector4f::GREEN);
-
-	if (GCalibration.IsCalibrated()){
-		Vector3f offset = GCalibration.GetOffest();
-		sprintf(buff, "%.2f (%.3f %.3f %.3f)", GCalibration.GetTemperature(), offset.x, offset.y, offset.z);
-		bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-1.f, 0.f, 0.4f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, size, Vector4f::RED);
-	}
-	
-	Matrix4f vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
-
 	glBindVertexArray(0);
 
 }
+
+
+void DrawCalibriation(int w, int h)
+{
+	float alpha = 0.1f;
+	
+
+	float lineHeight = -30.0f;
+	Vector3f pos(10.f, h - 10.f, 0.f);
+	
+	char buff[64];
+	sprintf(buff, "fps %.2f", Time.GetFPS());
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
+
+	pos.y += lineHeight;
+	sprintf(buff, "samples %d", GCalibration.GetNumSamples());
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
+	spriteBatch.Commit(w, h);
+
+	pos.y += lineHeight;
+	sprintf(buff, "accel    %+.4f %+.4f %+.4f", smoothAccel_.x, smoothAccel_.y, smoothAccel_.z);
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
+
+	pos.y += lineHeight;
+	sprintf(buff, "gyro(c)  %+.4f %+.4f %+.4f", drawSample.gyro.x, drawSample.gyro.y, drawSample.gyro.z);
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
+	spriteBatch.Commit(w, h);
+
+	pos.y += lineHeight;
+	if (GCalibration.IsCalibrated()){
+		Vector3f offset = GCalibration.GetOffest();
+		sprintf(buff, "Temperature %.2f offset (%.3f %.3f %.3f)", GCalibration.GetTemperature(), offset.x, offset.y, offset.z);
+		bitmapFont.DrawString(&spriteBatch, buff, pos);
+	}
+
+	spriteBatch.Commit(w, h);
+
+	glBindVertexArray(0);
+}
+
+
+
+
 
 void DrawFrame() {
 	
@@ -171,18 +199,16 @@ void DrawFrame() {
 
 	glClearDepthf(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glViewport(0, 0, glState.width / 2, glState.height);
-
+	
 	//glDisable(GL_CULL_FACE);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	float eyeDistance = EyeDistance.GetFloat();
 
-	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
-	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
-
+	//DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	//DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+	DrawCalibriation(glState.width, glState.height);
 
 	glFlush();
 	glFinish();

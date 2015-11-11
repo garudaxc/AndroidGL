@@ -3,6 +3,8 @@
 package com.xvr.aurora;
 
 import android.app.Activity;
+import android.view.MotionEvent;
+import android.view.KeyEvent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -58,6 +60,21 @@ public class XVRActivity extends Activity {
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
+	}
+	
+	@Override
+	public boolean dispatchTouchEvent (MotionEvent ev){
+		return false;
+	}
+	
+	@Override
+	public boolean dispatchKeyEvent (KeyEvent event) {
+		return false;
+	}
+	
+	@Override
+	public boolean dispatchGenericMotionEvent (MotionEvent ev) {
+		return false;
 	}
 
     protected static native void nativeOnCreate();

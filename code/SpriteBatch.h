@@ -21,7 +21,7 @@ public:
 		const Vector3f& pos, const Quaternionf& rot,
 		float scale, const Vector4f& color);
 
-	void	Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f& ViewProj);
+	void	Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f& ViewProj = Matrix4f::IDENTITY);
 	
 private:
 

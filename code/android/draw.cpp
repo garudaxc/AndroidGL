@@ -98,10 +98,13 @@ int setupGraphics(int w, int h) {
 Matrix4f _GetDeviceRotationMatrix();
 
 TrackerSample drawSample;
+Vector3f smoothAccel_;
 
 void DrawTrackSample(const TrackerSample& sample)
 {
 	drawSample = sample;
+	float alpha = 0.01f;
+	smoothAccel_ = sample.accelerate * alpha + smoothAccel_ * (1.0f - alpha);
 }
 
 
@@ -154,41 +157,47 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		//	glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
 		//}
 	}
-	
-	char buff[256];	
+}
 
-	/*
-	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(100.f, h - 100.f, 0.f));
-	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
-	Vector3f n = -Vector3f::UNIT_Y * mWorld;*/
+
+
+void DrawCalibriation(int w, int h)
+{
+	float alpha = 0.1f;
+
+
+	float lineHeight = -30.0f;
+	Vector3f pos(10.f, h - 10.f, 0.f);
+
+	char buff[64];
 	sprintf(buff, "fps %.2f", Time.GetFPS());
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, -5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	sprintf(buff, "samples %d", GCalibration.GetNumSamples());
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	sprintf(buff, "%.3f %.3f %.3f", drawSample.gyro.x, drawSample.gyro.y, drawSample.gyro.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::GREEN);
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
 
+	pos.y += lineHeight;
+	sprintf(buff, "samples %d", GCalibration.GetNumSamples());
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
+	spriteBatch.Commit(w, h);
+
+	pos.y += lineHeight;
+	sprintf(buff, "accel    %+.4f %+.4f %+.4f", smoothAccel_.x, smoothAccel_.y, smoothAccel_.z);
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
+
+	pos.y += lineHeight;
+	sprintf(buff, "gyro(c)  %+.4f %+.4f %+.4f", drawSample.gyro.x, drawSample.gyro.y, drawSample.gyro.z);
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
+	spriteBatch.Commit(w, h);
+
+	pos.y += lineHeight;
 	if (GCalibration.IsCalibrated()){
 		Vector3f offset = GCalibration.GetOffest();
-		sprintf(buff, "%.2f (%.3f %.3f %.3f)",GCalibration.GetTemperature(), offset.x, offset.y, offset.z);
-		bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 10.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-
+		sprintf(buff, "Temperature %.2f offset (%.3f %.3f %.3f)", GCalibration.GetTemperature(), offset.x, offset.y, offset.z);
+		bitmapFont.DrawString(&spriteBatch, buff, pos);
 	}
-	Matrix4f vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
-	//
-	//sprintf(buff, "%.2f %.2f %.2f", gyroValue.x, gyroValue.y, gyroValue.z);
-	//bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	//vp = mView * mProj;
-	//spriteBatch.Commit(w, h, vp);
 
-	//sprintf(buff, "%.2f %.2f %.2f", magValue.x, magValue.y, magValue.z);
-	//bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, -5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	//vp = mView * mProj;
-	//spriteBatch.Commit(w, h, vp);
-
+	spriteBatch.Commit(w, h);
 
 }
+
 
 
 float lastTime = 0.f;
@@ -205,8 +214,10 @@ void renderFrame() {
 
 	float eyeDistance = EyeDistance.GetFloat();
 
-	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
-	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+	//DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	//DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+
+	DrawCalibriation(glState.width, glState.height);
 
 	if (Time.GetTime() - lastTime > 1.f) {
 		GLog.LogInfo("fps %f time %f", Time.GetFPS(), Time.GetTime());
