@@ -7,6 +7,7 @@
 
 
 using namespace std;
+using namespace FancyTech;
 
 
 const char* vsInclude = "#define VERTEX_SHADER\n";

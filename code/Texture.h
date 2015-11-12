@@ -1,18 +1,21 @@
 #include "Platfrom.h"
 
-
-class Texture
+namespace FancyTech
 {
-public:
-	Texture();
-	~Texture();
 
-	bool	Load(const char* fileName);
+	class Texture
+	{
+	public:
+		Texture();
+		~Texture();
 
-	void	Bind();
+		bool	Load(const char* fileName);
 
-private:
+		void	Bind();
 
-	uint32_t	target_;
-	GLuint		texId_;
-};
+	private:
+
+		uint32_t	target_;
+		GLuint		texId_;
+	};
+}

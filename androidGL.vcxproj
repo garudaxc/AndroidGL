@@ -86,6 +86,7 @@
     <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\GlobalVar.h" />
     <ClInclude Include="code\glUtil.h" />
+    <ClInclude Include="code\Input.h" />
     <ClInclude Include="code\MathFunction.h" />
     <ClInclude Include="code\Model.h" />
     <ClInclude Include="code\MyLog.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\GlobalVar.cpp" />
     <ClCompile Include="code\glUtil.cpp" />
+    <ClCompile Include="code\Input.cpp" />
     <ClCompile Include="code\Model.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
     <ClCompile Include="code\SpriteBatch.cpp" />

@@ -7,7 +7,7 @@
 
 #pragma warning( disable : 4201 )
 
-namespace Aurora
+namespace FancyTech
 {
 	template<typename T> class Vector2;
 	template<typename T> class Vector3;

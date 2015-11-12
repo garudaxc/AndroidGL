@@ -143,6 +143,9 @@
     <ClInclude Include="code\win\dirent.h">
       <Filter>源文件\win</Filter>
     </ClInclude>
+    <ClInclude Include="code\Input.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\win\MyLog.cpp">
@@ -266,6 +269,12 @@
       <Filter>源文件\thirdParty\zip</Filter>
     </ClCompile>
     <ClCompile Include="code\win\dirent.c">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Input.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\InputWin.cpp">
       <Filter>源文件\win</Filter>
     </ClCompile>
   </ItemGroup>

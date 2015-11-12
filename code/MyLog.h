@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+namespace FancyTech
+{
 
 class Log
 {
@@ -18,3 +20,5 @@ private:
 };
 
 extern Log GLog;
+
+}

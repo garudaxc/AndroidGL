@@ -3,11 +3,14 @@
 
 using namespace std;
 
+namespace FancyTech
+{
+
 enum
 {
-	MY_WAIT_NONE = 0,
-	MY_WAIT_TIMEOUT,
-	MY_WAIT_SIGNALED,
+	FANCY_WAIT_NONE = 0,
+	FANCY_WAIT_TIMEOUT,
+	FANCY_WAIT_SIGNALED,
 };
 
 
@@ -87,3 +90,6 @@ private:
 
 	struct ThreadImpl* impl_;
 };
+
+
+}

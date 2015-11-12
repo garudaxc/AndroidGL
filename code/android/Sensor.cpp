@@ -9,7 +9,7 @@
 #include "MessageQueue.h"
 
 using namespace std;
-using namespace Aurora;
+using namespace FancyTech;
 
 
 enum {

@@ -115,6 +115,9 @@
     <ClInclude Include="code\thirdParty\zip\ioapi.h">
       <Filter>Source files\thirdParty\zip</Filter>
     </ClInclude>
+    <ClInclude Include="code\Input.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -191,6 +194,9 @@
     </ClCompile>
     <ClCompile Include="code\thirdParty\zip\ioapi.c">
       <Filter>Source files\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Input.cpp">
+      <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

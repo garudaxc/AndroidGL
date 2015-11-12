@@ -159,12 +159,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY	- 发送退出消息并返回
 //
 //
+
+namespace FancyTech
+{
+	// windows input
+	void DispatchWindowsEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
 	//PAINTSTRUCT ps;
 	//HDC hdc;
 
+	FancyTech::DispatchWindowsEvent(hWnd, message, wParam, lParam);
 	switch (message)
 	{
 	case WM_COMMAND:

@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-namespace Aurora
+namespace FancyTech
 {
 
 #define LogConsole GLog.LogInfo

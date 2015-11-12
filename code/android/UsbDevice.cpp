@@ -15,7 +15,7 @@
 #include "SensorDevice.h"
 #include "Calibration.h"
 
-using namespace Aurora;
+using namespace FancyTech;
 
 
 #if !defined(bool)

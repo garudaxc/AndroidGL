@@ -4,6 +4,8 @@
 #include "AuroraGL.h"
 
 
+using namespace FancyTech;
+
 void _UpdateTimer();
 void SuspendSensorThread();
 void ResumeSensorThread();
@@ -54,6 +56,10 @@ extern "C" {
 	{
 		StopSensorThread();
 		GLog.LogInfo("nativeOnDestroy");		
+	}
+
+	JNIEXPORT void JNICALL Java_com_xvr_aurora_GL2JNILib_nativeTouch(JNIEnv * env, jint width, jint height)
+	{
 	}
 
 

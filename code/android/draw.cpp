@@ -19,7 +19,7 @@
 #include "FileSystem.h"
 
 using namespace std;
-using namespace Aurora;
+using namespace FancyTech;
 
 struct glState_t glState;
 
@@ -163,9 +163,6 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 void DrawCalibriation(int w, int h)
 {
-	float alpha = 0.1f;
-
-
 	float lineHeight = -30.0f;
 	Vector3f pos(10.f, h - 10.f, 0.f);
 
@@ -195,7 +192,6 @@ void DrawCalibriation(int w, int h)
 	}
 
 	spriteBatch.Commit(w, h);
-
 }
 
 

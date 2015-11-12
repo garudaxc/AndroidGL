@@ -2,7 +2,7 @@
 #include "Platfrom.h"
 #include "AurMath.h"
 
-using namespace Aurora;
+using namespace FancyTech;
 
 
 struct TrackerSample

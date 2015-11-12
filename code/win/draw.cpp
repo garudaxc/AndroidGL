@@ -17,9 +17,30 @@
 #include "SensorDevice.h"
 #include "Calibration.h"
 #include "FileSystem.h"
+#include "Input.h"
 
 using namespace std;
-using namespace Aurora;
+using namespace FancyTech;
+
+
+class MyReceiver : public EventReceiver
+{
+public:
+
+	bool	OnEvent(const Event& event)	{
+		if (event.Type != Event::MouseMove)
+		{
+			GLog.LogInfo("%hd, %d %d", event.Type, event.xPos, event.yPos);
+		}
+		return true;
+	}
+
+};
+
+MyReceiver a;
+
+
+MyReceiver b;
 
 
 GlobalVar EyeDistance("EyeDistance", "0.065f", GVFLAG_FLOAT, "");

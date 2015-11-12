@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace Aurora
+namespace FancyTech
 {
 
 	int AsciiStricmp(const char * dst, const char * src);

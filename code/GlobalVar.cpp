@@ -3,7 +3,7 @@
 #include "CommandSystem.h"
 #include "MyLog.h"
 
-namespace Aurora
+namespace FancyTech
 {
 
 #define LogConsole GLog.LogInfo

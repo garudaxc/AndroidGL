@@ -3,7 +3,7 @@
 #include "AurMath.h"
 #include <vector>
 
-using namespace Aurora;
+using namespace FancyTech;
 using namespace std;
 
 class SpriteBatch

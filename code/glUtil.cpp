@@ -5,6 +5,7 @@
 #include "Platfrom.h"
 
 using namespace std;
+using namespace FancyTech;
 
 
 const char * GL_ErrorForEnum(const GLenum e){

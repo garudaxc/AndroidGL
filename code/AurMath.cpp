@@ -1,6 +1,6 @@
 #include "AurMath.h"
 
-namespace Aurora
+namespace FancyTech
 {
 template<> const float Math<float>::ZERO_TOLERANCE = 1e-06f;
 template<> const float Math<float>::MAX_VALUE = 3.4e38f;

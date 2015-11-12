@@ -6,7 +6,7 @@
 #include "Quaternion.h"
 #include "AurMath.h"
 
-namespace Aurora
+namespace FancyTech
 {
 //----------------------------------------------------------------------
 // the order of combine between vector and matrix is form left to right
