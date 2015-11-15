@@ -11,6 +11,10 @@ void SuspendSensorThread();
 void ResumeSensorThread();
 void StopSensorThread();
 
+namespace FancyTech
+{
+	void DispatchAndroidEvent(int action, float x, float y);
+}
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,8 +62,10 @@ extern "C" {
 		GLog.LogInfo("nativeOnDestroy");		
 	}
 
-	JNIEXPORT void JNICALL Java_com_xvr_aurora_GL2JNILib_nativeTouch(JNIEnv * env, jint width, jint height)
+
+	JNIEXPORT void JNICALL Java_com_xvr_aurora_XVRActivity_nativeOnEvent(JNIEnv * env, jobject obj, jint action, jfloat xpos, jfloat ypos)
 	{
+		DispatchAndroidEvent(action, xpos, ypos);
 	}
 
 

@@ -24,6 +24,11 @@ namespace FancyTech
 
 			KeyDown,
 			KeyUp,
+
+			TouchDown,
+			TouchUp,
+
+			Unknown,
 		};
 
 		enum Parameter
@@ -171,8 +176,17 @@ namespace FancyTech
 		uint16_t	Type;
 		uint16_t	Param;
 
-		int			xPos;
-		int			yPos;
+		union
+		{
+			int		xPos;
+			float	fxPos;
+		};
+
+		union
+		{
+			int		yPos;
+			float	fyPos;
+		};
 
 		union
 		{

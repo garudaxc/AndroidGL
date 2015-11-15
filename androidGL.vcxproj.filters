@@ -198,6 +198,9 @@
     <ClCompile Include="code\Input.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="code\android\InputAndroid.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="AndroidManifest.xml">

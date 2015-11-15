@@ -17,6 +17,7 @@
 #include "SpriteBatch.h"
 #include "Calibration.h"
 #include "FileSystem.h"
+#include "Input.h"
 
 using namespace std;
 using namespace FancyTech;
@@ -26,7 +27,25 @@ struct glState_t glState;
 #define TEST_MODEL 1
 
 
+class MyReceiver : public EventReceiver
+{
+public:
+
+	bool	OnEvent(const Event& event)	{
+		if (event.Type != Event::MouseMove)
+		{
+			GLog.LogInfo("%hd, %f %f", event.Type, event.fxPos, event.fyPos);
+		}
+		return true;
+	}
+
+};
+
+MyReceiver a;
+
+
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
+
 
 class ModelInstance
 {

@@ -63,7 +63,29 @@ public class XVRActivity extends Activity {
 	}
 	
 	@Override
-	public boolean dispatchTouchEvent (MotionEvent ev){
+	public boolean dispatchTouchEvent (MotionEvent ev) {
+		
+		/*final int historySize = ev.getHistorySize(); 
+		final int pointerCount = ev.getPointerCount();   
+		for (int h = 0; h < historySize; h++) {     
+			System.out.printf("At time %d:", ev.getHistoricalEventTime(h));     
+			
+			for (int p = 0; p < pointerCount; p++) {      
+				System.out.printf("  pointer %d: (%f,%f)",      
+						ev.getPointerId(p), ev.getHistoricalX(p, h), ev.getHistoricalY(p, h));     
+				}    
+			}    
+		System.out.printf("At time %d:", ev.getEventTime());  
+		for (int p = 0; p < pointerCount; p++) {   
+			System.out.printf("  pointer %d: (%f,%f)", ev.getPointerId(p), ev.getX(p), ev.getY(p));
+		} */
+		
+		int action = ev.getAction();
+		float x = ev.getX();
+		float y = ev.getY();
+		
+		nativeOnEvent(action, x, y);
+		
 		return false;
 	}
 	
@@ -81,6 +103,6 @@ public class XVRActivity extends Activity {
     protected static native void nativeOnResume();
     protected static native void nativeOnPause();
     protected static native void nativeOnDestroy();
-
-
+    protected static native void nativeOnEvent(int action, float x, float y);
+    
 }
