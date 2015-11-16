@@ -745,7 +745,6 @@ void* UsbDeviceThread::Run()
 			GCalibration.Apply(sample[0]);
 			GCalibration.Apply(sample[1]);
 
-			DrawTrackSample(sample[0]);
 
 			uint64_t timeStamp = GetTicksNanos();
 			UpdateGyroScope(sample[0].gyro, timeStamp);

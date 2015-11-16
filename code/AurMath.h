@@ -283,7 +283,6 @@ public:
 	inline const T* Ptr() const;
 
 	static Vector3<T> Lerp(const Vector3<T>& a, const Vector3<T>& b, T s);
-	static Vector3<T> Modulate(const Vector3<T>& a, const Vector3<T>& b);
 
 	inline std::string ToString() const;
 	static Vector3<T> FromString(const char* str);
@@ -1038,7 +1037,7 @@ Vector3<T> Vector3<T>::Lerp(const Vector3<T>& a, const Vector3<T>& b, T s)
 }
 
 template<typename T>
-Vector3<T> Vector3<T>::Modulate(const Vector3<T>& a, const Vector3<T>& b)
+Vector3<T> Modulate(const Vector3<T>& a, const Vector3<T>& b)
 {
 	return Vector3<T>(a.x * b.x, a.y * b.y, a.z * b.z);
 }

@@ -169,7 +169,7 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 			continue;
 		}
 
-		Vector3f pos = Vector3f::Modulate(it->pos, invViewPort) - Vector3f(1.0f, 1.0f, 0.f);
+		Vector3f pos = Modulate(it->pos, invViewPort) - Vector3f(1.0f, 1.0f, 0.f);
 		float w = it->w * invViewPort.x;
 		float h = it->h * invViewPort.y;
 		

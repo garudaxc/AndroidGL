@@ -40,7 +40,7 @@ public:
 	~AutoLock()
 	{
 		mutex_->Unlock();
-	}
+	}	
 
 private:
 	Mutex*	mutex_;

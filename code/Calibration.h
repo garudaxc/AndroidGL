@@ -3,6 +3,9 @@
 #include "SensorDevice.h"
 #include "RingBuffer.h"
 
+namespace FancyTech
+{
+
 class Calibration
 {
 public:
@@ -27,8 +30,10 @@ public:
 		return samples_.size();
 	}
 
-
 private:
+	void	CalcGyroOffset(TrackerSample& sample);
+
+
 	RingBuffer<Vector3f>	samples_;
 	Vector3f	offset_;
 	float		temperature_;
@@ -36,5 +41,6 @@ private:
 
 };
 
-
 extern Calibration GCalibration;
+
+}

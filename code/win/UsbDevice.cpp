@@ -339,7 +339,6 @@ T DecodeData(const uint8_t* data)
 	return (T(data[0]) << 8) | T(data[1]);
 }
 
-void DrawTrackSample(const TrackerSample& sample);
 
 void* TrackerThread::Run()
 {
@@ -397,9 +396,7 @@ void* TrackerThread::Run()
 
 		GCalibration.Apply(sample[0]);
 		GCalibration.Apply(sample[1]);
-
-		DrawTrackSample(sample[0]);
-
+		
 		uint64_t timeStamp = GetTicksNanos();
 		//UpdateGyroScope(sample[0].gyro, timeStamp);
 
