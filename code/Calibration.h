@@ -41,6 +41,38 @@ private:
 
 };
 
+
+
+
+class GyroTempCalibration
+{
+public:
+	void	Load();
+	void	Save();
+
+	struct DataEntry
+	{
+		uint32_t	version;
+		float		actualTemperature;
+		uint32_t	time;
+		Vector3f	offset;
+
+		DataEntry()
+		{
+			version = 2;
+		}
+	};
+
+	enum { GyroCalibrationNumBins = 7 };
+	enum { GyroCalibrationNumSamples = 5 };
+
+	DataEntry data_[GyroCalibrationNumBins][GyroCalibrationNumSamples];
+
+};
+
+
+
+
 extern Calibration GCalibration;
 
 }

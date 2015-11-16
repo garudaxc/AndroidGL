@@ -649,7 +649,6 @@ void Fancy3DKeepAlive()
 	//GLog.LogInfo("KeepAlive %d reallen %d", r, readlen);
 }
 
-void DrawTrackSample(const TrackerSample& sample);
 
 void* UsbDeviceThread::Run()
 {	

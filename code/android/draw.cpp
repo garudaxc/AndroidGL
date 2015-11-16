@@ -27,22 +27,6 @@ struct glState_t glState;
 #define TEST_MODEL 1
 
 
-class MyReceiver : public EventReceiver
-{
-public:
-
-	bool	OnEvent(const Event& event)	{
-		if (event.Type != Event::MouseMove)
-		{
-			GLog.LogInfo("%hd, %f %f", event.Type, event.fxPos, event.fyPos);
-		}
-		return true;
-	}
-
-};
-
-MyReceiver a;
-
 
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
 
@@ -75,6 +59,7 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 }
 
 int setupGraphics(int w, int h) {
+
 	GGlobalVarManager->Init();
 
 	GFileSys->SetRootPath("/sdcard/MyTest/", true);
@@ -115,16 +100,6 @@ int setupGraphics(int w, int h) {
 
 
 Matrix4f _GetDeviceRotationMatrix();
-
-TrackerSample drawSample;
-Vector3f smoothAccel_;
-
-void DrawTrackSample(const TrackerSample& sample)
-{
-	drawSample = sample;
-	float alpha = 0.01f;
-	smoothAccel_ = sample.accelerate * alpha + smoothAccel_ * (1.0f - alpha);
-}
 
 
 extern int readlen;
@@ -178,41 +153,10 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	}
 }
 
-
-
-void DrawCalibriation(int w, int h)
+namespace FancyTech
 {
-	float lineHeight = -30.0f;
-	Vector3f pos(10.f, h - 10.f, 0.f);
-
-	char buff[64];
-	sprintf(buff, "fps %.2f", Time.GetFPS());
-	bitmapFont.DrawString(&spriteBatch, buff, pos);
-
-	pos.y += lineHeight;
-	sprintf(buff, "samples %d", GCalibration.GetNumSamples());
-	bitmapFont.DrawString(&spriteBatch, buff, pos);
-	spriteBatch.Commit(w, h);
-
-	pos.y += lineHeight;
-	sprintf(buff, "accel    %+.4f %+.4f %+.4f", smoothAccel_.x, smoothAccel_.y, smoothAccel_.z);
-	bitmapFont.DrawString(&spriteBatch, buff, pos);
-
-	pos.y += lineHeight;
-	sprintf(buff, "gyro(c)  %+.4f %+.4f %+.4f", drawSample.gyro.x, drawSample.gyro.y, drawSample.gyro.z);
-	bitmapFont.DrawString(&spriteBatch, buff, pos);
-	spriteBatch.Commit(w, h);
-
-	pos.y += lineHeight;
-	if (GCalibration.IsCalibrated()){
-		Vector3f offset = GCalibration.GetOffest();
-		sprintf(buff, "Temperature %.2f offset (%.3f %.3f %.3f)", GCalibration.GetTemperature(), offset.x, offset.y, offset.z);
-		bitmapFont.DrawString(&spriteBatch, buff, pos);
-	}
-
-	spriteBatch.Commit(w, h);
+	void DrawCalibration(int w, int h, BitmapFont& bitmapFont, SpriteBatch& spriteBatch);
 }
-
 
 
 float lastTime = 0.f;
@@ -232,7 +176,7 @@ void renderFrame() {
 	//DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
 	//DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
 
-	DrawCalibriation(glState.width, glState.height);
+	DrawCalibration(glState.width, glState.height, bitmapFont, spriteBatch);
 
 	if (Time.GetTime() - lastTime > 1.f) {
 		GLog.LogInfo("fps %f time %f", Time.GetFPS(), Time.GetTime());

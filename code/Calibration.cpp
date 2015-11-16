@@ -174,7 +174,32 @@ namespace FancyTech
 		}
 
 		spriteBatch.Commit(w, h);
+
+
+		// 最新陀螺仪的矫正矩阵
+		//GyroMatrix = Matrix4f(
+		//	0.999407f, 0.024805f, 0.023882f, 0.f,
+		//	-0.020954f, 0.988222f, -0.149530f, 0.f,
+		//	-0.027318f, 0.148987f, 0.988462f, 0.f,
+		//	0.f, 0.f, 0.f, 1.f);
 	}
+
+
+
+
+
+
+
+	void GyroTempCalibration::Load()
+	{
+
+	}
+
+	void GyroTempCalibration::Save()
+	{
+	}
+
+
 
 
 	class LogGyroTransform : public EventReceiver
