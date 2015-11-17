@@ -2,6 +2,9 @@
 #include "Platfrom.h"
 #include "SensorDevice.h"
 #include "RingBuffer.h"
+#include <string>
+
+using namespace std;
 
 namespace FancyTech
 {
@@ -47,8 +50,11 @@ private:
 class GyroTempCalibration
 {
 public:
+	void	Init(const string& serial);
 	void	Load();
 	void	Save();
+
+	void	SetValue(float temperature, const Vector3f& offset);
 
 	struct DataEntry
 	{
@@ -63,10 +69,14 @@ public:
 		}
 	};
 
-	enum { GyroCalibrationNumBins = 7 };
-	enum { GyroCalibrationNumSamples = 5 };
+	enum { NumBins = 7 };
+	enum { NumSamples = 5 };
 
-	DataEntry data_[GyroCalibrationNumBins][GyroCalibrationNumSamples];
+
+
+private:
+	DataEntry data_[NumBins][NumSamples];
+	string		filename_;
 
 };
 
@@ -74,5 +84,5 @@ public:
 
 
 extern Calibration GCalibration;
-
+extern GyroTempCalibration  GGyroCalibration;
 }

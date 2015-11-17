@@ -5,6 +5,14 @@
 #include "Platfrom.h"
 #include "Timer.h"
 #include "Input.h"
+#include <time.h>
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h" // for stringify JSON
+#include "rapidjson/filewritestream.h"   // wrapper of C stream for prettywriter as output
+#include "FileSystem.h"
+#include <vector>
+#include <stdlib.h>
 
 namespace FancyTech
 {
@@ -184,20 +192,176 @@ namespace FancyTech
 		//	0.f, 0.f, 0.f, 1.f);
 	}
 
+	
+
+	void GyroTempCalibration::Init(const string& serial)
+	{
+		filename_ = string("GyroCalibration_") + serial + ".json";
+
+		uint32_t t = time(NULL);
+
+		for (int i = 0; i < NumBins; i++){
+			for (int j = 0; j < NumSamples; j++) {
+				DataEntry entry;
+				entry.version = 2;
+				entry.time = t - 3600 * 24 * 5 * j;
+				entry.actualTemperature = 30.f;
+				entry.offset = Vector3f::ZERO;
+
+				data_[i][j] = entry;
+			}
+		}
+
+		filename_ = "GyroCalibration_8D8651A65153.json";
+	}
 
 
+	void SplitString(vector<string>& tokens, const string& str)
+	{
+		char split = ' ';
+		size_t i = 0, j = 0;
+		while (true) {
+			j = str.find_first_of(split, i);
+			if (j == string::npos) {
+				string token = str.substr(i);
+				tokens.push_back(token);
+				break;
+			} else {
+				string token = str.substr(i, j - i);
+				tokens.push_back(token);
+				i = str.find_first_not_of(split, j);
+				if (i == string::npos) {
+					break;
+				}
+			}
+		}
+	}
 
 
+	uint32_t StringToUInt32(const string& token)
+	{
+		char * endptr;
+		uint32_t value = strtoul(token.c_str(), &endptr, 10);
+		return value;
+	}
 
+	float StringToFloat(const string& token)
+	{
+		char * endptr;
+		float value = strtof(token.c_str(), &endptr);
+		return value;
+	}
+
+	void GyroTempCalibration::SetValue(float temperature, const Vector3f& offset)
+	{
+		uint32_t t = time(NULL);
+		uint32_t timeout = 30;
+
+		for (int i = 0; i < NumBins; i++){
+			float targetTemperature = 15.f + i * 5.f;
+			if (Mathf::Abs(temperature - targetTemperature) > 1.f) {
+				continue;
+			}
+
+			for (int j = 0; j < NumSamples; j++) {
+				DataEntry& entry = data_[i][j];
+				if ((t - entry.time) < timeout) {
+					continue;
+				}
+
+				entry.version = 2;
+				entry.actualTemperature = temperature;
+				entry.time = t;
+				entry.offset = offset;
+			}
+		}
+	}
 
 	void GyroTempCalibration::Load()
 	{
+		File* file = GFileSys->OpenFile(filename_);
+		if (file == NULL) {
+			GLog.LogError("GyroTempCalibration::Load() failed! %s", filename_.c_str());
+			return;
+		}
 
+		vector<char> buffer(file->Size() + 1);
+		file->Read(&buffer[0], file->Size());
+		buffer[file->Size()] = '\0';
+		file->Close();
+		
+		typedef rapidjson::Document WDocument;
+		typedef rapidjson::Value WValue;
+
+		rapidjson::Document document;
+		document.Parse(&buffer[0]);
+
+		if (document.HasParseError()) {
+			rapidjson::ParseErrorCode err = document.GetParseError();
+			GLog.LogError("pares error! %d %d", err, document.GetErrorOffset());
+			return;
+		}
+
+		if (!document.IsObject()) {
+			printf("GyroTempCalibration::Load() error, not a object");
+			return;
+		}
+
+		int version = document["Calibration Version"].GetInt();
+		string data = document["Data"].GetString();
+
+		vector<string> tokens;
+		SplitString(tokens, data);
+
+		for (int i = 0; i < NumBins; i++){
+			for (int j = 0; j < NumSamples; j++) {
+				int index = i * 5 + j;
+				DataEntry& entry = data_[i][j];
+				entry.version =				StringToUInt32(tokens[index * 6 + 0].c_str());
+				entry.actualTemperature =	StringToFloat (tokens[index * 6 + 1].c_str());
+				entry.time =				StringToUInt32(tokens[index * 6 + 2].c_str());
+				entry.offset.x =			StringToFloat (tokens[index * 6 + 3].c_str());
+				entry.offset.y =			StringToFloat (tokens[index * 6 + 4].c_str());
+				entry.offset.z =			StringToFloat (tokens[index * 6 + 5].c_str());
+
+			}
+		}
 	}
 
 	void GyroTempCalibration::Save()
 	{
+		string data;
+		for (int i = 0; i < NumBins; i++){
+			for (int j = 0; j < NumSamples; j++) {				
+				const DataEntry& entry = data_[i][j];
+
+				char buffer[512];
+				sprintf(buffer, "%u %f %u %f %f %f ", entry.version, entry.actualTemperature, 
+					entry.time, entry.offset.x, entry.offset.y, entry.offset.z);
+				data += buffer;			
+			}
+		}
+
+		rapidjson::Document doc;
+		doc.SetObject().
+			AddMember("Calibration Version", rapidjson::Value(2), doc.GetAllocator()).
+			AddMember("Data", rapidjson::Value(data.c_str(), doc.GetAllocator()), doc.GetAllocator());		
+
+		char buffer[1024];
+		FILE* pf = fopen("D:/test/AndroidGL/resource/test.json", "wb+");
+		if (pf == NULL)	{
+			GLog.LogError("GyroTempCalibration::Save() failed");
+			return;
+		}
+
+		rapidjson::FileWriteStream f(pf, buffer, 1024);
+		rapidjson::PrettyWriter<rapidjson::FileWriteStream> writer(f);
+		doc.Accept(writer);
+
+		fclose(pf);
 	}
+
+	GyroTempCalibration  GGyroCalibration;
 
 
 
@@ -215,6 +379,8 @@ namespace FancyTech
 					Vector3f axis = gyroTransfrom_[i].axis;
 					GLog.LogInfo("%ff, %ff, %ff, 1.0f", axis.x, axis.y, axis.z);
 				}
+
+				GGyroCalibration.Save();
 			}
 			return true;
 		}

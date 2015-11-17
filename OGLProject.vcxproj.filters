@@ -24,6 +24,9 @@
     <Filter Include="源文件\thirdParty\stb_image">
       <UniqueIdentifier>{d35edbc5-97d8-4680-b2df-a21f397abba6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\thirdParty\rapidjson">
+      <UniqueIdentifier>{3df6a930-e2a1-4616-ace5-bb876cad9631}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\win\AuroraGL.h">
@@ -145,6 +148,54 @@
     </ClInclude>
     <ClInclude Include="code\Input.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\allocators.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\document.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\encodedstream.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\encodings.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\filereadstream.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\filewritestream.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\memorybuffer.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\memorystream.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\pointer.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\prettywriter.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\rapidjson.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\reader.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\stringbuffer.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\writer.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\msinttypes\inttypes.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\msinttypes\stdint.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

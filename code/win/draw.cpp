@@ -101,6 +101,10 @@ void LoadResource() {
 	//model = CreateModel("Box001.mesh", "2.png");
 	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	//Models.push_back(model);
+
+	GGyroCalibration.Init("");
+	GGyroCalibration.Load();
+
 	libUsbTest();
 }
 
