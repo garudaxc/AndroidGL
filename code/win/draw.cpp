@@ -102,8 +102,9 @@ void LoadResource() {
 	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	//Models.push_back(model);
 
-	GGyroCalibration.Init("");
+	GGyroCalibration.Init("8D8651A65153");
 	GGyroCalibration.Load();
+	GGyroCalibration.Save();
 
 	libUsbTest();
 }

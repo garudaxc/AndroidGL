@@ -712,7 +712,7 @@ void* UsbDeviceThread::Run()
 			uint16_t timestamp = DecodeData<uint16_t>(data);
 			data += 2;
 			
-			int16_t temperature = DecodeData<int16_t>(data) / 340.f + 36.53f;
+			float temperature = DecodeData<int16_t>(data) / 340.f + 36.53f;
 			data += 2;
 			
 			TrackerSample sample[2];

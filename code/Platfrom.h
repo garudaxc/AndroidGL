@@ -21,6 +21,9 @@ typedef unsigned char ubyte_t;
 
 #endif // WIN32
 
+#include <string>
+using namespace std;
+
 
 typedef struct tagRect_t
 {
@@ -33,14 +36,18 @@ typedef struct tagRect_t
 extern const char* vsInclude;
 extern const char* psInclude;
 
-void PlatfromInit();
-void PlatfromShutDown();
-
 void EnumGLConfig();
 
 uint64_t GetTicksNanos();
 uint32_t	GetTicksMS();
 
+class Platfrom
+{
+public:
+	static void	Init();
+	static void Shutdown();
 
+	static const string&	GetTempPath();
+};
 
 

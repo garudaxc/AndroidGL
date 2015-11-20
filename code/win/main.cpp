@@ -40,7 +40,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	LoadString(hInstance, IDC_OGLPROJECT, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	PlatfromInit();
+	Platfrom::Init();
 	// 执行应用程序初始化: 
 	if (!InitInstance (hInstance, nCmdShow))
 	{
@@ -71,7 +71,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	UnloadResource();
-	PlatfromShutDown();
+	Platfrom::Shutdown();
 	return (int) msg.wParam;
 }
 

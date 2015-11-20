@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <time.h>
+#include "Platfrom.h"
 
 namespace FancyTech
 {
@@ -22,8 +23,8 @@ namespace FancyTech
 	{
 		impl_ = new LogImpl;
 
-		const char* filename = "log.txt";
-		FILE* pf = fopen(filename, "w+");
+		string filename = Platfrom::GetTempPath() + "/log.txt";
+		FILE* pf = fopen(filename.c_str(), "w+");
 		if (pf == NULL) {
 			::exit(1);
 		}

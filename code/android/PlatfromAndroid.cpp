@@ -109,11 +109,18 @@ uint32_t GetTicksMS()
 
 
 
-
-void PlatfromInit()
+void Platfrom::Init()
 {
+
 }
 
-void PlatfromShutDown()
+void Platfrom::Shutdown()
 {
+
+}
+
+const string& Platfrom::GetTempPath()
+{
+	static string path("/sdcard/mytest");
+	return path;
 }

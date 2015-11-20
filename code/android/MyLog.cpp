@@ -31,21 +31,22 @@ namespace FancyTech
 	Log::Log(){
 		impl_ = new LogImpl;
 
-		const char* path = "/sdcard/mytest";
-		int r = access(path, F_OK);
+		const string path = Platfrom::GetTempPath();
+
+		int r = access(path.c_str(), F_OK);
 		if (r < 0){
-			LOGI("path %s not exist, create", path);
-			r = mkdir(path, 0770 /*S_IRWXU | S_IRWXG | S_IROTH | S_IWOTH*/);
+			LOGI("path %s not exist, create", path.c_str());
+			r = mkdir(path.c_str(), 0770 /*S_IRWXU | S_IRWXG | S_IROTH | S_IWOTH*/);
 			if (r < 0) {
-				LOGE("create dir %s failed errno(%d)", path, errno);
+				LOGE("create dir %s failed errno(%d)", path.c_str(), errno);
 			}
 			else {
-				LOGI("create dir %s", path);
+				LOGI("create dir %s", path.c_str());
 			}
 		}
 
 		char logfile[128];
-		sprintf(logfile, "%s/log.txt", path);
+		sprintf(logfile, "%s/log.txt", path.c_str());
 
 		FILE* pf = fopen(logfile, "w+");
 		if (pf == NULL) {
@@ -53,7 +54,7 @@ namespace FancyTech
 			::exit(1);
 		}
 
-		LOGI("create log file %s", logfile);
+		LOGI("create log file %s", path.c_str());
 		impl_->pf = pf;
 	}
 

@@ -114,7 +114,8 @@ uint32_t	GetTicksMS()
 	return (uint32_t)(GetTicksNanos() / 1000000);
 }
 
-void PlatfromInit()
+
+void Platfrom::Init()
 {
 	timeBeginPeriod(1);
 	InitializeCriticalSection(&TimeCS);
@@ -122,9 +123,14 @@ void PlatfromInit()
 	getFrequency();
 }
 
-void PlatfromShutDown()
+void Platfrom::Shutdown()
 {
 	DeleteCriticalSection(&TimeCS);
 	timeEndPeriod(1);
+}
 
+const string& Platfrom::GetTempPath()
+{
+	static string path(".");
+	return path;
 }

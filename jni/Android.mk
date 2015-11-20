@@ -25,7 +25,7 @@ $(LOCAL_PATH)/../code/thirdParty \
 $(LOCAL_PATH)/../code/thirdParty/libusb/src
 
 #macro for minzip
-LOCAL_CFLAGS := -DUSE_FILE32API
+LOCAL_CFLAGS := -DUSE_FILE32API -DRAPIDJSON_HAS_CXX11_RVALUE_REFS=0
 
 LOCAL_CPPFLAGS := -std=c++11
 

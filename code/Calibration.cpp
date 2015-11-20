@@ -91,6 +91,7 @@ namespace FancyTech
 			offset_ = MeanValue(samples_);
 			temperature_ = sample.temperature;
 			calibrated_ = true;
+			GGyroCalibration.SetValue(temperature_, offset_);
 		}
 
 		sample.gyro -= offset_;
@@ -197,22 +198,19 @@ namespace FancyTech
 	void GyroTempCalibration::Init(const string& serial)
 	{
 		filename_ = string("GyroCalibration_") + serial + ".json";
-
-		uint32_t t = time(NULL);
-
+		
 		for (int i = 0; i < NumBins; i++){
+			float temperature = 15.f + i * 5.f;
 			for (int j = 0; j < NumSamples; j++) {
 				DataEntry entry;
 				entry.version = 2;
-				entry.time = t - 3600 * 24 * 5 * j;
-				entry.actualTemperature = 30.f;
+				entry.time = 0;
+				entry.actualTemperature = temperature;
 				entry.offset = Vector3f::ZERO;
 
 				data_[i][j] = entry;
 			}
 		}
-
-		filename_ = "GyroCalibration_8D8651A65153.json";
 	}
 
 
@@ -252,28 +250,30 @@ namespace FancyTech
 		return value;
 	}
 
+
 	void GyroTempCalibration::SetValue(float temperature, const Vector3f& offset)
 	{
 		uint32_t t = time(NULL);
-		uint32_t timeout = 30;
 
 		for (int i = 0; i < NumBins; i++){
 			float targetTemperature = 15.f + i * 5.f;
-			if (Mathf::Abs(temperature - targetTemperature) > 1.f) {
+			if (Mathf::Abs(temperature - targetTemperature) > 0.1f) {
 				continue;
 			}
 
+			int oldest = 0;
 			for (int j = 0; j < NumSamples; j++) {
-				DataEntry& entry = data_[i][j];
-				if ((t - entry.time) < timeout) {
-					continue;
+				if (data_[i][oldest].time > data_[i][j].time) {
+					oldest = j;
 				}
-
-				entry.version = 2;
-				entry.actualTemperature = temperature;
-				entry.time = t;
-				entry.offset = offset;
 			}
+
+			DataEntry& entry = data_[i][oldest];
+
+			entry.version = 2;
+			entry.actualTemperature = temperature;
+			entry.time = t;
+			entry.offset = offset;
 		}
 	}
 
@@ -323,7 +323,6 @@ namespace FancyTech
 				entry.offset.x =			StringToFloat (tokens[index * 6 + 3].c_str());
 				entry.offset.y =			StringToFloat (tokens[index * 6 + 4].c_str());
 				entry.offset.z =			StringToFloat (tokens[index * 6 + 5].c_str());
-
 			}
 		}
 	}
@@ -343,12 +342,15 @@ namespace FancyTech
 		}
 
 		rapidjson::Document doc;
-		doc.SetObject().
-			AddMember("Calibration Version", rapidjson::Value(2), doc.GetAllocator()).
-			AddMember("Data", rapidjson::Value(data.c_str(), doc.GetAllocator()), doc.GetAllocator());		
+
+		rapidjson::Value v(data.c_str(), doc.GetAllocator());
+		doc.SetObject()
+			.AddMember("Calibration Version", 2, doc.GetAllocator())
+			.AddMember("Data", v, doc.GetAllocator());
 
 		char buffer[1024];
-		FILE* pf = fopen("D:/test/AndroidGL/resource/test.json", "wb+");
+		string name = Platfrom::GetTempPath() + "/test.json";
+		FILE* pf = fopen(name.c_str(), "wb+");
 		if (pf == NULL)	{
 			GLog.LogError("GyroTempCalibration::Save() failed");
 			return;
