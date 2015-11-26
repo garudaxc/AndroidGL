@@ -164,69 +164,69 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 
 	TextVert* vertex = &vert[0];
 	// 2d text
-	for (auto it = sprites_.begin(); it != sprites_.begin() + spriteCount_; ++it) {
-		if (it->is3d) {
+	for (const Sprite& it : sprites_) {
+		if (it.is3d) {
 			continue;
 		}
 
-		Vector3f pos = Modulate(it->pos, invViewPort) - Vector3f(1.0f, 1.0f, 0.f);
-		float w = it->w * invViewPort.x;
-		float h = it->h * invViewPort.y;
+		Vector3f pos = Modulate(it.pos, invViewPort) - Vector3f(1.0f, 1.0f, 0.f);
+		float w = it.w * invViewPort.x;
+		float h = it.h * invViewPort.y;
 		
 		vertex->pos = pos;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvLeft, it->uvTop);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvLeft, it.uvTop);
 		vertex++;
 
 		vertex->pos = pos + Vector3f(w, 0.f, 0.f);
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvRight, it->uvTop);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvRight, it.uvTop);
 		vertex++;
 
 		vertex->pos = pos + Vector3f(w, h, 0.f);
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvRight, it->uvBottom);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvRight, it.uvBottom);
 		vertex++;
 
 		vertex->pos = pos + Vector3f(0.f, h, 0.f);
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvLeft, it->uvBottom);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvLeft, it.uvBottom);
 		vertex++;
 	}
 	int vertex2d = vertex - &vert[0];
 
 	// 3d text
-	for (auto it = sprites_.begin(); it != sprites_.begin() + spriteCount_; ++it) {
-		if (!it->is3d) {
+	for (const Sprite& it : sprites_) {
+		if (!it.is3d) {
 			continue;
 		}
 
-		Vector3f pos = it->pos;
+		Vector3f pos = it.pos;
 
-		Vector3f right = Vector3f::UNIT_X * it->rotation;
-		Vector3f up = Vector3f::UNIT_Y * it->rotation;
+		Vector3f right = Vector3f::UNIT_X * it.rotation;
+		Vector3f up = Vector3f::UNIT_Y * it.rotation;
 
-		float w = it->w * invViewPort.x;
-		float h = it->h * invViewPort.y;
+		float w = it.w * invViewPort.x;
+		float h = it.h * invViewPort.y;
 
 		vertex->pos = pos;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvLeft, it->uvTop);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvLeft, it.uvTop);
 		vertex++;
 
-		vertex->pos = pos + right * it->w;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvRight, it->uvTop);
+		vertex->pos = pos + right * it.w;
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvRight, it.uvTop);
 		vertex++;
 
-		vertex->pos = pos + right * it->w + up * it->h;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvRight, it->uvBottom);
+		vertex->pos = pos + right * it.w + up * it.h;
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvRight, it.uvBottom);
 		vertex++;
 
-		vertex->pos = pos + up * it->h;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvLeft, it->uvBottom);
+		vertex->pos = pos + up * it.h;
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvLeft, it.uvBottom);
 		vertex++;
 	}
 

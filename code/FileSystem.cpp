@@ -67,8 +67,7 @@ namespace FancyTech
 		delete this;
 	}
 
-
-
+	
 
 	class FileInMemory : public File
 	{
@@ -262,9 +261,9 @@ namespace FancyTech
 
 		// search pak
 		unzFile pakFile = NULL;
-		for (auto it = paks_.begin(); it != paks_.end(); ++it) {
-			if (unzLocateFile(*it, name.c_str(), 0) == UNZ_OK) {
-				pakFile = *it;
+		for (auto it : paks_) {
+			if (unzLocateFile(it, name.c_str(), 0) == UNZ_OK) {
+				pakFile = it;
 				break;
 			}
 		}
@@ -308,8 +307,8 @@ namespace FancyTech
 			return true;
 		}
 
-		for (auto it = paks_.begin(); it != paks_.end(); ++it) {
-			if (unzLocateFile(*it, name.c_str(), 0) == UNZ_OK) {
+		for (auto it : paks_) {
+			if (unzLocateFile(it, name.c_str(), 0) == UNZ_OK) {
 				return true;
 			}
 		}
