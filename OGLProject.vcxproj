@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="code\audio\WavFile.h" />
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\BitmapFont.h" />
     <ClInclude Include="code\Calibration.h" />
@@ -69,6 +70,7 @@
     <ClInclude Include="code\win\wglew.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\audio\WavFile.cpp" />
     <ClCompile Include="code\BitmapFont.cpp" />
     <ClCompile Include="code\Calibration.cpp" />
     <ClCompile Include="code\CommandSystem.cpp" />

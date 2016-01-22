@@ -27,6 +27,9 @@
     <Filter Include="Source files\thirdParty\zip">
       <UniqueIdentifier>{77ba04e5-fde2-4348-bcab-0cd1b86a2116}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\audio">
+      <UniqueIdentifier>{e9a32fb6-1c5a-4337-baf3-a86ae8194b79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="jni\Android.mk">
@@ -118,6 +121,12 @@
     <ClInclude Include="code\Input.h">
       <Filter>Source files</Filter>
     </ClInclude>
+    <ClInclude Include="code\audio\audio.h">
+      <Filter>Source files\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="code\audio\WavFile.h">
+      <Filter>Source files\audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -200,6 +209,12 @@
     </ClCompile>
     <ClCompile Include="code\android\InputAndroid.cpp">
       <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\audio\WavFile.cpp">
+      <Filter>Source files\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="code\audio\audio.cpp">
+      <Filter>Source files\audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -17,6 +17,7 @@ public:
 	
 	RingBuffer() :capacity_(0), size_(0), first_(0), data_(NULL)
 	{
+		Realloc(64);
 	}
 
 	RingBuffer(size_type capacity) :capacity_(0), size_(0), first_(0), data_(NULL)

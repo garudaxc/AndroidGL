@@ -241,8 +241,7 @@ namespace FancyTech
 		if (rawPath.find(rootPath_) == 0) {
 			fullname = rawPath;
 			name = fullname.substr(rootPath_.length());
-		}
-		else {
+		} else {
 			fullname = rootPath_ + rawPath;
 			name = rawPath;
 		}

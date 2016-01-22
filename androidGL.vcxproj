@@ -79,6 +79,8 @@
   <ItemGroup>
     <ClInclude Include="code\android\AuroraGL.h" />
     <ClInclude Include="code\android\MessageQueue.h" />
+    <ClInclude Include="code\audio\audio.h" />
+    <ClInclude Include="code\audio\WavFile.h" />
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\BitmapFont.h" />
     <ClInclude Include="code\Calibration.h" />
@@ -114,6 +116,8 @@
     <ClCompile Include="code\android\MyLog.cpp" />
     <ClCompile Include="code\android\PlatfromAndroid.cpp" />
     <ClCompile Include="code\android\UsbDevice.cpp" />
+    <ClCompile Include="code\audio\audio.cpp" />
+    <ClCompile Include="code\audio\WavFile.cpp" />
     <ClCompile Include="code\AurMath.cpp" />
     <ClCompile Include="code\BitmapFont.cpp" />
     <ClCompile Include="code\Calibration.cpp" />
