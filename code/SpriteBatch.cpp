@@ -164,7 +164,8 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 
 	TextVert* vertex = &vert[0];
 	// 2d text
-	for (const Sprite& it : sprites_) {
+	for (int i = 0; i < spriteCount_; i++) {
+		Sprite& it = sprites_[i];
 		if (it.is3d) {
 			continue;
 		}
@@ -196,7 +197,8 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 	int vertex2d = vertex - &vert[0];
 
 	// 3d text
-	for (const Sprite& it : sprites_) {
+	for (int i = 0; i < spriteCount_; i++) {
+		Sprite& it = sprites_[i];
 		if (!it.is3d) {
 			continue;
 		}
@@ -233,6 +235,8 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 	int vertex3d = spriteCount_ * 4 - vertex2d;
 
 	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -245,12 +249,14 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 	glBindTexture(GL_TEXTURE_2D, sprites_.front().texture);
 
 	GShaderManager.SetUnifrom(SU_VIEWPROJ, Matrix4f::IDENTITY);
-	geometry_->Draw(vertex2d / 2 * 3, 0);
-
+	geometry_->Draw((vertex2d / 2) * 3, 0);
+	
 	GShaderManager.SetUnifrom(SU_VIEWPROJ, ViewProj);
-	geometry_->Draw(vertex3d / 2 * 3, vertex2d / 2 * 3);
+	geometry_->Draw((vertex3d / 2) * 3, (vertex2d / 2) * 3);
 
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 
 	spriteCount_ = 0;
