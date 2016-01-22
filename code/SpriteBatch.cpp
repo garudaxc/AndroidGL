@@ -164,7 +164,7 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 
 	TextVert* vertex = &vert[0];
 	// 2d text
-	for (int i = 0; i < spriteCount_; i++) {
+	for (uint32_t i = 0; i < spriteCount_; i++) {
 		Sprite& it = sprites_[i];
 		if (it.is3d) {
 			continue;
@@ -197,7 +197,7 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 	int vertex2d = vertex - &vert[0];
 
 	// 3d text
-	for (int i = 0; i < spriteCount_; i++) {
+	for (uint32_t i = 0; i < spriteCount_; i++) {
 		Sprite& it = sprites_[i];
 		if (!it.is3d) {
 			continue;
