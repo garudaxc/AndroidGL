@@ -368,28 +368,28 @@ namespace FancyTech
 
 
 
-	class LogGyroTransform : public EventReceiver
-	{
-	public:
+	//class LogGyroTransform : public EventReceiver
+	//{
+	//public:
 
-		bool	OnEvent(const Event& event)	{
-			if (event.Type == Event::LButtonUp ||
-				event.Type == Event::TouchUp)
-			{
-				GLog.LogInfo("GyroTransform");
-				for (int i = 0; i < 3; i++)	{
-					Vector3f axis = gyroTransfrom_[i].axis;
-					GLog.LogInfo("%ff, %ff, %ff, 1.0f", axis.x, axis.y, axis.z);
-				}
+	//	bool	OnEvent(const Event& event)	{
+	//		if (event.Type == Event::LButtonUp ||
+	//			event.Type == Event::TouchUp)
+	//		{
+	//			GLog.LogInfo("GyroTransform");
+	//			for (int i = 0; i < 3; i++)	{
+	//				Vector3f axis = gyroTransfrom_[i].axis;
+	//				GLog.LogInfo("%ff, %ff, %ff, 1.0f", axis.x, axis.y, axis.z);
+	//			}
 
-				GGyroCalibration.Save();
-			}
-			return true;
-		}
+	//			GGyroCalibration.Save();
+	//		}
+	//		return true;
+	//	}
 
-	};
+	//};
 
-	static LogGyroTransform logger;
+	//static LogGyroTransform logger;
 
 
 }

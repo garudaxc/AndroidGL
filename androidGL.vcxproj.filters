@@ -30,6 +30,9 @@
     <Filter Include="Source files\audio">
       <UniqueIdentifier>{e9a32fb6-1c5a-4337-baf3-a86ae8194b79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\thirdParty\etc1">
+      <UniqueIdentifier>{f7ac4371-42d8-41de-8891-c4aab1af7c5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="jni\Android.mk">
@@ -127,6 +130,12 @@
     <ClInclude Include="code\audio\WavFile.h">
       <Filter>Source files\audio</Filter>
     </ClInclude>
+    <ClInclude Include="code\TextureFormat.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\etc1\etc1.h">
+      <Filter>Source files\thirdParty\etc1</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\Model.cpp">
@@ -215,6 +224,9 @@
     </ClCompile>
     <ClCompile Include="code\audio\audio.cpp">
       <Filter>Source files\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\etc1\etc1.cpp">
+      <Filter>Source files\thirdParty\etc1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,6 @@ const char * EglErrorString(const EGLint err) {
 	}
 }
 
-
 struct EGLAttri
 {
 	int		id;
@@ -108,7 +107,6 @@ uint32_t GetTicksMS()
 //////////////////////////////////////////////////////////////////////////
 
 
-
 void Platfrom::Init()
 {
 
@@ -123,4 +121,62 @@ const string& Platfrom::GetTempPath()
 {
 	static string path("/sdcard/mytest");
 	return path;
+}
+
+
+///------------------------------------------------
+// gles api hook test
+
+
+
+extern "C"
+{
+	struct gl_hooks_t {
+		struct gl_t {
+			void* foo1;
+			void* foo2;
+		} gl;
+	};
+
+	GL_APICALL void GL_APIENTRY my_glActiveTexture(GLenum texture)
+	{
+		GLog.LogInfo("my_glActiveTexture %u", texture);
+	}
+
+#define TLS_SLOT_OPENGL_API		 3
+
+	void glesApiHookTest()
+	{
+		void *tls_base = NULL;
+
+		asm volatile(
+			"mrc p15, 0, r12, c13, c0, 3"	"\n\t"
+			"mov %0, r12"		"\n\t"
+			: "=r" (tls_base)
+			);
+
+		GLog.LogInfo("tls_base %p", tls_base);
+
+		if (tls_base == NULL) {
+			return;
+		}
+
+		gl_hooks_t * volatile * tls_hooks =
+			reinterpret_cast<gl_hooks_t * volatile *>(tls_base);
+		gl_hooks_t * hooks = tls_hooks[TLS_SLOT_OPENGL_API];
+
+		GLog.LogInfo("hooks %p", hooks);
+
+		void* origFunPtr = hooks->gl.foo2;
+		GLog.LogInfo("origFunPtr %p", origFunPtr);
+
+		// function list in android code/frameworks/Native/Opengl/Libs/Entries.in
+		hooks->gl.foo2 = (void*)my_glActiveTexture;
+
+		// will call to "my_glActiveTexture" function
+		glActiveTexture(999);
+
+		hooks->gl.foo2 = origFunPtr;
+	}
+
 }

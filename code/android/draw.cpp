@@ -18,6 +18,7 @@
 #include "Calibration.h"
 #include "FileSystem.h"
 #include "Input.h"
+#include "audio/audio.h"
 
 using namespace std;
 using namespace FancyTech;
@@ -58,6 +59,7 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 	return model;
 }
 
+
 int setupGraphics(int w, int h) {
 
 	GGlobalVarManager->Init();
@@ -95,6 +97,7 @@ int setupGraphics(int w, int h) {
 
 	checkGlError("CreateModel");
 	GLog.LogInfo("create model finished");
+
 	return 1;
 }
 
@@ -161,9 +164,59 @@ namespace FancyTech
 
 float lastTime = 0.f;
 
+bool audioInited = false;
+int	bpm_ = 0;
+bool toutched_ = false;
+
+class LogGyroTransform : public EventReceiver
+{
+public:
+
+	bool	OnEvent(const Event& event)	{
+		if (event.Type == Event::LButtonUp ||
+			event.Type == Event::TouchUp)
+		{
+			toutched_ = true;
+
+			if (!audioInited) {
+				bool succeeded = false;
+				if (event.fxPos < glState.width / 2) {
+					succeeded = GAudioSystem.Init("100bpm.wav");
+					bpm_ = 100;
+				} else {
+					succeeded = GAudioSystem.Init("140bpm.wav");
+					bpm_ = 140;
+				}
+
+				if (!succeeded)	{
+					GLog.LogInfo("Audio init failed");
+				} else {
+					audioInited = true;
+				}
+				
+				if (audioInited) {
+					GAudioSystem.Play();
+				}
+			}
+		}
+
+		return true;
+	}
+
+};
+
+static LogGyroTransform logger;
+
+
 void renderFrame() {
 
-	glClearColor(0.3f, 0.3f, 0.3f, 0);
+	Vector3f color = Vector3f::ZERO;
+	if (toutched_)	{
+		color = Vector3f::UNIT_X;
+		toutched_ = false;
+	}
+
+	glClearColor(color.x, color.y, color.z, 1.f);
 	glClearDepthf(1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -171,16 +224,34 @@ void renderFrame() {
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
-	float eyeDistance = EyeDistance.GetFloat();
+	float lineHeight = -30.0f;
+	Vector3f pos(10.f, glState.height - 10.f, 0.f);
 
-	//DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
-	//DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+	char buff[64];
+	sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
+	spriteBatch.Commit(glState.width, glState.height);
 
-	DrawCalibration(glState.width, glState.height, bitmapFont, spriteBatch);
-
-	if (Time.GetTime() - lastTime > 1.f) {
-		GLog.LogInfo("fps %f time %f", Time.GetFPS(), Time.GetTime());
-		lastTime = Time.GetTime();
+	if (!audioInited) {
+		return;
 	}
+
+	pos.Set(glState.width / 2, glState.height / 2, 0.f);
+	sprintf(buff, "%u", GAudioSystem.GetPosition());
+	bitmapFont.DrawString(&spriteBatch, buff, pos, 5);
+
+	//float eyeDistance = EyeDistance.GetFloat();
+
+	////DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	////DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+
+	//DrawCalibration(glState.width, glState.height, bitmapFont, spriteBatch);
+
+	//if (Time.GetTime() - lastTime > 1.f) {
+	//	GLog.LogInfo("fps %f time %f", Time.GetFPS(), Time.GetTime());
+	//	lastTime = Time.GetTime();
+	//}
 	
 }
+
+
