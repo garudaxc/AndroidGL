@@ -1,42 +1,49 @@
-
- 
 package com.xvr.aurora;
 
 import android.app.Activity;
+import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.KeyEvent;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 
 
-public class XVRActivity extends Activity {	
+public class XVRActivity extends Activity implements SurfaceHolder.Callback,  android.view.Choreographer.FrameCallback {	
 
     static {
         System.loadLibrary("aurora-native");
     }
 
-    GL2JNIView mView;
+    SurfaceView mView;
     public static String TAG = "aurora_MainActivity";
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mView = new GL2JNIView(getApplication());
+        //mView = new GL2JNIView(getApplication());
+        //setContentView(mView);
+        mView = new SurfaceView(this);        
         setContentView(mView);
+		mView.getHolder().addCallback( this );
 	
         nativeOnCreate();
         GL2JNILib.InitUsbDevice(this);
+        
+        startVsync(this, this);
     }
 
     @Override protected void onResume() {
         super.onResume();
-        mView.onResume();
+        //mView.onResume();
         
         nativeOnResume();
     }
     
     @Override protected void onPause() {
         super.onPause();
-        mView.onPause();
+        //mView.onPause();
         
         nativeOnPause();    
     }
@@ -104,5 +111,76 @@ public class XVRActivity extends Activity {
     protected static native void nativeOnPause();
     protected static native void nativeOnDestroy();
     protected static native void nativeOnEvent(int action, float x, float y);
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+		Surface sur = holder.getSurface();
+		Log.d(TAG, "surfaceChanged " + sur.toString());	
+
+        GL2JNILib.init(width, height, sur);	
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		Log.d(TAG, this + " surfaceCreated()");
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		Log.d(TAG, "surfaceDestroyed");
+		stopVsync(this, this);
+	}
+	
+	public static native void nativeVsync(long lastVsyncNano);
+
+	public static Choreographer choreographerInstance;
+
+	public static void startVsync( Activity act, final Choreographer.FrameCallback callback ) {
+    	act.runOnUiThread( new Thread()
+    	{
+		 @Override
+    		public void run()
+    		{
+				// Look this up now, so the callback (which will be on the same thread)
+				// doesn't have to.
+				choreographerInstance = Choreographer.getInstance();
+
+				// Make sure we never get multiple callbacks going.
+				choreographerInstance.removeFrameCallback(callback);
+
+				// Start up our vsync callbacks.
+				choreographerInstance.postFrameCallback(callback);
+    		}
+    	});
+		
+	}
+
+	// It is important to stop the callbacks when the app is paused,
+	// because they consume several percent of a cpu core!
+	public static void stopVsync( Activity act, final Choreographer.FrameCallback callback ) {
+		// This may not need to be run on the UI thread, but it doesn't hurt.
+    	act.runOnUiThread( new Thread()
+    	{
+		 @Override
+    		public void run()
+    		{
+				choreographerInstance.removeFrameCallback(callback);
+    		}
+    	});		
+	}
+
+	int frame = 0;
+	public void doFrame(long frameTimeNanos) {
+		//Log.d(TAG, "frame " + frame++);
+		//nativeVsync(frameTimeNanos);
+		
+        GL2JNILib.step();
+		choreographerInstance.postFrameCallback(this);
+	}
+	
     
 }

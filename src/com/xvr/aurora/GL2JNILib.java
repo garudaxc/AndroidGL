@@ -139,7 +139,7 @@ public class GL2JNILib {
 	 * @param height
 	 *            the current view height
 	 */
-	public static native void init(int width, int height);
+	public static native void init(int width, int height, Object surface);
 
 	public static native void step();
 
