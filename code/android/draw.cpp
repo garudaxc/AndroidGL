@@ -142,6 +142,7 @@ int setupGraphics(int w, int h) {
 	spriteBatch.Init(256);
 
 	ModelInstance* model = NULL;
+<<<<<<< HEAD
 	model = CreateModel("build_tower003.mesh", "1.png");
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
 	Models.push_back(model);
@@ -149,6 +150,15 @@ int setupGraphics(int w, int h) {
 	model = CreateModel("build_house008.mesh", "1.png");
 	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
 	Models.push_back(model);
+=======
+	model = CreateModel("build_tower003.mesh", "test.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
+	Models.push_back(model);
+
+	//model = CreateModel("build_house008.mesh", "1.png");
+	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
+	//Models.push_back(model);
+>>>>>>> etc1 support
 
 //#if TEST_MODEL
 //	model = CreateModel("Box01.mesh", "2.png");
@@ -179,7 +189,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	Matrix4f mView, mEyeOffset;
 
 #if TEST_MODEL
-	mView = Matrix4f::LookAtRH(Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
+	mView = Matrix4f::LookAtRH(Vector3f(0.f, -6.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
 #else
 	mView = _GetDeviceRotationMatrix();
 #endif
@@ -291,14 +301,15 @@ void renderFrame() {
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
-	float lineHeight = -30.0f;
-	Vector3f pos(10.f, glState.height - 10.f, 0.f);
+	//float lineHeight = -30.0f;
+	//Vector3f pos(10.f, glState.height - 10.f, 0.f);
 
-	char buff[64];
-	sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
-	bitmapFont.DrawString(&spriteBatch, buff, pos);
-	spriteBatch.Commit(glState.width, glState.height);
+	//char buff[64];
+	//sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
+	//bitmapFont.DrawString(&spriteBatch, buff, pos);
+	//spriteBatch.Commit(glState.width, glState.height);
 
+<<<<<<< HEAD
 	gyro_.x += 0.0001f;
 	gyro_.y -= 0.0001f;
 
@@ -324,6 +335,19 @@ void renderFrame() {
 	//pos.Set(glState.width / 2, glState.height / 2, 0.f);
 	//sprintf(buff, "%u", GAudioSystem.GetPosition());
 	//bitmapFont.DrawString(&spriteBatch, buff, pos, 5);
+=======
+	//if (!audioInited) {
+	//	return;
+	//}
+
+	//pos.Set(glState.width / 2, glState.height / 2, 0.f);
+	//sprintf(buff, "%u", GAudioSystem.GetPosition());
+	//bitmapFont.DrawString(&spriteBatch, buff, pos, 5);
+
+	float eyeDistance = EyeDistance.GetFloat();
+	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+>>>>>>> etc1 support
 
 	//DrawCalibration(glState.width, glState.height, bitmapFont, spriteBatch);
 

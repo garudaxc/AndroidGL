@@ -114,6 +114,7 @@
     <ClCompile Include="code\android\jniMain.cpp" />
     <ClCompile Include="code\android\MessageQueue.cpp" />
     <ClCompile Include="code\android\Sensor.cpp" />
+    <ClCompile Include="code\android\TextureFormat.cpp" />
     <ClCompile Include="code\android\Thread.cpp" />
     <ClCompile Include="code\android\TrackDropping.cpp" />
     <ClCompile Include="code\android\MyLog.cpp" />

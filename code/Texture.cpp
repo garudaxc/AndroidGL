@@ -4,6 +4,7 @@
 #include "thirdParty/stb/stb_image.h"
 #include "FileSystem.h"
 #include <vector>
+#include "TextureFormat.h"
 
 using namespace std;
 
@@ -193,9 +194,20 @@ namespace FancyTech
 		return true;
 	}
 
+	bool StrPostfix(const char* str, const char* fix)
+	{
+		const char* sub = strstr(str, fix);
+		if (sub != NULL && (sub - str) == strlen(str) - strlen(fix)) {
+			return true;
+		}
+
+		return false;
+	}
+
 
 	bool Texture::Load(const char* fileName)
 	{
+		target_ = GL_TEXTURE_2D;
 		int w, h, comp;
 
 		//ubyte_t* buffer = NULL;
@@ -214,6 +226,15 @@ namespace FancyTech
 		file->Read(&buffer[0], file->Size());
 		file->Close();
 
+		if (StrPostfix(fileName, ".pkm")) {
+			GLog.LogInfo("load pkm texture file!");
+
+			texId_ = LoadPKM(&buffer[0], buffer.size());
+			if (texId_ != 0) {
+				return true;
+			}
+		}
+
 		//stbi_uc * t = stbi_load(fileName, &w, &h, &comp, 0);
 		stbi_uc* t = stbi_load_from_memory(&buffer[0], buffer.size(), &w, &h, &comp, 0);
 		if (t == NULL){
@@ -227,7 +248,6 @@ namespace FancyTech
 			return false;
 		}
 
-		target_ = GL_TEXTURE_2D;
 		int format = 0;
 		if (comp == 3){
 			format = GL_RGB;
@@ -238,19 +258,25 @@ namespace FancyTech
 			format_ = RGBA8;
 		}
 
+		texId_ = CreateTexture(t, w, h, comp, comp * w);
+		if (texId_ != 0) {
+			stbi_image_free(t);
+			return true;
+		}
+
 		glGenTextures(1, &texId_);
 		glBindTexture(target_, texId_);
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexImage2D(target_, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, t);
 		checkGlError("glTexImage2D");
-		glGenerateMipmap(GL_TEXTURE_2D);
+		glGenerateMipmap(target_);
 
 		// Draw left quad with repeat wrap mode
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(target_, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(target_, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(target_, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+		glTexParameteri(target_, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glBindTexture(target_, 0);
 		stbi_image_free(t);

@@ -1,18 +1,9 @@
+#pragma once
 #include "Platfrom.h"
 #include "TextureFormat.h"
 
 namespace FancyTech
 {
-
-	enum TEXTURE_FORMAT
-	{
-		RGB8,
-		RGBA8,
-		ETC1,
-		ETC2,
-		DXT1,
-		DXT5,
-	};
 
 	class FrameBuffer;
 
