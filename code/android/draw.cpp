@@ -77,23 +77,23 @@ int setupGraphics(int w, int h) {
 	spriteBatch.Init(256);
 
 	ModelInstance* model = NULL;
-	//model = CreateModel("build_tower003.mesh", "1.png");
-	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
-	//Models.push_back(model);
-
-	//model = CreateModel("build_house008.mesh", "1.png");
-	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
-	//Models.push_back(model);
-
-#if TEST_MODEL
-	model = CreateModel("Box01.mesh", "2.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+	model = CreateModel("build_tower003.mesh", "1.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
 	Models.push_back(model);
-#else
-	model = CreateModel("Box001.mesh", "2.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+
+	model = CreateModel("build_house008.mesh", "1.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
 	Models.push_back(model);
-#endif
+
+//#if TEST_MODEL
+//	model = CreateModel("Box01.mesh", "2.png");
+//	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+//	Models.push_back(model);
+//#else
+//	model = CreateModel("Box001.mesh", "2.png");
+//	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+//	Models.push_back(model);
+//#endif
 
 	checkGlError("CreateModel");
 	GLog.LogInfo("create model finished");
@@ -144,15 +144,15 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 		glActiveTexture(GL_TEXTURE0);
 		(*it)->texture_.Bind();
-				
-		Model& mesh = (*it)->mesh_;
-		//mesh.Bind();
-		//for (int i = 0; i < mesh.GetElementCount(); i++) {
-		//	const ModelElement* e = mesh.GetElement(i);
 
-		//	void* index = (void*)(e->indexOffset * sizeof(unsigned short));
-		//	glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
-		//}
+		Model& mesh = (*it)->mesh_;
+		mesh.Bind();
+		for (int i = 0; i < mesh.GetElementCount(); i++) {
+			const ModelElement* e = mesh.GetElement(i);
+
+			void* index = (void*)(e->indexOffset * sizeof(unsigned short));
+			glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
+		}
 	}
 }
 
@@ -163,49 +163,49 @@ namespace FancyTech
 
 
 float lastTime = 0.f;
-
-bool audioInited = false;
-int	bpm_ = 0;
+//
+//bool audioInited = false;
+//int	bpm_ = 0;
 bool toutched_ = false;
+//
+//class LogGyroTransform : public EventReceiver
+//{
+//public:
+//
+//	bool	OnEvent(const Event& event)	{
+//		if (event.Type == Event::LButtonUp ||
+//			event.Type == Event::TouchUp)
+//		{
+//			toutched_ = true;
+//
+//			if (!audioInited) {
+//				bool succeeded = false;
+//				if (event.fxPos < glState.width / 2) {
+//					succeeded = GAudioSystem.Init("100bpm.wav");
+//					bpm_ = 100;
+//				} else {
+//					succeeded = GAudioSystem.Init("140bpm.wav");
+//					bpm_ = 140;
+//				}
+//
+//				if (!succeeded)	{
+//					GLog.LogInfo("Audio init failed");
+//				} else {
+//					audioInited = true;
+//				}
+//				
+//				if (audioInited) {
+//					GAudioSystem.Play();
+//				}
+//			}
+//		}
+//
+//		return true;
+//	}
+//
+//};
 
-class LogGyroTransform : public EventReceiver
-{
-public:
-
-	bool	OnEvent(const Event& event)	{
-		if (event.Type == Event::LButtonUp ||
-			event.Type == Event::TouchUp)
-		{
-			toutched_ = true;
-
-			if (!audioInited) {
-				bool succeeded = false;
-				if (event.fxPos < glState.width / 2) {
-					succeeded = GAudioSystem.Init("100bpm.wav");
-					bpm_ = 100;
-				} else {
-					succeeded = GAudioSystem.Init("140bpm.wav");
-					bpm_ = 140;
-				}
-
-				if (!succeeded)	{
-					GLog.LogInfo("Audio init failed");
-				} else {
-					audioInited = true;
-				}
-				
-				if (audioInited) {
-					GAudioSystem.Play();
-				}
-			}
-		}
-
-		return true;
-	}
-
-};
-
-static LogGyroTransform logger;
+//static LogGyroTransform logger;
 
 
 void renderFrame() {
@@ -227,23 +227,24 @@ void renderFrame() {
 	float lineHeight = -30.0f;
 	Vector3f pos(10.f, glState.height - 10.f, 0.f);
 
-	char buff[64];
-	sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
-	bitmapFont.DrawString(&spriteBatch, buff, pos);
-	spriteBatch.Commit(glState.width, glState.height);
+	//char buff[64];
+	//sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
+	//bitmapFont.DrawString(&spriteBatch, buff, pos);
+	//spriteBatch.Commit(glState.width, glState.height);
 
-	if (!audioInited) {
-		return;
-	}
+	float eyeDistance = EyeDistance.GetFloat();
 
-	pos.Set(glState.width / 2, glState.height / 2, 0.f);
-	sprintf(buff, "%u", GAudioSystem.GetPosition());
-	bitmapFont.DrawString(&spriteBatch, buff, pos, 5);
+	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
 
-	//float eyeDistance = EyeDistance.GetFloat();
+	//if (!audioInited) {
+	//	return;
+	//}
 
-	////DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
-	////DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+	//pos.Set(glState.width / 2, glState.height / 2, 0.f);
+	//sprintf(buff, "%u", GAudioSystem.GetPosition());
+	//bitmapFont.DrawString(&spriteBatch, buff, pos, 5);
+
 
 	//DrawCalibration(glState.width, glState.height, bitmapFont, spriteBatch);
 

@@ -632,7 +632,7 @@ void DK1Setup() {
 void Dk1KeekAlive()
 {
 	SensorKeepAliveImpl keepAlive;
-	keepAlive.KeepAliveIntervalMs = 1000;
+	keepAlive.KeepAliveIntervalMs = 3000;
 	keepAlive.CommandId = 0;
 	keepAlive.Pack();
 	
@@ -656,9 +656,14 @@ void* UsbDeviceThread::Run()
 	//int readLen = 0;
 	int r = 0;
 
+	Dk1KeekAlive();
+	GLog.LogInfo("UsbDeviceThread::Run()");
+
 	while (r == 0 && readlen >= 0 && Check()){
-;
-		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
+
+		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 10);
+
+		//GLog.LogInfo("libusb_bulk_transfer %d", readlen);
 
 		if (r < 0) {
 			GLog.LogError("libusb_bulk_transfer failed! %d", r);
@@ -691,6 +696,7 @@ void* UsbDeviceThread::Run()
 			sample.temperature = s.Temperature;
 
 			uint64_t timeStamp = GetTicksNanos();
+			UpdateGyroScope(sample.gyro, timeStamp);
 
 			sampleCount++;
 			if (timeStamp - lastTimeStamp > 1000000000)	{

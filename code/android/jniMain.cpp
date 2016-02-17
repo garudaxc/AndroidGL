@@ -145,6 +145,7 @@ extern "C" {
 			EGL_RED_SIZE, 8,
 			EGL_GREEN_SIZE, 8,
 			EGL_BLUE_SIZE, 8,
+			EGL_DEPTH_SIZE, 24,
 			// (ommiting other configs regarding the color channels etc...
 			EGL_NONE
 		};
@@ -201,8 +202,7 @@ extern "C" {
 		}
 
 		eglQuerySurface(display, surface, EGL_WIDTH, &w);
-		eglQuerySurface(display, surface, EGL_HEIGHT, &h);
-				
+		eglQuerySurface(display, surface, EGL_HEIGHT, &h);				
 
 		GLog.LogInfo("create device width = %d height = %d", w, h);
 
@@ -257,7 +257,7 @@ extern "C" {
 			return;
 		}
 		static int framecount = 0;
-		GLog.LogInfo("Java_com_xvr_aurora_GL2JNILib_step %d tid %d", framecount++, gettid());
+		//GLog.LogInfo("Java_com_xvr_aurora_GL2JNILib_step %d tid %d", framecount++, gettid());
 
 		eglMakeCurrent(display_, surface_, surface_, context_);
 

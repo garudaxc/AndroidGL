@@ -7,6 +7,9 @@ import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -22,6 +25,12 @@ public class XVRActivity extends Activity implements SurfaceHolder.Callback,  an
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+		
+        Window window = getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        window.setAttributes(params);
+
         //mView = new GL2JNIView(getApplication());
         //setContentView(mView);
         mView = new SurfaceView(this);        
