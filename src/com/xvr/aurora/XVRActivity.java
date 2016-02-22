@@ -17,6 +17,7 @@ import android.util.Log;
 public class XVRActivity extends Activity implements SurfaceHolder.Callback,  android.view.Choreographer.FrameCallback {	
 
     static {
+        System.loadLibrary("simplejni");
         System.loadLibrary("aurora-native");
     }
 

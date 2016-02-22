@@ -67,7 +67,7 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 int setupGraphics(int w, int h) {
 
 	GLog.LogInfo("begin setupGraphics");	
-	init(NULL, NULL, w, h, NULL);
+	//init(NULL, NULL, w, h, NULL);
 	GLog.LogInfo("after init");
 
 	GGlobalVarManager->Init();
@@ -172,8 +172,8 @@ namespace FancyTech
 
 float lastTime = 0.f;
 //
-//bool audioInited = false;
-//int	bpm_ = 0;
+bool audioInited = false;
+int	bpm_ = 0;
 bool toutched_ = false;
 //
 //class LogGyroTransform : public EventReceiver
@@ -236,15 +236,15 @@ void renderFrame() {
 	float lineHeight = -30.0f;
 	Vector3f pos(10.f, glState.height - 10.f, 0.f);
 
-	//char buff[64];
+	char buff[64];
 	//sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
 	//bitmapFont.DrawString(&spriteBatch, buff, pos);
 	//spriteBatch.Commit(glState.width, glState.height);
 
 
-	pos.Set(glState.width / 2, glState.height / 2, 0.f);
+	pos.Set(10.f, glState.height / 2, 0.f);
 	sprintf(buff, "%+.4f %+.4f %+.4f", gyro_.x, gyro_.y, gyro_.z);
-	bitmapFont.DrawString(&spriteBatch, buff, pos, 2.f);
+	bitmapFont.DrawString(&spriteBatch, buff, pos, 1.f);
 	spriteBatch.Commit(glState.width, glState.height);
 
 	if (!audioInited) {

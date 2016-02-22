@@ -14,10 +14,7 @@ import android.hardware.usb.*;
 
 public class GL2JNILib {
 
-	static {
-		System.loadLibrary("aurora-native");
-	}
-
+	
 	static UsbDeviceConnection connection = null;
 	UsbInterface intf = null;
 	UsbEndpoint endpoint = null;

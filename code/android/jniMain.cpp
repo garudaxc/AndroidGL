@@ -218,8 +218,8 @@ extern "C" {
 	}
 
 
-
-
+	
+	extern "C" JNIEXPORT EGLSurface JNICALL init2(EGLContext& cont, jint width, jint height);
 
 
 	JNIEXPORT void JNICALL Java_com_xvr_aurora_XVRActivity_nativeOnCreate(JNIEnv * env, jobject obj)
@@ -239,7 +239,10 @@ extern "C" {
 			display_ = eglGetCurrentDisplay();
 			//surface_ = CreateSurface(nativeWindow);
 
-			surface_ = engine_init_display(nativeWindow);
+			//surface_ = engine_init_display(nativeWindow);
+
+			surface_ = init2(context_, width, height);
+			GLog.LogInfo("surface_ = init2(width, height) %p", surface_);
 
 			if (surface_ != EGL_NO_SURFACE) {
 				//EGLContext contex = eglGetCurrentContext();
@@ -259,7 +262,7 @@ extern "C" {
 		static int framecount = 0;
 		//GLog.LogInfo("Java_com_xvr_aurora_GL2JNILib_step %d tid %d", framecount++, gettid());
 
-		//eglMakeCurrent(display_, surface_, surface_, context_);
+		eglMakeCurrent(display_, surface_, surface_, context_);
 
 		_UpdateTimer();
 		renderFrame();

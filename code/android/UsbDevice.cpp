@@ -663,7 +663,7 @@ void* UsbDeviceThread::Run()
 
 	while (r == 0 && readlen >= 0 && Check()){
 
-		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 10);
+		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
 
 		//GLog.LogInfo("libusb_bulk_transfer %d", readlen);
 
