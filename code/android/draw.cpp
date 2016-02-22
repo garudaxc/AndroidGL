@@ -19,6 +19,7 @@
 #include "FileSystem.h"
 #include "Input.h"
 #include "audio/audio.h"
+#include "jni.h"
 
 using namespace std;
 using namespace FancyTech;
@@ -30,6 +31,9 @@ struct glState_t glState;
 
 
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
+
+//extern "C" JNIEXPORT void JNICALL LibTest();
+extern "C" JNIEXPORT void JNICALL init(JNIEnv *env, jobject thiz, jint width, jint height, jobject surface);
 
 
 class ModelInstance
@@ -61,6 +65,10 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 
 
 int setupGraphics(int w, int h) {
+
+	GLog.LogInfo("begin setupGraphics");	
+	init(NULL, NULL, w, h, NULL);
+	GLog.LogInfo("after init");
 
 	GGlobalVarManager->Init();
 
@@ -207,6 +215,7 @@ public:
 
 static LogGyroTransform logger;
 
+extern Vector3f gyro_;
 
 void renderFrame() {
 
@@ -230,6 +239,12 @@ void renderFrame() {
 	char buff[64];
 	sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
 	bitmapFont.DrawString(&spriteBatch, buff, pos);
+	spriteBatch.Commit(glState.width, glState.height);
+
+
+	pos.Set(glState.width / 2, glState.height / 2, 0.f);
+	sprintf(buff, "%+.4f %+.4f %+.4f", gyro_.x, gyro_.y, gyro_.z);
+	bitmapFont.DrawString(&spriteBatch, buff, pos, 2.f);
 	spriteBatch.Commit(glState.width, glState.height);
 
 	if (!audioInited) {

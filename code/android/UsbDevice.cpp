@@ -649,6 +649,8 @@ void Fancy3DKeepAlive()
 	//GLog.LogInfo("KeepAlive %d reallen %d", r, readlen);
 }
 
+Vector3f gyro_;
+
 
 void* UsbDeviceThread::Run()
 {	
@@ -691,6 +693,7 @@ void* UsbDeviceThread::Run()
 			sample.temperature = s.Temperature;
 
 			uint64_t timeStamp = GetTicksNanos();
+			gyro_ = sample.gyro;
 
 			sampleCount++;
 			if (timeStamp - lastTimeStamp > 1000000000)	{

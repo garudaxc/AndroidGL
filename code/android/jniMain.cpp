@@ -257,9 +257,9 @@ extern "C" {
 			return;
 		}
 		static int framecount = 0;
-		GLog.LogInfo("Java_com_xvr_aurora_GL2JNILib_step %d tid %d", framecount++, gettid());
+		//GLog.LogInfo("Java_com_xvr_aurora_GL2JNILib_step %d tid %d", framecount++, gettid());
 
-		eglMakeCurrent(display_, surface_, surface_, context_);
+		//eglMakeCurrent(display_, surface_, surface_, context_);
 
 		_UpdateTimer();
 		renderFrame();
