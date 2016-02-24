@@ -145,7 +145,8 @@ extern "C" {
 			EGL_RED_SIZE, 8,
 			EGL_GREEN_SIZE, 8,
 			EGL_BLUE_SIZE, 8,
-			EGL_DEPTH_SIZE, 24,
+			EGL_ALPHA_SIZE, 8,
+			//EGL_DEPTH_SIZE, 24,
 			// (ommiting other configs regarding the color channels etc...
 			EGL_NONE
 		};
@@ -220,6 +221,7 @@ extern "C" {
 
 	
 	extern "C" JNIEXPORT EGLSurface JNICALL init2(EGLContext& cont, jint width, jint height);
+	extern "C" JNIEXPORT void JNICALL SetRenderToFrontBuffer(ANativeWindow * nativeWindow);
 
 
 	JNIEXPORT void JNICALL Java_com_xvr_aurora_XVRActivity_nativeOnCreate(JNIEnv * env, jobject obj)
@@ -239,9 +241,11 @@ extern "C" {
 			display_ = eglGetCurrentDisplay();
 			//surface_ = CreateSurface(nativeWindow);
 
-			//surface_ = engine_init_display(nativeWindow);
+			surface_ = engine_init_display(nativeWindow);
+			SetRenderToFrontBuffer(nativeWindow);
+			eglSwapBuffers(display_, surface_);
 
-			surface_ = init2(context_, width, height);
+			//surface_ = init2(context_, width, height);
 			GLog.LogInfo("surface_ = init2(width, height) %p", surface_);
 
 			if (surface_ != EGL_NO_SURFACE) {
@@ -268,15 +272,15 @@ extern "C" {
 		renderFrame();
 		glFinish();
 		glFlush();
-		EGLBoolean result = eglSwapBuffers(display_, surface_);
-		if (!result) {
-			GLog.LogError("eglSwapBuffers failed");
-			int w, h;
+		//EGLBoolean result = eglSwapBuffers(display_, surface_);
+		//if (!result) {
+		//	GLog.LogError("eglSwapBuffers failed");
+		//	int w, h;
 
-			eglQuerySurface(display_, surface_, EGL_WIDTH, &w);
-			eglQuerySurface(display_, surface_, EGL_HEIGHT, &h);
-			GLog.LogInfo("surface %d width = %d height = %d",surface_, w, h);
-		}
+		//	eglQuerySurface(display_, surface_, EGL_WIDTH, &w);
+		//	eglQuerySurface(display_, surface_, EGL_HEIGHT, &h);
+		//	GLog.LogInfo("surface %d width = %d height = %d",surface_, w, h);
+		//}
 	}
 
 
