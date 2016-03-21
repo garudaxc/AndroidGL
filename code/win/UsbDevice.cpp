@@ -48,9 +48,18 @@ static int perr(char const *format, ...)
 #define ERR_EXIT(errcode) do { perr("   %s\n", libusb_strerror((enum libusb_error)errcode)); return -1; } while (0)
 #define CALL_CHECK(fcall) do { r=fcall; if (r < 0) ERR_EXIT(r); } while (0);
 
-static int devicefd = -1;
-static libusb_device_handle * devHandle = NULL;
-static int devEndPoint = -1;
+//static libusb_device_handle * devHandle = NULL;
+//static int devEndPoint = -1;
+
+struct UsbChannel
+{
+	libusb_device_handle * handle;
+	int interfaceNum;
+	int endpoint;
+};
+
+UsbChannel	gyroDataChannel_;
+UsbChannel	hidInputChannel_;
 
 int PrintDeviceInfo(libusb_device_handle *handle)
 {
@@ -67,7 +76,6 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 		"480 Mbit/s (USB HighSpeed)", "5000 Mbit/s (USB SuperSpeed)"};
 	char string[128];
 	uint8_t string_index[3];	// indexes of the string descriptors
-	uint8_t endpoint_in = 0, endpoint_out = 0;	// default IN and OUT endpoints
 
 	//GLog.LogInfo("Opening device %04X:%04X...\n", vid, pid);
 	//handle = libusb_open_device_with_vid_pid(NULL, vid, pid);
@@ -147,15 +155,15 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 				endpoint = &conf_desc->usb_interface[i].altsetting[j].endpoint[k];
 				GLog.LogInfo("       endpoint[%d].address: %02X", k, endpoint->bEndpointAddress);
 				// Use the first interrupt or bulk IN/OUT endpoints as default for testing
-				if ((endpoint->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) & (LIBUSB_TRANSFER_TYPE_BULK | LIBUSB_TRANSFER_TYPE_INTERRUPT)) {
-					if (endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
-						if (!endpoint_in)
-							endpoint_in = endpoint->bEndpointAddress;
-					} else {
-						if (!endpoint_out)
-							endpoint_out = endpoint->bEndpointAddress;
-					}
-				}
+				//if ((endpoint->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) & (LIBUSB_TRANSFER_TYPE_BULK | LIBUSB_TRANSFER_TYPE_INTERRUPT)) {
+				//	if (endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
+				//		if (!endpoint_in)
+				//			endpoint_in = endpoint->bEndpointAddress;
+				//	} else {
+				//		if (!endpoint_out)
+				//			endpoint_out = endpoint->bEndpointAddress;
+				//	}
+				//}
 				GLog.LogInfo("           max packet size: %04X", endpoint->wMaxPacketSize);
 				GLog.LogInfo("          polling interval: %02X", endpoint->bInterval);
 				libusb_get_ss_endpoint_companion_descriptor(NULL, endpoint, &ep_comp);
@@ -163,6 +171,26 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 					GLog.LogInfo("                 max burst: %02X   (USB 3.0)", ep_comp->bMaxBurst);
 					GLog.LogInfo("        bytes per interval: %04X (USB 3.0)", ep_comp->wBytesPerInterval);
 					libusb_free_ss_endpoint_companion_descriptor(ep_comp);
+				}
+
+				if (conf_desc->usb_interface[i].altsetting[j].bInterfaceClass == LIBUSB_CLASS_DATA &&
+					conf_desc->usb_interface[i].altsetting[j].bInterfaceSubClass == 0x00 &&
+					conf_desc->usb_interface[i].altsetting[j].bInterfaceProtocol == 0x00 && 
+					endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
+					gyroDataChannel_.handle = handle;
+					gyroDataChannel_.interfaceNum = conf_desc->usb_interface[i].altsetting[j].bInterfaceNumber;
+					gyroDataChannel_.endpoint = endpoint->bEndpointAddress;
+					GLog.LogInfo("found gyroDataChannel_  endpoint %02X", endpoint->bEndpointAddress);
+				}
+
+				if (conf_desc->usb_interface[i].altsetting[j].bInterfaceClass == LIBUSB_CLASS_HID &&
+					conf_desc->usb_interface[i].altsetting[j].bInterfaceSubClass == 0x00 &&
+					conf_desc->usb_interface[i].altsetting[j].bInterfaceProtocol == 0x00 &&
+					endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
+					hidInputChannel_.handle = handle;
+					hidInputChannel_.interfaceNum = conf_desc->usb_interface[i].altsetting[j].bInterfaceNumber;
+					hidInputChannel_.endpoint = endpoint->bEndpointAddress;
+					GLog.LogInfo("found hidInputChannel_ endpoint %02X", endpoint->bEndpointAddress);
 				}
 			}
 		}
@@ -180,7 +208,7 @@ void Fancy3DKeepAlive()
 {
 	uint8_t buffer = 0x31;
 	int readlen = 0;
-	int r = libusb_bulk_transfer(devHandle, 0x03, &buffer, 1, &readlen, 0);
+	int r = libusb_bulk_transfer(gyroDataChannel_.handle, 0x03, &buffer, 1, &readlen, 0);
 	//GLog.LogInfo("KeepAlive %d reallen %d", r, readlen);
 }
 
@@ -217,10 +245,48 @@ int OpenTrackerDevice(libusb_device_handle *handle)
 	return 0;
 }
 
+int OpenTrackerDevice(const UsbChannel* channel)
+{
+	if (channel->handle == NULL) {
+		return -1;
+	}
+
+	GLog.LogInfo("open usb devices channel interface %x endpoint %x", channel->interfaceNum, channel->endpoint);
+
+	if (libusb_kernel_driver_active(channel->handle, channel->interfaceNum) == 1) {
+
+		GLog.LogInfo("driver is active");
+
+		if (!libusb_detach_kernel_driver(channel->handle, channel->interfaceNum)) {
+			GLog.LogInfo("Detached kernel driver");
+		}
+		else {
+			GLog.LogInfo("Detaching kernel driver failed!");
+			return -1;
+		}
+	}
+
+	int r = libusb_claim_interface(channel->handle, channel->interfaceNum);
+	if (r != LIBUSB_SUCCESS) {
+		GLog.LogInfo(" libusb_claim_interface Failed. %d", r);
+		return -1;
+	}
+
+	//uint8_t buffer[128];
+	//int readLen = 0;
+	//r = libusb_bulk_transfer(handle, endpoint_in, buffer, 128, &readLen, 0);
+	//GLog.LogInfo("read r = %d length %d", r, readLen);
+
+	return 0;
+}
+
 
 
 int libUsbTest()
 {
+	memset(&gyroDataChannel_, 0, sizeof(gyroDataChannel_));
+	memset(&hidInputChannel_, 0, sizeof(hidInputChannel_));
+
 	libusb_context* context = NULL;
 	int status = libusb_init(&context);
 	if (status != LIBUSB_SUCCESS){
@@ -230,7 +296,6 @@ int libUsbTest()
 		GLog.LogError("context error NULL");
 		return LIBUSB_ERROR_OTHER;
 	}
-
 
 	libusb_device* device = NULL;
 	libusb_device **list;
@@ -254,6 +319,11 @@ int libUsbTest()
 			deviceFound++;
 			device = list[i];
 		}
+
+		if ((dd.idVendor == 0x483 && dd.idProduct == 0x5750)) {
+			deviceFound++;
+			device = list[i];
+		}
 	}
 
 	if (device == NULL) {
@@ -273,10 +343,12 @@ int libUsbTest()
 
 	PrintDeviceInfo(handle);
 
-	devHandle = handle;
-	devEndPoint = 0x81;
+	OpenTrackerDevice(gyroDataChannel_.handle);
+	//OpenTrackerDevice(&gyroDataChannel_);
+	//OpenTrackerDevice(&hidInputChannel_);
 
-	if (OpenTrackerDevice(handle) < 0) {
+	if (OpenTrackerDevice(&gyroDataChannel_) < 0 ||
+		OpenTrackerDevice(&hidInputChannel_) < 0) {
 		libusb_close(handle);
 	} else {
 		StartTrackerThread();
@@ -350,7 +422,7 @@ void* TrackerThread::Run()
 
 	while (r == 0 && readlen >= 0 && Check()){
 
-		r = libusb_bulk_transfer(devHandle, devEndPoint, buffer, 128, &readlen, 0);
+		r = libusb_bulk_transfer(gyroDataChannel_.handle, gyroDataChannel_.endpoint, buffer, 128, &readlen, 0);
 
 		if (r < 0) {
 			GLog.LogError("libusb_bulk_transfer failed! %d", r);
@@ -432,4 +504,33 @@ void StopTrackerThread()
 {
 	trackerThread.Stop();
 
+}
+
+
+
+
+class HIDInputThread : public Thread
+{
+public:
+	HIDInputThread();
+	~HIDInputThread();
+
+	virtual void*		Run();
+private:
+
+};
+
+HIDInputThread::HIDInputThread() :Thread("HIDInputThread")
+{
+}
+
+HIDInputThread::~HIDInputThread()
+{
+}
+
+
+void* HIDInputThread::Run()
+{
+
+	return NULL;
 }
