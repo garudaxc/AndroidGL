@@ -70,7 +70,7 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 	struct libusb_config_descriptor *conf_desc;
 	const struct libusb_endpoint_descriptor *endpoint;
 	int i, j, k, r;
-	int nb_ifaces, first_iface = -1;
+	int nb_ifaces;
 	struct libusb_device_descriptor dev_desc;
 	const char* speed_name[5] = { "Unknown", "1.5 Mbit/s (USB LowSpeed)", "12 Mbit/s (USB FullSpeed)",
 		"480 Mbit/s (USB HighSpeed)", "5000 Mbit/s (USB SuperSpeed)"};
@@ -131,8 +131,6 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 	CALL_CHECK(libusb_get_config_descriptor(dev, 0, &conf_desc));
 	nb_ifaces = conf_desc->bNumInterfaces;
 	GLog.LogInfo("             nb interfaces: %d", nb_ifaces);
-	if (nb_ifaces > 0)
-		first_iface = conf_desc->usb_interface[0].altsetting[0].bInterfaceNumber;
 	for (i=0; i<nb_ifaces; i++) {
 		GLog.LogInfo("              interface[%d]: id = %d", i,
 			conf_desc->usb_interface[i].altsetting[0].bInterfaceNumber);
@@ -179,6 +177,7 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 					endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
 					gyroDataChannel_.handle = handle;
 					gyroDataChannel_.interfaceNum = conf_desc->usb_interface[i].altsetting[j].bInterfaceNumber;
+					//gyroDataChannel_.interfaceNum = 0;
 					gyroDataChannel_.endpoint = endpoint->bEndpointAddress;
 					GLog.LogInfo("found gyroDataChannel_  endpoint %02X", endpoint->bEndpointAddress);
 				}
@@ -201,7 +200,7 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 }
 
 void StartTrackerThread();
-
+void StartHIDInputThread();
 
 
 void Fancy3DKeepAlive()
@@ -209,7 +208,9 @@ void Fancy3DKeepAlive()
 	uint8_t buffer = 0x31;
 	int readlen = 0;
 	int r = libusb_bulk_transfer(gyroDataChannel_.handle, 0x03, &buffer, 1, &readlen, 0);
-	//GLog.LogInfo("KeepAlive %d reallen %d", r, readlen);
+	if (r < 0) {
+		GLog.LogInfo("Fancy3DKeepAlive failed %d reallen %d", r, readlen);
+	}
 }
 
 int OpenTrackerDevice(libusb_device_handle *handle)
@@ -343,15 +344,21 @@ int libUsbTest()
 
 	PrintDeviceInfo(handle);
 
-	OpenTrackerDevice(gyroDataChannel_.handle);
+	//OpenTrackerDevice(gyroDataChannel_.handle);
 	//OpenTrackerDevice(&gyroDataChannel_);
 	//OpenTrackerDevice(&hidInputChannel_);
 
-	if (OpenTrackerDevice(&gyroDataChannel_) < 0 ||
-		OpenTrackerDevice(&hidInputChannel_) < 0) {
+	//if (OpenTrackerDevice(&gyroDataChannel_) < 0) {
+	//	libusb_close(handle);
+	//} else {
+	//	StartTrackerThread();
+	//}
+
+	if (OpenTrackerDevice(&hidInputChannel_) < 0) {
 		libusb_close(handle);
-	} else {
-		StartTrackerThread();
+	}
+	else {
+		StartHIDInputThread();
 	}
 
 	return 0;
@@ -409,6 +416,11 @@ template<class T>
 T DecodeData(const uint8_t* data)
 {
 	return (T(data[0]) << 8) | T(data[1]);
+}
+
+uint32_t ComposeData(const uint8_t* data)
+{
+	return (uint32_t)data[0] << 24 | (uint32_t)data[1] << 16 | (uint32_t)data[2] << 8 | (uint32_t)data[3];
 }
 
 
@@ -531,6 +543,55 @@ HIDInputThread::~HIDInputThread()
 
 void* HIDInputThread::Run()
 {
+	GLog.LogInfo("start hidInpuThread thread!");
+	uint8_t buffer[128];
+	//int readLen = 0;
+	int r = 0;
+	
+	while (r == 0 && readlen >= 0 && Check()){
+
+		r = libusb_interrupt_transfer(hidInputChannel_.handle, hidInputChannel_.endpoint, buffer, 128, &readlen, 0);
+
+		if (r < 0) {
+			GLog.LogError("libusb_bulk_transfer failed! %d", r);
+			break;
+		}
+
+		//assert(readlen == sizeof(SensorDeviceSample));
+		//SensorDeviceSample sample;
+		
+		char text[128];
+		char* p = text;
+		for (int i = 0; i < readlen; i++) {
+			sprintf(p, "%02X", buffer[i]);
+			p += 2;
+		}
+		*(p - 1) = '\0';
+		GLog.LogInfo("HIDInput readed r %d readLen %d %s", r, readlen, text);
+
+		uint64_t timeStamp = GetTicksNanos();
+		//UpdateGyroScope(sample[0].gyro, timeStamp);
+
+		sampleCount++;
+		if (timeStamp - lastTimeStamp > 1000000000)	{
+			float freq = ((sampleCount - lastSampleCount) * 1000000000.f) / (timeStamp - lastTimeStamp);
+			lastSampleCount = sampleCount;
+			lastTimeStamp = timeStamp;
+
+			GLog.LogInfo("freq %.2f", freq);
+		}
+	}
 
 	return NULL;
+}
+
+
+
+static HIDInputThread hidInpuThread_;
+
+static void StartHIDInputThread()
+{
+	if (!hidInpuThread_.Create()) {
+		GLog.LogError("create hidInpuThread thread failed!");
+	}
 }
