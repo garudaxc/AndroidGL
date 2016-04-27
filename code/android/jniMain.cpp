@@ -242,11 +242,14 @@ extern "C" {
 			//surface_ = CreateSurface(nativeWindow);
 
 			surface_ = engine_init_display(nativeWindow);
+
+#ifdef USE_FRONT_BUFFER
 			SetRenderToFrontBuffer(nativeWindow);
+#endif
 			eglSwapBuffers(display_, surface_);
 
 			//surface_ = init2(context_, width, height);
-			GLog.LogInfo("surface_ = init2(width, height) %p", surface_);
+			//GLog.LogInfo("surface_ = init2(width, height) %p", surface_);
 
 			if (surface_ != EGL_NO_SURFACE) {
 				//EGLContext contex = eglGetCurrentContext();
@@ -272,15 +275,18 @@ extern "C" {
 		renderFrame();
 		glFinish();
 		glFlush();
-		//EGLBoolean result = eglSwapBuffers(display_, surface_);
-		//if (!result) {
-		//	GLog.LogError("eglSwapBuffers failed");
-		//	int w, h;
 
-		//	eglQuerySurface(display_, surface_, EGL_WIDTH, &w);
-		//	eglQuerySurface(display_, surface_, EGL_HEIGHT, &h);
-		//	GLog.LogInfo("surface %d width = %d height = %d",surface_, w, h);
-		//}
+#ifndef USE_FRONT_BUFFER
+		EGLBoolean result = eglSwapBuffers(display_, surface_);
+		if (!result) {
+			GLog.LogError("eglSwapBuffers failed");
+			int w, h;
+
+			eglQuerySurface(display_, surface_, EGL_WIDTH, &w);
+			eglQuerySurface(display_, surface_, EGL_HEIGHT, &h);
+			GLog.LogInfo("surface %d width = %d height = %d", surface_, w, h);
+		}
+#endif
 	}
 
 
