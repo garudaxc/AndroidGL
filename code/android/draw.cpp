@@ -63,13 +63,77 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 	return model;
 }
 
+void MemoryTest()
+{
+	GLuint		vbo_;
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 1024 * 1024, NULL, GL_STATIC_DRAW);
+
+	uint8_t* buff = new uint8_t[4 * 1024 * 1024];
+
+
+
+	uint32_t target_ = GL_TEXTURE_2D;
+	int format = GL_RGBA;
+	GLuint texId_ = 0;
+
+	glGenTextures(1, &texId_);
+	glBindTexture(target_, texId_);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(target_, 0, format, 1024, 1024, 0, format, GL_UNSIGNED_BYTE, buff);
+	checkGlError("glTexImage2D");
+	//glGenerateMipmap(GL_TEXTURE_2D);
+
+	// Draw left quad with repeat wrap mode
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(target_, 0);
+
+
+	GLuint framebuffer;
+	GLuint depthRenderbuffer;
+	GLuint texture;
+	GLint texWidth = 1024, texHeight = 1024;
+	GLint maxRenderbufferSize;
+
+	// generate the framebuffer, renderbuffer, and texture object names
+	glGenFramebuffers(1, &framebuffer);
+	glGenRenderbuffers(1, &depthRenderbuffer);
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// bind renderbuffer and create a 16-bit depth buffer
+	// width and height of renderbuffer = width and height of
+	// the texture
+	glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, texWidth, texHeight);
+	// bind the framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	// specify texture as color attachment
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+	// specify depth_renderbufer as depth attachment
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+
+
+}
+
 
 int setupGraphics(int w, int h) {
+	//MemoryTest();
 
 	GLog.LogInfo("begin setupGraphics");	
 	//init(NULL, NULL, w, h, NULL);
 	GLog.LogInfo("after init");
-
+	
 	GGlobalVarManager->Init();
 
 	GFileSys->SetRootPath("/sdcard/MyTest/", true);
@@ -139,10 +203,11 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 #if TEST_MODEL
 		Matrix4f mWorld = _GetDeviceRotationMatrix();
+		mWorld = Matrix4f::IDENTITY;
 #else
 		Matrix4f mWorld = Matrix4f::IDENTITY;
 #endif
-		//mWorld = (*it)->transform_;
+		mWorld = (*it)->transform_;
 
 		GShaderManager.Bind(ShaderDiffuse);
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld);
@@ -175,51 +240,51 @@ float lastTime = 0.f;
 bool audioInited = false;
 int	bpm_ = 0;
 bool toutched_ = false;
-//
-//class LogGyroTransform : public EventReceiver
-//{
-//public:
-//
-//	bool	OnEvent(const Event& event)	{
-//		if (event.Type == Event::LButtonUp ||
-//			event.Type == Event::TouchUp)
-//		{
-//			toutched_ = true;
-//
-//			if (!audioInited) {
-//				bool succeeded = false;
-//				if (event.fxPos < glState.width / 2) {
-//					succeeded = GAudioSystem.Init("100bpm.wav");
-//					bpm_ = 100;
-//				} else {
-//					succeeded = GAudioSystem.Init("140bpm.wav");
-//					bpm_ = 140;
-//				}
-//
-//				if (!succeeded)	{
-//					GLog.LogInfo("Audio init failed");
-//				} else {
-//					audioInited = true;
-//				}
-//				
-//				if (audioInited) {
-//					GAudioSystem.Play();
-//				}
-//			}
-//		}
-//
-//		return true;
-//	}
-//
-//};
 
-//static LogGyroTransform logger;
+class LogGyroTransform : public EventReceiver
+{
+public:
+
+	bool	OnEvent(const Event& event)	{
+		if (event.Type == Event::LButtonUp ||
+			event.Type == Event::TouchUp)
+		{
+			toutched_ = true;
+
+			/*if (!audioInited) {
+				bool succeeded = false;
+				if (event.fxPos < glState.width / 2) {
+					succeeded = GAudioSystem.Init("100bpm.wav");
+					bpm_ = 100;
+				} else {
+					succeeded = GAudioSystem.Init("140bpm.wav");
+					bpm_ = 140;
+				}
+
+				if (!succeeded)	{
+					GLog.LogInfo("Audio init failed");
+				} else {
+					audioInited = true;
+				}
+				
+				if (audioInited) {
+					GAudioSystem.Play();
+				}
+			}*/
+		}
+
+		return true;
+	}
+
+};
+
+static LogGyroTransform logger;
 
 extern Vector3f gyro_;
 
 void renderFrame() {
 
-	Vector3f color = Vector3f::ZERO;
+	Vector3f color(0.5f, 0.5f, 1.f);
 	if (toutched_)	{
 		color = Vector3f::UNIT_X;
 		toutched_ = false;
@@ -237,23 +302,28 @@ void renderFrame() {
 	Vector3f pos(10.f, glState.height - 10.f, 0.f);
 
 	char buff[64];
-	//sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
-	//bitmapFont.DrawString(&spriteBatch, buff, pos);
-	//spriteBatch.Commit(glState.width, glState.height);
-
-
-	pos.Set(10.f, glState.height / 2, 0.f);
-	sprintf(buff, "%+.4f %+.4f %+.4f", gyro_.x, gyro_.y, gyro_.z);
-	bitmapFont.DrawString(&spriteBatch, buff, pos, 1.f);
+	sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
+	bitmapFont.DrawString(&spriteBatch, buff, pos);
 	spriteBatch.Commit(glState.width, glState.height);
+
+	gyro_.x += 0.0001f;
+	gyro_.y -= 0.0001f;
+
+	//pos.Set(10.f, glState.height / 2, 0.f);
+	//sprintf(buff, "%+.4f %+.4f %+.4f", gyro_.x, gyro_.y, gyro_.z);
+
+
+	//bitmapFont.DrawString(&spriteBatch, buff, pos, 3.f);
+	//spriteBatch.Commit(glState.width, glState.height);
 
 	if (!audioInited) {
 		return;
 	}
 	float eyeDistance = EyeDistance.GetFloat();
 
-	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
-	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+	//DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	//DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+	DrawView(0, 0, glState.width, glState.height, 0);
 
 	//if (!audioInited) {
 	//	return;

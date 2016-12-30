@@ -17,7 +17,6 @@ import android.util.Log;
 public class XVRActivity extends Activity implements SurfaceHolder.Callback,  android.view.Choreographer.FrameCallback {	
 
     static {
-        System.loadLibrary("simplejni");
         System.loadLibrary("aurora-native");
     }
 
@@ -26,7 +25,7 @@ public class XVRActivity extends Activity implements SurfaceHolder.Callback,  an
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-		
+
         Window window = getWindow();
         WindowManager.LayoutParams params = window.getAttributes();
         params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;

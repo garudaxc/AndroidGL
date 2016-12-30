@@ -2,6 +2,7 @@
 *.sdf
 *.user
 *.suo
+build/*
 bin/*
 obj/*
 libs/*

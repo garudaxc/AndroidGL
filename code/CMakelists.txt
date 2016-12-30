@@ -1,0 +1,30 @@
+
+project(AndroidGL)
+
+set(PROJ_NAME AndroidGL)
+
+message("MSVC10 " ${MSVC10})
+message("MSVC11 " ${MSVC11})
+message("MSVC12 " ${MSVC12})
+message("MSVC14 " ${MSVC14})
+message("CMAKE_HOST_UNIX " ${CMAKE_HOST_UNIX})
+message("CMAKE_HOST_WIN32 " ${CMAKE_HOST_WIN32})
+
+message("project name " ${CMAKE_PROJECT_NAME})
+message("project binary dir " ${PROJECT_BINARY_DIR})
+
+aux_source_directory(. srcs)
+aux_source_directory(./win srcs)
+
+include_directories(. ./win ./thirdParty)
+
+link_directories(../libs/win32)
+
+
+
+add_executable(${PROJ_NAME} ${srcs})
+
+# target_link_libraries(hello Foo)
+
+set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../bin/win)
+set_target_properties(${PROJ_NAME} PROPERTIES PDB_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../bin/win)
