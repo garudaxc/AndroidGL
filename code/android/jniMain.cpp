@@ -3,19 +3,21 @@
 #include "MyLog.h"
 #include "AuroraGL.h"
 #include <android/native_window_jni.h>	// for native window JNI
+#include "Client.h"
+#include "Rendering.h"
+#include "Input.h"
 
 
 using namespace FancyTech;
 
 void _UpdateTimer();
-void SuspendSensorThread();
-void ResumeSensorThread();
-void StopSensorThread();
 
 namespace FancyTech
 {
 	void DispatchAndroidEvent(int action, float x, float y);
 }
+
+glState_t glState;
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,6 +32,7 @@ extern "C" {
 #ifndef ALOGI
 #define ALOGI GLog.LogInfo
 #endif
+
 
 
 	JNIEXPORT EGLSurface JNICALL CreateSurface(ANativeWindow * nativeWindow)
@@ -109,8 +112,6 @@ extern "C" {
 	}
 
 
-
-
 	static EGLSurface engine_init_display(ANativeWindow * nativeWindow) {
 		// initialize OpenGL ES and EGL
 
@@ -145,8 +146,8 @@ extern "C" {
 			EGL_RED_SIZE, 8,
 			EGL_GREEN_SIZE, 8,
 			EGL_BLUE_SIZE, 8,
-			EGL_ALPHA_SIZE, 8,
-			//EGL_DEPTH_SIZE, 24,
+			//EGL_ALPHA_SIZE, 8,
+			EGL_DEPTH_SIZE, 24,
 			// (ommiting other configs regarding the color channels etc...
 			EGL_NONE
 		};
@@ -195,6 +196,8 @@ extern "C" {
 		context = eglCreateContext(display, config, NULL, context_attrib_list);
 		if (context == EGL_NO_CONTEXT)	{
 			GLog.LogError("eglCreateContext failed!");
+		} else {
+			GLog.LogInfo("create context, version %d", context_attrib_list[1]);
 		}
 
 		if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
@@ -206,6 +209,9 @@ extern "C" {
 		eglQuerySurface(display, surface, EGL_HEIGHT, &h);				
 
 		GLog.LogInfo("create device width = %d height = %d", w, h);
+		
+		glState.width = w;
+		glState.height = h;
 
 		// Initialize GL state.
 		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -218,9 +224,6 @@ extern "C" {
 		return surface;
 	}
 
-
-	
-	extern "C" JNIEXPORT EGLSurface JNICALL init2(EGLContext& cont, jint width, jint height);
 	extern "C" JNIEXPORT void JNICALL SetRenderToFrontBuffer(ANativeWindow * nativeWindow);
 
 
@@ -244,18 +247,28 @@ extern "C" {
 			surface_ = engine_init_display(nativeWindow);
 
 #ifdef USE_FRONT_BUFFER
+			sdfafd
+
 			SetRenderToFrontBuffer(nativeWindow);
 #endif
+
 			eglSwapBuffers(display_, surface_);
 
-			//surface_ = init2(context_, width, height);
-			//GLog.LogInfo("surface_ = init2(width, height) %p", surface_);
+			Platfrom::Init();
+			GInput->Create();
+
+
+			if (MainClient == nullptr) {
+				GLog.LogError("MainClient is null");
+				return;
+			}
 
 			if (surface_ != EGL_NO_SURFACE) {
-				//EGLContext contex = eglGetCurrentContext();
-				//eglMakeCurrent(display_, surface_, surface_, contex);
-				setupGraphics(width, height);
+				//setupGraphics(width, height);
 
+				RenderSystem->Create(glState.width, glState.height);
+				MainClient->OnCreate();
+				
 				inited = true;
 			}
 		}	
@@ -267,14 +280,19 @@ extern "C" {
 			return;
 		}
 		static int framecount = 0;
-		//GLog.LogInfo("Java_com_xvr_aurora_GL2JNILib_step %d tid %d", framecount++, gettid());
 
 		eglMakeCurrent(display_, surface_, surface_, context_);
 
 		_UpdateTimer();
-		renderFrame();
-		glFinish();
-		glFlush();
+
+		MainClient->OnUpdate();
+		RenderSystem->BeginFrame();
+		MainClient->OnRender();
+		RenderSystem->EndFrame();		
+
+		//renderFrame();
+		//glFinish();
+		//glFlush();
 
 #ifndef USE_FRONT_BUFFER
 		EGLBoolean result = eglSwapBuffers(display_, surface_);
@@ -293,22 +311,17 @@ extern "C" {
 	JNIEXPORT void JNICALL Java_com_xvr_aurora_XVRActivity_nativeOnResume(JNIEnv * env, jobject obj)
 	{
 		GLog.LogInfo("nativeOnResume");
-		ResumeSensorThread();
 	}
 
 	JNIEXPORT void JNICALL Java_com_xvr_aurora_XVRActivity_nativeOnPause(JNIEnv * env, jobject obj)
 	{
 		GLog.LogInfo("nativeOnPause");
-		SuspendSensorThread();
-
 	}
 
 	JNIEXPORT void JNICALL Java_com_xvr_aurora_XVRActivity_nativeOnDestroy(JNIEnv * env, jobject obj)
 	{
-		StopSensorThread();
 		GLog.LogInfo("nativeOnDestroy");		
 	}
-
 
 	JNIEXPORT void JNICALL Java_com_xvr_aurora_XVRActivity_nativeOnEvent(JNIEnv * env, jobject obj, jint action, jfloat xpos, jfloat ypos)
 	{

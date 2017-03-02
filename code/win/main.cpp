@@ -5,6 +5,12 @@
 #include "resource.h"
 #include "AuroraGL.h"
 #include "Platfrom.h"
+#include "Client.h"
+#include "Rendering.h"
+#include "Input.h"
+#include "glUtil.h"
+
+using namespace FancyTech;
 
 #define MAX_LOADSTRING 100
 
@@ -41,6 +47,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	MyRegisterClass(hInstance);
 
 	Platfrom::Init();
+	GInput->Create();
 	// 执行应用程序初始化: 
 	if (!InitInstance (hInstance, nCmdShow))
 	{
@@ -66,11 +73,18 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		else
 		{
 			_UpdateTimer();
-			DrawFrame();
+			MainClient->OnUpdate();
+
+			RenderSystem->BeginFrame();
+			MainClient->OnRender();
+			RenderSystem->EndFrame();
+
+			SwapBuffers(glState.hdc);
+			checkGlError("SwapBuffers");
 		}
 	}
 
-	UnloadResource();
+	//UnloadResource();
 	Platfrom::Shutdown();
 	return (int) msg.wParam;
 }
@@ -141,7 +155,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	   return 0;
    }
 
-   LoadResource();
+   if (MainClient == nullptr) {
+	   ::MessageBox(NULL, _T("No valid client founded!"), NULL, MB_OK);
+	   return FALSE;
+   }
+
+   RenderSystem->Create(glState.width, glState.height);
+   MainClient->OnCreate();
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);

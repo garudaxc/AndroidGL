@@ -616,13 +616,12 @@ void SetFloatArray(std::vector<float>& des, const FbxVector4* src, int numVec, i
 
 void ConvertMesh(FbxMesh* mesh)
 {
-	//DisplayPolygons(mesh);
-
+	//DisplayPolygons(mesh);	
 	if (!mesh->IsTriangleMesh()) {
 		FBXSDK_printf("Error ! mesh %s is not triangle mesh\n", mesh->GetNode()->GetName());
 		return;
 	}
-	
+
 	int polygonCount = mesh->GetPolygonCount();
 	
 	std::vector<float> positionData;

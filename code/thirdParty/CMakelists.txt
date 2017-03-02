@@ -1,0 +1,20 @@
+aux_source_directory(./etc1 srcs_third_lib)
+aux_source_directory(./stb srcs_third_lib)
+aux_source_directory(./zip srcs_third_lib)
+aux_source_directory(./libusb/src srcs_third_lib)
+aux_source_directory(./libusb/win srcs_third_lib)
+
+if(CMAKE_HOST_WIN32)
+	list(APPEND srcs_third_lib ./libusb/src/os/threads_windows.c)
+	list(APPEND srcs_third_lib ./libusb/src/os/windows_usb.c)
+	list(APPEND srcs_third_lib ./libusb/src/os/poll_windows.c)
+endif(CMAKE_HOST_WIN32)
+
+# file(WRITE files.txt ${srcs_third_lib})
+
+include_directories(./libusb/src)
+include_directories(./libusb/win)
+
+add_library(third_party_lib ${srcs_third_lib})
+
+message("project binary dirrrrrrr " ${PROJECT_BINARY_DIR})

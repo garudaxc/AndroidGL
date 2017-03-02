@@ -1,11 +1,14 @@
 #include "Input.h"
 #include <android/input.h>
+#include "MyLog.h"
 
 namespace FancyTech
 {
 
 	void DispatchAndroidEvent(int action, float x, float y)
 	{
+		GLog.LogInfo("action %d", action);
+
 		Event event;
 
 		event.Type = Event::Unknown;

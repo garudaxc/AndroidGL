@@ -194,8 +194,7 @@ namespace FancyTech
 			int		Code;
 		};
 	};
-
-
+	
 	class EventReceiver
 	{
 	public:
@@ -209,12 +208,13 @@ namespace FancyTech
 	};
 
 
-
 	class Input
 	{
 	public:
 		Input();
 		~Input();
+
+		void	Create();
 
 		void	Register(EventReceiver* receiver);
 		void	Dispatch(const Event& event);
@@ -225,6 +225,5 @@ namespace FancyTech
 	
 
 	extern Input* GInput;
-
 
 }

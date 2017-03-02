@@ -15,6 +15,7 @@
     <ClInclude Include="code\AurMath.h" />
     <ClInclude Include="code\BitmapFont.h" />
     <ClInclude Include="code\Calibration.h" />
+    <ClInclude Include="code\Client.h" />
     <ClInclude Include="code\CommandSystem.h" />
     <ClInclude Include="code\FileSystem.h" />
     <ClInclude Include="code\GlobalVar.h" />
@@ -22,6 +23,7 @@
     <ClInclude Include="code\Input.h" />
     <ClInclude Include="code\Model.h" />
     <ClInclude Include="code\MyLog.h" />
+    <ClInclude Include="code\Rendering.h" />
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
@@ -73,6 +75,7 @@
     <ClCompile Include="code\audio\WavFile.cpp" />
     <ClCompile Include="code\BitmapFont.cpp" />
     <ClCompile Include="code\Calibration.cpp" />
+    <ClCompile Include="code\Client.cpp" />
     <ClCompile Include="code\CommandSystem.cpp" />
     <ClCompile Include="code\FileSystem.cpp" />
     <ClCompile Include="code\GlobalVar.cpp" />
@@ -80,6 +83,7 @@
     <ClCompile Include="code\AurMath.cpp" />
     <ClCompile Include="code\Input.cpp" />
     <ClCompile Include="code\Model.cpp" />
+    <ClCompile Include="code\Rendering.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
     <ClCompile Include="code\SpriteBatch.cpp" />
     <ClCompile Include="code\Texture.cpp" />
@@ -106,7 +110,6 @@
     <ClCompile Include="code\thirdParty\zip\zutil.c" />
     <ClCompile Include="code\Timer.cpp" />
     <ClCompile Include="code\win\dirent.c" />
-    <ClCompile Include="code\win\draw.cpp" />
     <ClCompile Include="code\win\GLInit.cpp" />
     <ClCompile Include="code\win\InputWin.cpp" />
     <ClCompile Include="code\win\MyLog.cpp" />
@@ -114,6 +117,7 @@
     <ClCompile Include="code\win\PlatformWin.cpp" />
     <ClCompile Include="code\win\Thread.cpp" />
     <ClCompile Include="code\win\UsbDevice.cpp" />
+    <ClCompile Include="code\win\WinClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="code\win\OGLProject.ico" />

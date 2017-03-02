@@ -14,7 +14,7 @@ extern glState_t glState;
 
 bool InitOpenGL(HINSTANCE hInstance, HWND hWnd);
 
-void DrawFrame();
-
-void LoadResource();
-void UnloadResource();
+//void DrawFrame();
+//
+//void LoadResource();
+//void UnloadResource();

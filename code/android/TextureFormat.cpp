@@ -23,8 +23,5 @@ GLuint CreateTexture(const uint8_t* data, uint32_t w, uint32_t h,
 		return 0;
 	}
 
-
-
-
 	return 0;
 }

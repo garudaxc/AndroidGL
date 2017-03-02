@@ -1,25 +1,28 @@
 #include "Input.h"
+#include "MyLog.h"
 
 namespace FancyTech
 {
 
-	Input input_;
-	Input* GInput = NULL;
+	static Input input_;
+	Input* GInput = &input_;
 
 	static EventReceiver* EventStaticInit = NULL;
 
 	Input::Input() {
+	}
+
+	Input::~Input()
+	{
+	}
+	
+	void Input::Create()
+	{
 		EventReceiver* ptr = EventStaticInit;
 		while (ptr != NULL)	{
 			Register(ptr);
 			ptr = ptr->InitNext;
 		}
-
-		GInput = this;
-	}
-
-	Input::~Input()
-	{
 	}
 
 	void Input::Register(EventReceiver* receiver)
@@ -34,22 +37,14 @@ namespace FancyTech
 		}
 	}
 
-
-	EventReceiver::EventReceiver() :InitNext(NULL)
+	EventReceiver::EventReceiver()
 	{
-		if (GInput != NULL) {
-			GInput->Register(this);
-		} else {
-			InitNext = EventStaticInit;
-			EventStaticInit = this;
-		}
+		InitNext = EventStaticInit;
+		EventStaticInit = this;
 	}
 
 	EventReceiver::~EventReceiver()
 	{
 	}
-
-
-
 
 }

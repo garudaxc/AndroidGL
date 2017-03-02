@@ -242,6 +242,7 @@ void ListSceneNode(FbxNode* node)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+
 	if (argc <= 1) {
 		const char* helpInfo = \
 			"usage :\n"
@@ -278,8 +279,12 @@ int _tmain(int argc, _TCHAR* argv[])
 			Args.inputFile = argv[i];
 		}
 	}
-
-
+	
+	if (Args.inputFile.empty()) {
+		FBXSDK_printf("no input file specified!\n");
+		return 0;
+	}
+	
 	FbxManager* lSdkManager = NULL;
 	FbxScene* lScene = NULL;
 	bool lResult;
@@ -289,7 +294,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// Load the scene.
 
 	// The example can take a FBX file as an argument.
-	FbxString lFilePath("a.fbx");
+	FbxString lFilePath(Args.inputFile.c_str());
 
 	if (lFilePath.IsEmpty()){
 		lResult = false;

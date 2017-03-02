@@ -16,4 +16,4 @@ extern struct glState_t glState;
 int setupGraphics(int w, int h);
 
 
-void renderFrame();
+//void renderFrame();

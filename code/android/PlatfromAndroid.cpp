@@ -4,6 +4,7 @@
 #include <android/looper.h>
 #include "Platfrom.h"
 #include "MyLog.h"
+#include "FileSystem.h"
 
 
 using namespace std;
@@ -109,7 +110,7 @@ uint32_t GetTicksMS()
 
 void Platfrom::Init()
 {
-
+	GFileSys->SetRootPath("/sdcard/MyTest/", true);
 }
 
 void Platfrom::Shutdown()

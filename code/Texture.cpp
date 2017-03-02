@@ -167,10 +167,10 @@ namespace FancyTech
 
 	Texture::~Texture()
 	{
-		if (texId_ != 0){
-			glDeleteTextures(1, &texId_);
-			texId_ = 0;
-		}
+		//if (texId_ != 0){
+		//	glDeleteTextures(1, &texId_);
+		//	texId_ = 0;
+		//}
 	}
 
 	bool LoadFileToMemory(const char* fileName, ubyte_t*& buffer, uint32_t& size)
@@ -231,9 +231,11 @@ namespace FancyTech
 		int format = 0;
 		if (comp == 3){
 			format = GL_RGB;
+			format_ = RGB8;
 		}
 		else if (comp == 4){
 			format = GL_RGBA;
+			format_ = RGBA8;
 		}
 
 		glGenTextures(1, &texId_);
@@ -256,11 +258,98 @@ namespace FancyTech
 		return true;
 	}
 
+
+	void Texture::Create(int width, int height, TEXTURE_FORMAT fmt)
+	{
+		target_ = GL_TEXTURE_2D;
+		int format = 0;
+		if (fmt == RGB8){
+			format = GL_RGB;
+		} else if (fmt == RGBA8){
+			format = GL_RGBA;
+		} else {
+			GLog.LogError("unsupport texture format %d", fmt);
+			return;
+		}
+
+		format_ = fmt;
+
+		glGenTextures(1, &texId_);
+		glBindTexture(target_, texId_);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);	
+
+		glTexImage2D(target_, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+		
+		checkGlError("glTexImage2D");
+		//glGenerateMipmap(GL_TEXTURE_2D);
+
+		// Draw left quad with repeat wrap mode
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glBindTexture(target_, 0);
+	}
+
 	void Texture::Bind()
 	{
 		if (texId_ != 0){
 			glBindTexture(target_, texId_);
 		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+
+	FrameBuffer::FrameBuffer() :fboId_(0)
+	{
+	}
+
+	FrameBuffer::~FrameBuffer()
+	{
+		if (fboId_ != 0) {
+			glDeleteRenderbuffers(1, &fboId_);
+			fboId_ = 0;
+		}
+	}
+
+	void FrameBuffer::Create(int width, int height, TEXTURE_FORMAT fmt, int depth)
+	{
+		tex_.Create(width, height, fmt);
+
+		glGenFramebuffers(1, &fboId_);
+
+		//glGenRenderbuffers(1, &depthRenderbuffer);
+		//glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+		//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, fboId_);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex_.target_, tex_.texId_, 0);
+
+		//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+
+		checkGlError("glFramebufferTexture2D");
+		
+		GLenum state = state = glCheckFramebufferStatus(GL_FRAMEBUFFER);		
+		if (state != GL_FRAMEBUFFER_COMPLETE) {
+			GLog.LogError("frame buffer not complete! code = %d", state);
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void FrameBuffer::Bind()
+	{
+		if (fboId_ != 0) {
+			glBindFramebuffer(GL_FRAMEBUFFER, fboId_);
+		}
+	}
+
+	void FrameBuffer::Unbind()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 }

@@ -114,11 +114,10 @@ void UnloadResource()
 	StopTrackerThread();
 }
 
-
-
 extern int sampleCount;
 
-void DrawView(int x, int y, int w, int h, float eyeOffset)
+
+void DrawOneEye(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
 

@@ -93,6 +93,7 @@
     <ClInclude Include="code\Model.h" />
     <ClInclude Include="code\MyLog.h" />
     <ClInclude Include="code\Platfrom.h" />
+    <ClInclude Include="code\Rendering.h" />
     <ClInclude Include="code\RingBuffer.h" />
     <ClInclude Include="code\SensorDevice.h" />
     <ClInclude Include="code\ShaderManager.h" />
@@ -107,6 +108,7 @@
     <ClInclude Include="code\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\android\ClientAndroid.cpp" />
     <ClCompile Include="code\android\device.cpp" />
     <ClCompile Include="code\android\InputAndroid.cpp" />
     <ClCompile Include="code\android\jniMain.cpp" />
@@ -114,7 +116,6 @@
     <ClCompile Include="code\android\Sensor.cpp" />
     <ClCompile Include="code\android\Thread.cpp" />
     <ClCompile Include="code\android\TrackDropping.cpp" />
-    <ClCompile Include="code\android\draw.cpp" />
     <ClCompile Include="code\android\MyLog.cpp" />
     <ClCompile Include="code\android\PlatfromAndroid.cpp" />
     <ClCompile Include="code\android\UsbDevice.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="code\glUtil.cpp" />
     <ClCompile Include="code\Input.cpp" />
     <ClCompile Include="code\Model.cpp" />
+    <ClCompile Include="code\Rendering.cpp" />
     <ClCompile Include="code\ShaderManager.cpp" />
     <ClCompile Include="code\SpriteBatch.cpp" />
     <ClCompile Include="code\Texture.cpp" />

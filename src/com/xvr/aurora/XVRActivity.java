@@ -100,6 +100,8 @@ public class XVRActivity extends Activity implements SurfaceHolder.Callback,  an
 		float x = ev.getX();
 		float y = ev.getY();
 		
+		Log.d(TAG, "dispatchTouchEvent " + ev.toString());	
+		
 		nativeOnEvent(action, x, y);
 		
 		return false;

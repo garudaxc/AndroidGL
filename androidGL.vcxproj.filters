@@ -33,6 +33,12 @@
     <Filter Include="Source files\thirdParty\etc1">
       <UniqueIdentifier>{f7ac4371-42d8-41de-8891-c4aab1af7c5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{e97a8ae4-48e3-4b84-b0c7-5bacd1b927d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{e77cdcfc-fab5-400c-a6f4-454bc1222476}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="jni\Android.mk">
@@ -61,46 +67,10 @@
     <ClInclude Include="code\MyLog.h">
       <Filter>Source files</Filter>
     </ClInclude>
-    <ClInclude Include="code\Model.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
     <ClInclude Include="code\glUtil.h">
       <Filter>Source files</Filter>
     </ClInclude>
-    <ClInclude Include="code\AurMath.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
     <ClInclude Include="code\MathFunction.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\ShaderManager.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\FileSystem.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Texture.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Timer.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\CommandSystem.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\GlobalVar.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\android\MessageQueue.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\BitmapFont.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\SpriteBatch.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\RingBuffer.h">
       <Filter>Source files</Filter>
     </ClInclude>
     <ClInclude Include="code\Calibration.h">
@@ -121,30 +91,63 @@
     <ClInclude Include="code\thirdParty\zip\ioapi.h">
       <Filter>Source files\thirdParty\zip</Filter>
     </ClInclude>
-    <ClInclude Include="code\Input.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
     <ClInclude Include="code\audio\audio.h">
       <Filter>Source files\audio</Filter>
     </ClInclude>
     <ClInclude Include="code\audio\WavFile.h">
       <Filter>Source files\audio</Filter>
     </ClInclude>
-    <ClInclude Include="code\TextureFormat.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
     <ClInclude Include="code\thirdParty\etc1\etc1.h">
       <Filter>Source files\thirdParty\etc1</Filter>
     </ClInclude>
+    <ClInclude Include="code\AurMath.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\BitmapFont.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\CommandSystem.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\FileSystem.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\GlobalVar.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\android\MessageQueue.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\RingBuffer.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\SpriteBatch.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="code\ShaderManager.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Model.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Texture.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="code\TextureFormat.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Input.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Timer.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Rendering.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="code\Model.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
     <ClCompile Include="code\glUtil.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\ShaderManager.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="code\android\MyLog.cpp">
@@ -153,41 +156,11 @@
     <ClCompile Include="code\android\PlatfromAndroid.cpp">
       <Filter>Source files\android</Filter>
     </ClCompile>
-    <ClCompile Include="code\android\draw.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
     <ClCompile Include="code\android\TrackDropping.cpp">
       <Filter>Source files\android</Filter>
     </ClCompile>
-    <ClCompile Include="code\FileSystem.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Texture.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Timer.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\CommandSystem.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\GlobalVar.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
     <ClCompile Include="code\android\Sensor.cpp">
       <Filter>Source files\android</Filter>
-    </ClCompile>
-    <ClCompile Include="code\AurMath.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\MessageQueue.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\BitmapFont.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\SpriteBatch.cpp">
-      <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="code\android\device.cpp">
       <Filter>Source files\android</Filter>
@@ -213,9 +186,6 @@
     <ClCompile Include="code\thirdParty\zip\ioapi.c">
       <Filter>Source files\thirdParty\zip</Filter>
     </ClCompile>
-    <ClCompile Include="code\Input.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
     <ClCompile Include="code\android\InputAndroid.cpp">
       <Filter>Source files\android</Filter>
     </ClCompile>
@@ -227,6 +197,48 @@
     </ClCompile>
     <ClCompile Include="code\thirdParty\etc1\etc1.cpp">
       <Filter>Source files\thirdParty\etc1</Filter>
+    </ClCompile>
+    <ClCompile Include="code\AurMath.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\BitmapFont.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\CommandSystem.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\FileSystem.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\GlobalVar.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\MessageQueue.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\SpriteBatch.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="code\ShaderManager.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Model.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Texture.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\ClientAndroid.cpp">
+      <Filter>Source files\android</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Input.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Timer.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Rendering.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

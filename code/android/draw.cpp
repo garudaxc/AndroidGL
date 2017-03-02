@@ -32,9 +32,6 @@ struct glState_t glState;
 
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
 
-//extern "C" JNIEXPORT void JNICALL LibTest();
-extern "C" JNIEXPORT void JNICALL init(JNIEnv *env, jobject thiz, jint width, jint height, jobject surface);
-
 
 class ModelInstance
 {
@@ -70,8 +67,6 @@ void MemoryTest()
 	glBufferData(GL_ARRAY_BUFFER, 4 * 1024 * 1024, NULL, GL_STATIC_DRAW);
 
 	uint8_t* buff = new uint8_t[4 * 1024 * 1024];
-
-
 
 	uint32_t target_ = GL_TEXTURE_2D;
 	int format = GL_RGBA;
@@ -131,8 +126,6 @@ int setupGraphics(int w, int h) {
 	//MemoryTest();
 
 	GLog.LogInfo("begin setupGraphics");	
-	//init(NULL, NULL, w, h, NULL);
-	GLog.LogInfo("after init");
 	
 	GGlobalVarManager->Init();
 
@@ -312,7 +305,6 @@ void renderFrame() {
 	//pos.Set(10.f, glState.height / 2, 0.f);
 	//sprintf(buff, "%+.4f %+.4f %+.4f", gyro_.x, gyro_.y, gyro_.z);
 
-
 	//bitmapFont.DrawString(&spriteBatch, buff, pos, 3.f);
 	//spriteBatch.Commit(glState.width, glState.height);
 
@@ -332,7 +324,6 @@ void renderFrame() {
 	//pos.Set(glState.width / 2, glState.height / 2, 0.f);
 	//sprintf(buff, "%u", GAudioSystem.GetPosition());
 	//bitmapFont.DrawString(&spriteBatch, buff, pos, 5);
-
 
 	//DrawCalibration(glState.width, glState.height, bitmapFont, spriteBatch);
 

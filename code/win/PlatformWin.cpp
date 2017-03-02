@@ -1,6 +1,10 @@
 #include "Platfrom.h"
 #include <Windows.h>
 #include <Mmsystem.h>
+#include "ShaderManager.h"
+#include "FileSystem.h"
+#include "GlobalVar.h"
+#include "glUtil.h"
 
 const char* vsInclude = \
 "#version 330 core\n"
@@ -121,6 +125,8 @@ void Platfrom::Init()
 	InitializeCriticalSection(&TimeCS);
 	MMTimeWrapCounter = 0;
 	getFrequency();
+
+	GFileSys->SetRootPath("../../resource/", true);
 }
 
 void Platfrom::Shutdown()
