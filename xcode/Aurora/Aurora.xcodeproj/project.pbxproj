@@ -1,0 +1,407 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A8048AB11E88ADEB00BFFC75 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A8048AB01E88ADEB00BFFC75 /* Shader.fsh */; };
+		A8048AB31E88ADEB00BFFC75 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A8048AB21E88ADEB00BFFC75 /* Shader.vsh */; };
+		A8048AB91E88ADEB00BFFC75 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8048AB71E88ADEB00BFFC75 /* Main.storyboard */; };
+		A8048ABB1E88ADEB00BFFC75 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8048ABA1E88ADEB00BFFC75 /* Assets.xcassets */; };
+		A8048ABE1E88ADEB00BFFC75 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8048ABC1E88ADEB00BFFC75 /* LaunchScreen.storyboard */; };
+		A8048ACB1E88AF1000BFFC75 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A8048AC81E88AF1000BFFC75 /* AppDelegate.m */; };
+		A8048ACC1E88AF1000BFFC75 /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8048ACA1E88AF1000BFFC75 /* GameViewController.m */; };
+		A8048ACE1E88AF7A00BFFC75 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A8048ACD1E88AF7A00BFFC75 /* main.m */; };
+		A8048AD31E88B88000BFFC75 /* AurMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AD11E88B88000BFFC75 /* AurMath.cpp */; };
+		A8048ADC1E8961BE00BFFC75 /* MyLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048ADB1E8961BE00BFFC75 /* MyLog.cpp */; };
+		A8048AE81E89647F00BFFC75 /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AE41E89647F00BFFC75 /* CommandSystem.cpp */; };
+		A8048AE91E89647F00BFFC75 /* GlobalVar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AE61E89647F00BFFC75 /* GlobalVar.cpp */; };
+		A8048AEF1E89681500BFFC75 /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AEB1E89681500BFFC75 /* FileSystem.cpp */; };
+		A8048AF51E896DDC00BFFC75 /* PlatformIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AF41E896DDC00BFFC75 /* PlatformIOS.cpp */; };
+		A8048AF81E896FD400BFFC75 /* glUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AF61E896FD400BFFC75 /* glUtil.cpp */; };
+		A8048AFB1E8972DB00BFFC75 /* ShaderManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AF91E8972DB00BFFC75 /* ShaderManager.cpp */; };
+		A8048B001E89737000BFFC75 /* BitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AFC1E89737000BFFC75 /* BitmapFont.cpp */; };
+		A8048B011E89737000BFFC75 /* SpriteBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AFE1E89737000BFFC75 /* SpriteBatch.cpp */; };
+		A8048B061E89740200BFFC75 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048B021E89740200BFFC75 /* Model.cpp */; };
+		A8048B071E89740200BFFC75 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048B041E89740200BFFC75 /* Timer.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A8048AA71E88ADEB00BFFC75 /* Aurora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Aurora.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8048AB01E88ADEB00BFFC75 /* Shader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.fsh; path = Shaders/Shader.fsh; sourceTree = "<group>"; };
+		A8048AB21E88ADEB00BFFC75 /* Shader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.vsh; path = Shaders/Shader.vsh; sourceTree = "<group>"; };
+		A8048AB81E88ADEB00BFFC75 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A8048ABA1E88ADEB00BFFC75 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A8048ABD1E88ADEB00BFFC75 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A8048ABF1E88ADEB00BFFC75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A8048AC71E88AF1000BFFC75 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ../../../code/ios/AppDelegate.h; sourceTree = "<group>"; };
+		A8048AC81E88AF1000BFFC75 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ../../../code/ios/AppDelegate.m; sourceTree = "<group>"; };
+		A8048AC91E88AF1000BFFC75 /* GameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameViewController.h; path = ../../../code/ios/GameViewController.h; sourceTree = "<group>"; };
+		A8048ACA1E88AF1000BFFC75 /* GameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GameViewController.m; path = ../../../code/ios/GameViewController.m; sourceTree = "<group>"; };
+		A8048ACD1E88AF7A00BFFC75 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../../code/ios/main.m; sourceTree = "<group>"; };
+		A8048AD11E88B88000BFFC75 /* AurMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AurMath.cpp; path = ../../../code/AurMath.cpp; sourceTree = "<group>"; };
+		A8048AD21E88B88000BFFC75 /* AurMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AurMath.h; path = ../../../code/AurMath.h; sourceTree = "<group>"; };
+		A8048ADA1E89604500BFFC75 /* MyLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyLog.h; path = ../../../code/MyLog.h; sourceTree = "<group>"; };
+		A8048ADB1E8961BE00BFFC75 /* MyLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MyLog.cpp; path = ../../../code/ios/MyLog.cpp; sourceTree = "<group>"; };
+		A8048ADD1E89621400BFFC75 /* MathFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MathFunction.h; path = ../../../code/MathFunction.h; sourceTree = "<group>"; };
+		A8048AE41E89647F00BFFC75 /* CommandSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 2147486000; lastKnownFileType = sourcecode.cpp.cpp; name = CommandSystem.cpp; path = ../../../code/CommandSystem.cpp; sourceTree = "<group>"; };
+		A8048AE51E89647F00BFFC75 /* CommandSystem.h */ = {isa = PBXFileReference; fileEncoding = 2147486000; lastKnownFileType = sourcecode.c.h; name = CommandSystem.h; path = ../../../code/CommandSystem.h; sourceTree = "<group>"; };
+		A8048AE61E89647F00BFFC75 /* GlobalVar.cpp */ = {isa = PBXFileReference; fileEncoding = 2147486000; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalVar.cpp; path = ../../../code/GlobalVar.cpp; sourceTree = "<group>"; };
+		A8048AEA1E8964D700BFFC75 /* GlobalVar.h */ = {isa = PBXFileReference; fileEncoding = 2147486000; lastKnownFileType = sourcecode.c.h; name = GlobalVar.h; path = ../../../code/GlobalVar.h; sourceTree = "<group>"; };
+		A8048AEB1E89681500BFFC75 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSystem.cpp; path = ../../../code/FileSystem.cpp; sourceTree = "<group>"; };
+		A8048AEC1E89681500BFFC75 /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystem.h; path = ../../../code/FileSystem.h; sourceTree = "<group>"; };
+		A8048AF11E896D1800BFFC75 /* Platfrom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platfrom.h; path = ../../../code/Platfrom.h; sourceTree = "<group>"; };
+		A8048AF41E896DDC00BFFC75 /* PlatformIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformIOS.cpp; path = ../../../code/ios/PlatformIOS.cpp; sourceTree = "<group>"; };
+		A8048AF61E896FD400BFFC75 /* glUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glUtil.cpp; path = ../../../code/glUtil.cpp; sourceTree = "<group>"; };
+		A8048AF71E896FD400BFFC75 /* glUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glUtil.h; path = ../../../code/glUtil.h; sourceTree = "<group>"; };
+		A8048AF91E8972DB00BFFC75 /* ShaderManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderManager.cpp; path = ../../../code/ShaderManager.cpp; sourceTree = "<group>"; };
+		A8048AFA1E8972DB00BFFC75 /* ShaderManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderManager.h; path = ../../../code/ShaderManager.h; sourceTree = "<group>"; };
+		A8048AFC1E89737000BFFC75 /* BitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapFont.cpp; path = ../../../code/BitmapFont.cpp; sourceTree = "<group>"; };
+		A8048AFD1E89737000BFFC75 /* BitmapFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BitmapFont.h; path = ../../../code/BitmapFont.h; sourceTree = "<group>"; };
+		A8048AFE1E89737000BFFC75 /* SpriteBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpriteBatch.cpp; path = ../../../code/SpriteBatch.cpp; sourceTree = "<group>"; };
+		A8048AFF1E89737000BFFC75 /* SpriteBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpriteBatch.h; path = ../../../code/SpriteBatch.h; sourceTree = "<group>"; };
+		A8048B021E89740200BFFC75 /* Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Model.cpp; path = ../../../code/Model.cpp; sourceTree = "<group>"; };
+		A8048B031E89740200BFFC75 /* Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Model.h; path = ../../../code/Model.h; sourceTree = "<group>"; };
+		A8048B041E89740200BFFC75 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Timer.cpp; path = ../../../code/Timer.cpp; sourceTree = "<group>"; };
+		A8048B051E89740200BFFC75 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Timer.h; path = ../../../code/Timer.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A8048AA41E88ADEB00BFFC75 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A8048A9E1E88ADEB00BFFC75 = {
+			isa = PBXGroup;
+			children = (
+				A8048AA91E88ADEB00BFFC75 /* Aurora */,
+				A8048AA81E88ADEB00BFFC75 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A8048AA81E88ADEB00BFFC75 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A8048AA71E88ADEB00BFFC75 /* Aurora.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A8048AA91E88ADEB00BFFC75 /* Aurora */ = {
+			isa = PBXGroup;
+			children = (
+				A8048AD01E88B82900BFFC75 /* code */,
+				A8048ACF1E88AF8B00BFFC75 /* platform */,
+				A8048AB01E88ADEB00BFFC75 /* Shader.fsh */,
+				A8048AB21E88ADEB00BFFC75 /* Shader.vsh */,
+			);
+			path = Aurora;
+			sourceTree = "<group>";
+		};
+		A8048ACF1E88AF8B00BFFC75 /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				A8048AF41E896DDC00BFFC75 /* PlatformIOS.cpp */,
+				A8048ADB1E8961BE00BFFC75 /* MyLog.cpp */,
+				A8048AB71E88ADEB00BFFC75 /* Main.storyboard */,
+				A8048ABA1E88ADEB00BFFC75 /* Assets.xcassets */,
+				A8048ABC1E88ADEB00BFFC75 /* LaunchScreen.storyboard */,
+				A8048ABF1E88ADEB00BFFC75 /* Info.plist */,
+				A8048ACD1E88AF7A00BFFC75 /* main.m */,
+				A8048AC71E88AF1000BFFC75 /* AppDelegate.h */,
+				A8048AC81E88AF1000BFFC75 /* AppDelegate.m */,
+				A8048AC91E88AF1000BFFC75 /* GameViewController.h */,
+				A8048ACA1E88AF1000BFFC75 /* GameViewController.m */,
+			);
+			name = platform;
+			sourceTree = "<group>";
+		};
+		A8048AD01E88B82900BFFC75 /* code */ = {
+			isa = PBXGroup;
+			children = (
+				A8048B021E89740200BFFC75 /* Model.cpp */,
+				A8048B031E89740200BFFC75 /* Model.h */,
+				A8048B041E89740200BFFC75 /* Timer.cpp */,
+				A8048B051E89740200BFFC75 /* Timer.h */,
+				A8048AFC1E89737000BFFC75 /* BitmapFont.cpp */,
+				A8048AFD1E89737000BFFC75 /* BitmapFont.h */,
+				A8048AFE1E89737000BFFC75 /* SpriteBatch.cpp */,
+				A8048AFF1E89737000BFFC75 /* SpriteBatch.h */,
+				A8048AF91E8972DB00BFFC75 /* ShaderManager.cpp */,
+				A8048AFA1E8972DB00BFFC75 /* ShaderManager.h */,
+				A8048AF61E896FD400BFFC75 /* glUtil.cpp */,
+				A8048AF71E896FD400BFFC75 /* glUtil.h */,
+				A8048AF11E896D1800BFFC75 /* Platfrom.h */,
+				A8048AEB1E89681500BFFC75 /* FileSystem.cpp */,
+				A8048AEC1E89681500BFFC75 /* FileSystem.h */,
+				A8048AEA1E8964D700BFFC75 /* GlobalVar.h */,
+				A8048AE61E89647F00BFFC75 /* GlobalVar.cpp */,
+				A8048AE41E89647F00BFFC75 /* CommandSystem.cpp */,
+				A8048AE51E89647F00BFFC75 /* CommandSystem.h */,
+				A8048ADD1E89621400BFFC75 /* MathFunction.h */,
+				A8048ADA1E89604500BFFC75 /* MyLog.h */,
+				A8048AD11E88B88000BFFC75 /* AurMath.cpp */,
+				A8048AD21E88B88000BFFC75 /* AurMath.h */,
+			);
+			name = code;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A8048AA61E88ADEB00BFFC75 /* Aurora */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A8048AC21E88ADEB00BFFC75 /* Build configuration list for PBXNativeTarget "Aurora" */;
+			buildPhases = (
+				A8048AA31E88ADEB00BFFC75 /* Sources */,
+				A8048AA41E88ADEB00BFFC75 /* Frameworks */,
+				A8048AA51E88ADEB00BFFC75 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Aurora;
+			productName = Aurora;
+			productReference = A8048AA71E88ADEB00BFFC75 /* Aurora.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A8048A9F1E88ADEB00BFFC75 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = h3d;
+				TargetAttributes = {
+					A8048AA61E88ADEB00BFFC75 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A8048AA21E88ADEB00BFFC75 /* Build configuration list for PBXProject "Aurora" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A8048A9E1E88ADEB00BFFC75;
+			productRefGroup = A8048AA81E88ADEB00BFFC75 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A8048AA61E88ADEB00BFFC75 /* Aurora */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A8048AA51E88ADEB00BFFC75 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8048AB91E88ADEB00BFFC75 /* Main.storyboard in Resources */,
+				A8048AB31E88ADEB00BFFC75 /* Shader.vsh in Resources */,
+				A8048ABB1E88ADEB00BFFC75 /* Assets.xcassets in Resources */,
+				A8048ABE1E88ADEB00BFFC75 /* LaunchScreen.storyboard in Resources */,
+				A8048AB11E88ADEB00BFFC75 /* Shader.fsh in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A8048AA31E88ADEB00BFFC75 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8048AFB1E8972DB00BFFC75 /* ShaderManager.cpp in Sources */,
+				A8048ACB1E88AF1000BFFC75 /* AppDelegate.m in Sources */,
+				A8048ACE1E88AF7A00BFFC75 /* main.m in Sources */,
+				A8048B071E89740200BFFC75 /* Timer.cpp in Sources */,
+				A8048ADC1E8961BE00BFFC75 /* MyLog.cpp in Sources */,
+				A8048AE91E89647F00BFFC75 /* GlobalVar.cpp in Sources */,
+				A8048AF81E896FD400BFFC75 /* glUtil.cpp in Sources */,
+				A8048AEF1E89681500BFFC75 /* FileSystem.cpp in Sources */,
+				A8048AF51E896DDC00BFFC75 /* PlatformIOS.cpp in Sources */,
+				A8048AD31E88B88000BFFC75 /* AurMath.cpp in Sources */,
+				A8048AE81E89647F00BFFC75 /* CommandSystem.cpp in Sources */,
+				A8048B011E89737000BFFC75 /* SpriteBatch.cpp in Sources */,
+				A8048B061E89740200BFFC75 /* Model.cpp in Sources */,
+				A8048ACC1E88AF1000BFFC75 /* GameViewController.m in Sources */,
+				A8048B001E89737000BFFC75 /* BitmapFont.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A8048AB71E88ADEB00BFFC75 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A8048AB81E88ADEB00BFFC75 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		A8048ABC1E88ADEB00BFFC75 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A8048ABD1E88ADEB00BFFC75 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A8048AC01E88ADEB00BFFC75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A8048AC11E88ADEB00BFFC75 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A8048AC31E88ADEB00BFFC75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Aurora/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = xc.Aurora;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A8048AC41E88ADEB00BFFC75 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Aurora/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = xc.Aurora;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A8048AA21E88ADEB00BFFC75 /* Build configuration list for PBXProject "Aurora" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A8048AC01E88ADEB00BFFC75 /* Debug */,
+				A8048AC11E88ADEB00BFFC75 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A8048AC21E88ADEB00BFFC75 /* Build configuration list for PBXNativeTarget "Aurora" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A8048AC31E88ADEB00BFFC75 /* Debug */,
+				A8048AC41E88ADEB00BFFC75 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A8048A9F1E88ADEB00BFFC75 /* Project object */;
+}

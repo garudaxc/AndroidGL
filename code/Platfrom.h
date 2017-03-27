@@ -9,7 +9,9 @@ typedef unsigned short	uint16_t;
 typedef unsigned int	uint32_t;
 typedef unsigned long long uint64_t;
 
-#else
+#endif
+
+#ifdef __ANDROID__
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <GLES2/gl2.h>
@@ -18,6 +20,19 @@ typedef unsigned long long uint64_t;
 typedef unsigned char ubyte_t;
 
 #endif // WIN32
+
+
+
+#ifdef __APPLE__
+
+#import <OpenGLES/ES2/glext.h>
+
+typedef unsigned char	ubyte_t;
+typedef unsigned short	uint16_t;
+typedef unsigned int	uint32_t;
+typedef unsigned long long uint64_t;
+
+#endif
 
 
 typedef struct tagRect_t

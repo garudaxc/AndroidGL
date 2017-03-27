@@ -176,11 +176,11 @@ inline float Math<float>::GetLerp(float min, float max, float middle)
 	return (middle - min) / (max - min);
 }
 //--------------------------------------------------------
-template<>
-inline bool Math<float>::IsZero(float value)
-{
-	return (value >= -Math<float>::ZERO_TOLERANCE) && (value <= Math<float>::ZERO_TOLERANCE);
-}
+//template<>
+//inline bool Math<float>::IsZero(float value)
+//{
+//	return (value >= -Math<float>::ZERO_TOLERANCE) && (value <= Math<float>::ZERO_TOLERANCE);
+//}
 
 typedef Math<float> Mathf;
 

@@ -1,5 +1,6 @@
 #include "GlobalVar.h"
 #include <algorithm>
+#include <cstdlib>
 #include "CommandSystem.h"
 #include "MyLog.h"
 
