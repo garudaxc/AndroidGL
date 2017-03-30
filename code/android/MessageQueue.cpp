@@ -20,6 +20,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <stdarg.h>
 #include "MyLog.h"
 
+using namespace FancyTech;
+
 //#include "Android/LogUtils.h"
 
 bool MessageQueue::debug = false;

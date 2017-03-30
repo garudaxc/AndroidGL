@@ -1,11 +1,13 @@
-
-#include "libusb.h"
+#include "libusb/src/libusb.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include "MyLog.h"
+#include "Thread.h"
+#include "SensorDevice.h"
+#include "Calibration.h"
 
 
 #if !defined(bool)
@@ -28,7 +30,6 @@ static bool extra_info = false;
 static bool force_device_request = false;	// For WCID descriptor queries
 static const char* binary_name = NULL;
 
-int devicefd = -1;
 
 static int perr(char const *format, ...)
 {
@@ -47,7 +48,18 @@ static int perr(char const *format, ...)
 #define ERR_EXIT(errcode) do { perr("   %s\n", libusb_strerror((enum libusb_error)errcode)); return -1; } while (0)
 #define CALL_CHECK(fcall) do { r=fcall; if (r < 0) ERR_EXIT(r); } while (0);
 
+//static libusb_device_handle * devHandle = NULL;
+//static int devEndPoint = -1;
 
+struct UsbChannel
+{
+	libusb_device_handle * handle;
+	int interfaceNum;
+	int endpoint;
+};
+
+UsbChannel	gyroDataChannel_;
+UsbChannel	hidInputChannel_;
 
 int PrintDeviceInfo(libusb_device_handle *handle)
 {
@@ -58,13 +70,12 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 	struct libusb_config_descriptor *conf_desc;
 	const struct libusb_endpoint_descriptor *endpoint;
 	int i, j, k, r;
-	int iface, nb_ifaces, first_iface = -1;
+	int nb_ifaces;
 	struct libusb_device_descriptor dev_desc;
 	const char* speed_name[5] = { "Unknown", "1.5 Mbit/s (USB LowSpeed)", "12 Mbit/s (USB FullSpeed)",
 		"480 Mbit/s (USB HighSpeed)", "5000 Mbit/s (USB SuperSpeed)"};
 	char string[128];
 	uint8_t string_index[3];	// indexes of the string descriptors
-	uint8_t endpoint_in = 0, endpoint_out = 0;	// default IN and OUT endpoints
 
 	//GLog.LogInfo("Opening device %04X:%04X...\n", vid, pid);
 	//handle = libusb_open_device_with_vid_pid(NULL, vid, pid);
@@ -114,15 +125,12 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 		if (libusb_get_string_descriptor_ascii(handle, string_index[i], (unsigned char*)string, 128) >= 0) {
 			GLog.LogInfo("   String (0x%02X): \"%s\"", string_index[i], string);
 		}
-	}
-	
+	}	
 
 	GLog.LogInfo("\nReading first configuration descriptor:");
 	CALL_CHECK(libusb_get_config_descriptor(dev, 0, &conf_desc));
 	nb_ifaces = conf_desc->bNumInterfaces;
 	GLog.LogInfo("             nb interfaces: %d", nb_ifaces);
-	if (nb_ifaces > 0)
-		first_iface = conf_desc->usb_interface[0].altsetting[0].bInterfaceNumber;
 	for (i=0; i<nb_ifaces; i++) {
 		GLog.LogInfo("              interface[%d]: id = %d", i,
 			conf_desc->usb_interface[i].altsetting[0].bInterfaceNumber);
@@ -145,15 +153,15 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 				endpoint = &conf_desc->usb_interface[i].altsetting[j].endpoint[k];
 				GLog.LogInfo("       endpoint[%d].address: %02X", k, endpoint->bEndpointAddress);
 				// Use the first interrupt or bulk IN/OUT endpoints as default for testing
-				if ((endpoint->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) & (LIBUSB_TRANSFER_TYPE_BULK | LIBUSB_TRANSFER_TYPE_INTERRUPT)) {
-					if (endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
-						if (!endpoint_in)
-							endpoint_in = endpoint->bEndpointAddress;
-					} else {
-						if (!endpoint_out)
-							endpoint_out = endpoint->bEndpointAddress;
-					}
-				}
+				//if ((endpoint->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) & (LIBUSB_TRANSFER_TYPE_BULK | LIBUSB_TRANSFER_TYPE_INTERRUPT)) {
+				//	if (endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
+				//		if (!endpoint_in)
+				//			endpoint_in = endpoint->bEndpointAddress;
+				//	} else {
+				//		if (!endpoint_out)
+				//			endpoint_out = endpoint->bEndpointAddress;
+				//	}
+				//}
 				GLog.LogInfo("           max packet size: %04X", endpoint->wMaxPacketSize);
 				GLog.LogInfo("          polling interval: %02X", endpoint->bInterval);
 				libusb_get_ss_endpoint_companion_descriptor(NULL, endpoint, &ep_comp);
@@ -162,43 +170,124 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 					GLog.LogInfo("        bytes per interval: %04X (USB 3.0)", ep_comp->wBytesPerInterval);
 					libusb_free_ss_endpoint_companion_descriptor(ep_comp);
 				}
+
+				if (conf_desc->usb_interface[i].altsetting[j].bInterfaceClass == LIBUSB_CLASS_DATA &&
+					conf_desc->usb_interface[i].altsetting[j].bInterfaceSubClass == 0x00 &&
+					conf_desc->usb_interface[i].altsetting[j].bInterfaceProtocol == 0x00 && 
+					endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
+					gyroDataChannel_.handle = handle;
+					gyroDataChannel_.interfaceNum = conf_desc->usb_interface[i].altsetting[j].bInterfaceNumber;
+					//gyroDataChannel_.interfaceNum = 0;
+					gyroDataChannel_.endpoint = endpoint->bEndpointAddress;
+					GLog.LogInfo("found gyroDataChannel_  endpoint %02X", endpoint->bEndpointAddress);
+				}
+
+				if (conf_desc->usb_interface[i].altsetting[j].bInterfaceClass == LIBUSB_CLASS_HID &&
+					conf_desc->usb_interface[i].altsetting[j].bInterfaceSubClass == 0x00 &&
+					conf_desc->usb_interface[i].altsetting[j].bInterfaceProtocol == 0x00 &&
+					endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN) {
+					hidInputChannel_.handle = handle;
+					hidInputChannel_.interfaceNum = conf_desc->usb_interface[i].altsetting[j].bInterfaceNumber;
+					hidInputChannel_.endpoint = endpoint->bEndpointAddress;
+					GLog.LogInfo("found hidInputChannel_ endpoint %02X", endpoint->bEndpointAddress);
+				}
 			}
 		}
 	}
 	libusb_free_config_descriptor(conf_desc);
+	
+	return 1;
+}
 
-	GLog.LogInfo("first interface %d endporint in 0x%x", first_iface, (uint32_t)endpoint_in);
+void StartTrackerThread();
+void StartHIDInputThread();
 
 
-	if (libusb_kernel_driver_active(handle, first_iface) == 1) {
+void Fancy3DKeepAlive()
+{
+	uint8_t buffer = 0x31;
+	int readlen = 0;
+	int r = libusb_bulk_transfer(gyroDataChannel_.handle, 0x03, &buffer, 1, &readlen, 0);
+	if (r < 0) {
+		GLog.LogInfo("Fancy3DKeepAlive failed %d reallen %d", r, readlen);
+	}
+}
+
+int OpenTrackerDevice(libusb_device_handle *handle)
+{
+	int interface = 1;
+	int endpoint_in = 0x81;
+	GLog.LogInfo("first interface %d endporint in 0x%x", interface, (uint32_t)endpoint_in);
+
+	if (libusb_kernel_driver_active(handle, interface) == 1) {
 
 		GLog.LogInfo("driver is active");
 
-		if (!libusb_detach_kernel_driver(handle, first_iface)) {
+		if (!libusb_detach_kernel_driver(handle, interface)) {
 			GLog.LogInfo("Detached kernel driver");
-		} else {
+		}
+		else {
 			GLog.LogInfo("Detaching kernel driver failed!");
 			return -1;
 		}
 	}
-	
-	r = libusb_claim_interface(handle, first_iface);
+
+	int r = libusb_claim_interface(handle, interface);
 	if (r != LIBUSB_SUCCESS) {
 		GLog.LogInfo(" libusb_claim_interface Failed. %d", r);
 		return -1;
 	}
 	
-	uint8_t buffer[128];
-	int readLen = 0;
-	r = libusb_bulk_transfer(handle, endpoint_in, buffer, 128, &readLen, 0);
-	GLog.LogInfo("read r = %d length %d", r, readLen);
+	//uint8_t buffer[128];
+	//int readLen = 0;
+	//r = libusb_bulk_transfer(handle, endpoint_in, buffer, 128, &readLen, 0);
+	//GLog.LogInfo("read r = %d length %d", r, readLen);
 
-	return 1;
+	return 0;
 }
+
+int OpenTrackerDevice(const UsbChannel* channel)
+{
+	if (channel->handle == NULL) {
+		return -1;
+	}
+
+	GLog.LogInfo("open usb devices channel interface %x endpoint %x", channel->interfaceNum, channel->endpoint);
+
+	if (libusb_kernel_driver_active(channel->handle, channel->interfaceNum) == 1) {
+
+		GLog.LogInfo("driver is active");
+
+		if (!libusb_detach_kernel_driver(channel->handle, channel->interfaceNum)) {
+			GLog.LogInfo("Detached kernel driver");
+		}
+		else {
+			GLog.LogInfo("Detaching kernel driver failed!");
+			return -1;
+		}
+	}
+
+	int r = libusb_claim_interface(channel->handle, channel->interfaceNum);
+	if (r != LIBUSB_SUCCESS) {
+		GLog.LogInfo(" libusb_claim_interface Failed. %d", r);
+		return -1;
+	}
+
+	//uint8_t buffer[128];
+	//int readLen = 0;
+	//r = libusb_bulk_transfer(handle, endpoint_in, buffer, 128, &readLen, 0);
+	//GLog.LogInfo("read r = %d length %d", r, readLen);
+
+	return 0;
+}
+
 
 
 int libUsbTest()
 {
+	memset(&gyroDataChannel_, 0, sizeof(gyroDataChannel_));
+	memset(&hidInputChannel_, 0, sizeof(hidInputChannel_));
+
 	libusb_context* context = NULL;
 	int status = libusb_init(&context);
 	if (status != LIBUSB_SUCCESS){
@@ -208,7 +297,6 @@ int libUsbTest()
 		GLog.LogError("context error NULL");
 		return LIBUSB_ERROR_OTHER;
 	}
-
 
 	libusb_device* device = NULL;
 	libusb_device **list;
@@ -227,7 +315,13 @@ int libUsbTest()
 			continue;
 		}
 
-		if (dd.idVendor == 10291 && dd.idProduct == 1) {
+		if ((dd.idVendor == 10291 && dd.idProduct == 1) ||
+			(dd.idVendor == 949 && dd.idProduct == 1)) {
+			deviceFound++;
+			device = list[i];
+		}
+
+		if ((dd.idVendor == 0x483 && dd.idProduct == 0x5750)) {
 			deviceFound++;
 			device = list[i];
 		}
@@ -249,8 +343,255 @@ int libUsbTest()
 	libusb_free_device_list(list, 1);
 
 	PrintDeviceInfo(handle);
-	libusb_close(handle);
+
+	//OpenTrackerDevice(gyroDataChannel_.handle);
+	//OpenTrackerDevice(&gyroDataChannel_);
+	//OpenTrackerDevice(&hidInputChannel_);
+
+	//if (OpenTrackerDevice(&gyroDataChannel_) < 0) {
+	//	libusb_close(handle);
+	//} else {
+	//	StartTrackerThread();
+	//}
+
+	if (OpenTrackerDevice(&hidInputChannel_) < 0) {
+		libusb_close(handle);
+	}
+	else {
+		StartHIDInputThread();
+	}
 
 	return 0;
 }
 
+
+
+class TrackerThread : public Thread
+{
+public:
+	TrackerThread();
+	~TrackerThread();
+
+	virtual void*		Run();
+private:
+
+};
+
+TrackerThread::TrackerThread() :Thread("TrackerThread")
+{
+}
+
+TrackerThread::~TrackerThread()
+{
+}
+
+int sampleCount = 0;
+static int lastSampleCount = 0;
+static uint64_t lastTimeStamp = 0;
+
+
+int readlen = 0;
+
+//////////////////////////////////////////////////////////////////////////
+
+float DECOM(const uint8_t * raw, float scale)
+{
+	short v = raw[0] << 8 | raw[1];
+	float f = ((float)v / (short)0x7fff) * scale;
+	return f;
+}
+
+Vector3f DeomposeData(const uint8_t * data, float scale)
+{
+	Vector3f v;
+
+	v.x = DECOM(data, scale);
+	v.y = DECOM(data + 2, scale);
+	v.z = DECOM(data + 4, scale);
+
+	return v;
+}
+
+template<class T>
+T DecodeData(const uint8_t* data)
+{
+	return (T(data[0]) << 8) | T(data[1]);
+}
+
+uint32_t ComposeData(const uint8_t* data)
+{
+	return (uint32_t)data[0] << 24 | (uint32_t)data[1] << 16 | (uint32_t)data[2] << 8 | (uint32_t)data[3];
+}
+
+
+void* TrackerThread::Run()
+{
+	uint8_t buffer[128];
+	//int readLen = 0;
+	int r = 0;
+	
+	Fancy3DKeepAlive();
+
+	while (r == 0 && readlen >= 0 && Check()){
+
+		r = libusb_bulk_transfer(gyroDataChannel_.handle, gyroDataChannel_.endpoint, buffer, 128, &readlen, 0);
+
+		if (r < 0) {
+			GLog.LogError("libusb_bulk_transfer failed! %d", r);
+			break;
+		}
+
+		//assert(readlen == sizeof(SensorDeviceSample));
+		//SensorDeviceSample sample;
+
+		uint8_t* data = buffer;
+
+		uint16_t timestamp = DecodeData<uint16_t>(data);
+		data += 2;
+
+		float temperature = DecodeData<int16_t>(data) / 340.f + 36.53f;
+		data += 2;
+
+		TrackerSample sample[2];
+		sample[0].timestamp = timestamp;
+		sample[0].temperature = temperature;
+
+		// 量程+/-4G
+		sample[0].accelerate = DeomposeData(data, 4.0f);
+		// 量程 +/- 1000度/s
+		sample[0].gyro = DeomposeData(data + 6, 1000.f * Mathf::DEG_TO_RAD);
+		data += 12;
+
+		sample[1].timestamp = timestamp + 1;
+		sample[1].temperature = temperature;
+		// 量程+/-4G
+		sample[1].accelerate = DeomposeData(data, 4.0f);
+		// 量程 +/- 1000度/s
+		sample[1].gyro = DeomposeData(data + 6, 1000.f * Mathf::DEG_TO_RAD);
+		data += 12;
+
+		// 量程 +/- 0.88 Ga
+		Vector3f magValue = DeomposeData(data, 32767.f * 0.00073f);
+		float y = magValue.z;
+		magValue.z = magValue.y;
+		magValue.y = y;
+
+		sample[0].magnet = sample[1].magnet = magValue;
+
+		GCalibration.Apply(sample[0]);
+		GCalibration.Apply(sample[1]);
+		
+		uint64_t timeStamp = GetTicksNanos();
+		//UpdateGyroScope(sample[0].gyro, timeStamp);
+
+		sampleCount++;
+		if (timeStamp - lastTimeStamp > 1000000000)	{
+			float freq = ((sampleCount - lastSampleCount) * 1000000000.f) / (timeStamp - lastTimeStamp);
+			lastSampleCount = sampleCount;
+			lastTimeStamp = timeStamp;
+
+			GLog.LogInfo("freq %.2f", freq);
+
+			Fancy3DKeepAlive();
+		}
+
+	}
+
+	return NULL;
+}
+
+
+
+static TrackerThread trackerThread;
+
+static void StartTrackerThread()
+{
+	if (!trackerThread.Create()) {
+		GLog.LogError("create tracker thread failed!");
+	}
+
+}
+
+void StopTrackerThread()
+{
+	trackerThread.Stop();
+
+}
+
+
+
+
+class HIDInputThread : public Thread
+{
+public:
+	HIDInputThread();
+	~HIDInputThread();
+
+	virtual void*		Run();
+private:
+
+};
+
+HIDInputThread::HIDInputThread() :Thread("HIDInputThread")
+{
+}
+
+HIDInputThread::~HIDInputThread()
+{
+}
+
+
+void* HIDInputThread::Run()
+{
+	GLog.LogInfo("start hidInpuThread thread!");
+	uint8_t buffer[128];
+	//int readLen = 0;
+	int r = 0;
+	
+	while (r == 0 && readlen >= 0 && Check()){
+
+		r = libusb_interrupt_transfer(hidInputChannel_.handle, hidInputChannel_.endpoint, buffer, 128, &readlen, 0);
+
+		if (r < 0) {
+			GLog.LogError("libusb_bulk_transfer failed! %d", r);
+			break;
+		}
+
+		//assert(readlen == sizeof(SensorDeviceSample));
+		//SensorDeviceSample sample;
+		
+		char text[128];
+		char* p = text;
+		for (int i = 0; i < readlen; i++) {
+			sprintf(p, "%02X", buffer[i]);
+			p += 2;
+		}
+		*(p - 1) = '\0';
+		GLog.LogInfo("HIDInput readed r %d readLen %d %s", r, readlen, text);
+
+		uint64_t timeStamp = GetTicksNanos();
+		//UpdateGyroScope(sample[0].gyro, timeStamp);
+
+		sampleCount++;
+		if (timeStamp - lastTimeStamp > 1000000000)	{
+			float freq = ((sampleCount - lastSampleCount) * 1000000000.f) / (timeStamp - lastTimeStamp);
+			lastSampleCount = sampleCount;
+			lastTimeStamp = timeStamp;
+
+			GLog.LogInfo("freq %.2f", freq);
+		}
+	}
+
+	return NULL;
+}
+
+
+
+static HIDInputThread hidInpuThread_;
+
+static void StartHIDInputThread()
+{
+	if (!hidInpuThread_.Create()) {
+		GLog.LogError("create hidInpuThread thread failed!");
+	}
+}

@@ -1,18 +1,54 @@
+#pragma once
 #include "Platfrom.h"
+#include "TextureFormat.h"
 
-
-class Texture
+namespace FancyTech
 {
-public:
-	Texture();
-	~Texture();
 
-	bool	Load(const char* fileName);
+	class FrameBuffer;
 
-	void	Bind();
+	class Texture
+	{
+	public:
+		Texture();
+		~Texture();
 
-private:
+		bool	Load(const char* fileName);
 
-	uint32_t	target_;
-	GLuint		texId_;
-};
+		void	Bind();
+
+		void	Create(int width, int height, TEXTURE_FORMAT fmt);
+
+	private:
+
+		uint32_t	target_;
+		GLuint		texId_;
+		TEXTURE_FORMAT format_;
+
+		friend class FrameBuffer;
+	};
+
+
+
+	class FrameBuffer
+	{
+	public:
+		FrameBuffer();
+		~FrameBuffer();
+
+		void	Create(int width, int height, TEXTURE_FORMAT fmt, int depth);
+		
+		Texture		GetTexture()
+		{
+			return tex_;
+		}
+
+		void	Bind();
+		void	Unbind();
+	private:
+		GLuint		fboId_;
+		GLuint		depthRenderbuffer;
+		Texture		tex_;
+	};
+
+}

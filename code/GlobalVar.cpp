@@ -4,7 +4,7 @@
 #include "CommandSystem.h"
 #include "MyLog.h"
 
-namespace Aurora
+namespace FancyTech
 {
 
 #define LogConsole GLog.LogInfo
@@ -248,9 +248,9 @@ namespace Aurora
 
 	void GlobalVarManagerImpl::Destroy()
 	{
-		for (vector<GlobalVarInternal*>::iterator it = m_InternalVars.begin(); it != m_InternalVars.end(); ++it)
+		for (auto it : m_InternalVars)
 		{
-			delete (*it);
+			delete (it);
 		}
 		m_InternalVars.clear();
 	}
@@ -269,13 +269,13 @@ namespace Aurora
 
 	GlobalVarInternal* GlobalVarManagerImpl::Find(const string& name)
 	{
-		for (vector<GlobalVarInternal*>::iterator it = m_InternalVars.begin(); it != m_InternalVars.end(); ++it)
+		for (auto it : m_InternalVars)
 		{		
 			//if ((*it)->GetNameInternal() == name)
 			// 大小写不敏感
-			if (AsciiStricmp((*it)->GetNameInternal().c_str(), name.c_str()) == 0)
+			if (AsciiStricmp(it->GetNameInternal().c_str(), name.c_str()) == 0)
 			{
-				return (*it);
+				return (it);
 			}
 		}
 		
@@ -387,11 +387,11 @@ namespace Aurora
 		}
 
 		int count = 0;
-		for (vector<GlobalVarInternal*>::iterator it = m_InternalVars.begin(); it != m_InternalVars.end(); ++it)
+		for (auto it : m_InternalVars)
 		{
-			if ((*it)->GetFlagInternal() & flag)
+			if (it->GetFlagInternal() & flag)
 			{
-				(*it)->PrintToConsole(bShowDesc);
+				it->PrintToConsole(bShowDesc);
 				count++;
 			}
 		}

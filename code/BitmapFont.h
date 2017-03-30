@@ -4,7 +4,7 @@
 #include <vector>
 
 using namespace std;
-using namespace Aurora;
+using namespace FancyTech;
 
 class SpriteBatch;
 

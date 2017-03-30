@@ -15,16 +15,23 @@
 #include "GlobalVar.h"
 #include "BitmapFont.h"
 #include "SpriteBatch.h"
+#include "Calibration.h"
+#include "FileSystem.h"
+#include "Input.h"
+#include "audio/audio.h"
+#include "jni.h"
 
 using namespace std;
-using namespace Aurora;
+using namespace FancyTech;
 
 struct glState_t glState;
 
 #define TEST_MODEL 1
 
 
+
 GlobalVar EyeDistance("EyeDistance", "0.4f", GVFLAG_FLOAT, "");
+
 
 class ModelInstance
 {
@@ -53,8 +60,76 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 	return model;
 }
 
+void MemoryTest()
+{
+	GLuint		vbo_;
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 1024 * 1024, NULL, GL_STATIC_DRAW);
+
+	uint8_t* buff = new uint8_t[4 * 1024 * 1024];
+
+	uint32_t target_ = GL_TEXTURE_2D;
+	int format = GL_RGBA;
+	GLuint texId_ = 0;
+
+	glGenTextures(1, &texId_);
+	glBindTexture(target_, texId_);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(target_, 0, format, 1024, 1024, 0, format, GL_UNSIGNED_BYTE, buff);
+	checkGlError("glTexImage2D");
+	//glGenerateMipmap(GL_TEXTURE_2D);
+
+	// Draw left quad with repeat wrap mode
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(target_, 0);
+
+
+	GLuint framebuffer;
+	GLuint depthRenderbuffer;
+	GLuint texture;
+	GLint texWidth = 1024, texHeight = 1024;
+	GLint maxRenderbufferSize;
+
+	// generate the framebuffer, renderbuffer, and texture object names
+	glGenFramebuffers(1, &framebuffer);
+	glGenRenderbuffers(1, &depthRenderbuffer);
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// bind renderbuffer and create a 16-bit depth buffer
+	// width and height of renderbuffer = width and height of
+	// the texture
+	glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, texWidth, texHeight);
+	// bind the framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	// specify texture as color attachment
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+	// specify depth_renderbufer as depth attachment
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+
+
+}
+
+
 int setupGraphics(int w, int h) {
+	//MemoryTest();
+
+	GLog.LogInfo("begin setupGraphics");	
+	
 	GGlobalVarManager->Init();
+
+	GFileSys->SetRootPath("/sdcard/MyTest/", true);
 
 	glState.width = w;
 	glState.height = h;
@@ -63,40 +138,48 @@ int setupGraphics(int w, int h) {
 	GShaderManager.LoadFromFile(ShaderDiffuse, "/sdcard/MyTest/shader.glsl");
 	GShaderManager.LoadFromFile(ShaderUI, "/sdcard/MyTest/ShaderUI.glsl");
 
-	bitmapFont.LoadFromFile("/sdcard/MyTest/consolas.bitmapfont");
-	spriteBatch.Init(128);
+	bitmapFont.LoadFromFile("consolas.bitmapfont");
+	spriteBatch.Init(256);
 
 	ModelInstance* model = NULL;
-	//model = CreateModel("/sdcard/MyTest/build_tower003.mesh", "/sdcard/MyTest/1.png");
-	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
-	//Models.push_back(model);
+<<<<<<< HEAD
+	model = CreateModel("build_tower003.mesh", "1.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
+	Models.push_back(model);
 
-	//model = CreateModel("/sdcard/MyTest/build_house008.mesh", "/sdcard/MyTest/1.png");
+	model = CreateModel("build_house008.mesh", "1.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
+	Models.push_back(model);
+=======
+	model = CreateModel("build_tower003.mesh", "test.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 1.0f, 0.0f));
+	Models.push_back(model);
+
+	//model = CreateModel("build_house008.mesh", "1.png");
 	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 2.0f, 0.0f));
 	//Models.push_back(model);
+>>>>>>> etc1 support
 
-#if TEST_MODEL
-	model = CreateModel("/sdcard/MyTest/Box01.mesh", "/sdcard/MyTest/2.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
-	Models.push_back(model);
-#else
-	model = CreateModel("/sdcard/MyTest/Box001.mesh", "/sdcard/MyTest/2.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
-	Models.push_back(model);
-#endif
+//#if TEST_MODEL
+//	model = CreateModel("Box01.mesh", "2.png");
+//	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+//	Models.push_back(model);
+//#else
+//	model = CreateModel("Box001.mesh", "2.png");
+//	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
+//	Models.push_back(model);
+//#endif
 
 	checkGlError("CreateModel");
 	GLog.LogInfo("create model finished");
+
 	return 1;
 }
 
 
 Matrix4f _GetDeviceRotationMatrix();
 
-extern Vector3f accValue;
-extern Vector3f gyroValue;
-extern Vector3f magValue;
-extern uint8_t vvv[6];
+
 extern int readlen;
 
 void DrawView(int x, int y, int w, int h, float eyeOffset)
@@ -106,7 +189,7 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 	Matrix4f mView, mEyeOffset;
 
 #if TEST_MODEL
-	mView = Matrix4f::LookAtRH(Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
+	mView = Matrix4f::LookAtRH(Vector3f(0.f, -6.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
 #else
 	mView = _GetDeviceRotationMatrix();
 #endif
@@ -123,10 +206,11 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 #if TEST_MODEL
 		Matrix4f mWorld = _GetDeviceRotationMatrix();
+		mWorld = Matrix4f::IDENTITY;
 #else
 		Matrix4f mWorld = Matrix4f::IDENTITY;
 #endif
-		//mWorld = (*it)->transform_;
+		mWorld = (*it)->transform_;
 
 		GShaderManager.Bind(ShaderDiffuse);
 		GShaderManager.SetUnifrom(SU_WORLD, mWorld);
@@ -136,50 +220,80 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 
 		glActiveTexture(GL_TEXTURE0);
 		(*it)->texture_.Bind();
-				
+
 		Model& mesh = (*it)->mesh_;
-		//mesh.Bind();
-		//for (int i = 0; i < mesh.GetElementCount(); i++) {
-		//	const ModelElement* e = mesh.GetElement(i);
+		mesh.Bind();
+		for (int i = 0; i < mesh.GetElementCount(); i++) {
+			const ModelElement* e = mesh.GetElement(i);
 
-		//	void* index = (void*)(e->indexOffset * sizeof(unsigned short));
-		//	glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
-		//}
+			void* index = (void*)(e->indexOffset * sizeof(unsigned short));
+			glDrawElements(GL_TRIANGLES, e->indexCount, GL_UNSIGNED_SHORT, index);
+		}
 	}
-	
-	char buff[256];
-	/*
-	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(100.f, h - 100.f, 0.f));
-	Matrix4f mWorld = Matrix4f::RotationAxis(Vector3f::UNIT_Z, Time.GetTime() * 0.2f);
-	Vector3f n = -Vector3f::UNIT_Y * mWorld;*/
-	//sprintf(buff, "%.2f", Time.GetFPS());
-	sprintf(buff, "%.2f %.2f %.2f", accValue.x, accValue.y, accValue.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	Matrix4f vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
-	
-	sprintf(buff, "%.2f %.2f %.2f", gyroValue.x, gyroValue.y, gyroValue.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 0.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
+}
 
-	sprintf(buff, "%.2f %.2f %.2f", magValue.x, magValue.y, magValue.z);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, -5.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
-
-	sprintf(buff, "%d [%d %d %d %d %d %d]", readlen, (int)vvv[0], (int)vvv[1], (int)vvv[2], (int)vvv[3], (int)vvv[4], (int)vvv[5]);
-	bitmapFont.DrawString3D(&spriteBatch, buff, Vector3f(-20.f, 40.f, 8.f), -Vector3f::UNIT_Y, Vector3f::UNIT_Z, 0.06f, Vector4f::RED);
-	vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
+namespace FancyTech
+{
+	void DrawCalibration(int w, int h, BitmapFont& bitmapFont, SpriteBatch& spriteBatch);
 }
 
 
 float lastTime = 0.f;
+//
+bool audioInited = false;
+int	bpm_ = 0;
+bool toutched_ = false;
+
+class LogGyroTransform : public EventReceiver
+{
+public:
+
+	bool	OnEvent(const Event& event)	{
+		if (event.Type == Event::LButtonUp ||
+			event.Type == Event::TouchUp)
+		{
+			toutched_ = true;
+
+			/*if (!audioInited) {
+				bool succeeded = false;
+				if (event.fxPos < glState.width / 2) {
+					succeeded = GAudioSystem.Init("100bpm.wav");
+					bpm_ = 100;
+				} else {
+					succeeded = GAudioSystem.Init("140bpm.wav");
+					bpm_ = 140;
+				}
+
+				if (!succeeded)	{
+					GLog.LogInfo("Audio init failed");
+				} else {
+					audioInited = true;
+				}
+				
+				if (audioInited) {
+					GAudioSystem.Play();
+				}
+			}*/
+		}
+
+		return true;
+	}
+
+};
+
+static LogGyroTransform logger;
+
+extern Vector3f gyro_;
 
 void renderFrame() {
 
-	glClearColor(0.3f, 0.3f, 0.3f, 0);
+	Vector3f color(0.5f, 0.5f, 1.f);
+	if (toutched_)	{
+		color = Vector3f::UNIT_X;
+		toutched_ = false;
+	}
+
+	glClearColor(color.x, color.y, color.z, 1.f);
 	glClearDepthf(1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -187,14 +301,61 @@ void renderFrame() {
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
+	//float lineHeight = -30.0f;
+	//Vector3f pos(10.f, glState.height - 10.f, 0.f);
+
+	//char buff[64];
+	//sprintf(buff, "fps %.2f   %d bpm", Time.GetFPS(), bpm_);
+	//bitmapFont.DrawString(&spriteBatch, buff, pos);
+	//spriteBatch.Commit(glState.width, glState.height);
+
+<<<<<<< HEAD
+	gyro_.x += 0.0001f;
+	gyro_.y -= 0.0001f;
+
+	//pos.Set(10.f, glState.height / 2, 0.f);
+	//sprintf(buff, "%+.4f %+.4f %+.4f", gyro_.x, gyro_.y, gyro_.z);
+
+	//bitmapFont.DrawString(&spriteBatch, buff, pos, 3.f);
+	//spriteBatch.Commit(glState.width, glState.height);
+
+	if (!audioInited) {
+		return;
+	}
 	float eyeDistance = EyeDistance.GetFloat();
 
+	//DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	//DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+	DrawView(0, 0, glState.width, glState.height, 0);
+
+	//if (!audioInited) {
+	//	return;
+	//}
+
+	//pos.Set(glState.width / 2, glState.height / 2, 0.f);
+	//sprintf(buff, "%u", GAudioSystem.GetPosition());
+	//bitmapFont.DrawString(&spriteBatch, buff, pos, 5);
+=======
+	//if (!audioInited) {
+	//	return;
+	//}
+
+	//pos.Set(glState.width / 2, glState.height / 2, 0.f);
+	//sprintf(buff, "%u", GAudioSystem.GetPosition());
+	//bitmapFont.DrawString(&spriteBatch, buff, pos, 5);
+
+	float eyeDistance = EyeDistance.GetFloat();
 	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
 	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+>>>>>>> etc1 support
 
-	if (Time.GetTime() - lastTime > 1.f) {
-		GLog.LogInfo("%f %f", Time.GetFPS(), Time.GetTime());
-		lastTime = Time.GetTime();
-	}
+	//DrawCalibration(glState.width, glState.height, bitmapFont, spriteBatch);
+
+	//if (Time.GetTime() - lastTime > 1.f) {
+	//	GLog.LogInfo("fps %f time %f", Time.GetFPS(), Time.GetTime());
+	//	lastTime = Time.GetTime();
+	//}
 	
 }
+
+

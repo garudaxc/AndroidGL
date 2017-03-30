@@ -5,6 +5,12 @@
 #include "resource.h"
 #include "AuroraGL.h"
 #include "Platfrom.h"
+#include "Client.h"
+#include "Rendering.h"
+#include "Input.h"
+#include "glUtil.h"
+
+using namespace FancyTech;
 
 #define MAX_LOADSTRING 100
 
@@ -40,12 +46,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	LoadString(hInstance, IDC_OGLPROJECT, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
+	Platfrom::Init();
+	GInput->Create();
 	// 执行应用程序初始化: 
 	if (!InitInstance (hInstance, nCmdShow))
 	{
 		return FALSE;
 	}
-	PlatfromInit();
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_OGLPROJECT));
 
@@ -66,11 +73,19 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		else
 		{
 			_UpdateTimer();
-			DrawFrame();
+			MainClient->OnUpdate();
+
+			RenderSystem->BeginFrame();
+			MainClient->OnRender();
+			RenderSystem->EndFrame();
+
+			SwapBuffers(glState.hdc);
+			checkGlError("SwapBuffers");
 		}
 	}
 
-	PlatfromShutDown();
+	//UnloadResource();
+	Platfrom::Shutdown();
 	return (int) msg.wParam;
 }
 
@@ -121,7 +136,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-	   CW_USEDEFAULT, CW_USEDEFAULT, 1600, 900, NULL, NULL, hInstance, NULL);
+	   CW_USEDEFAULT, CW_USEDEFAULT, 1920, 1080, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {
@@ -140,7 +155,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	   return 0;
    }
 
-   LoadResource();
+   if (MainClient == nullptr) {
+	   ::MessageBox(NULL, _T("No valid client founded!"), NULL, MB_OK);
+	   return FALSE;
+   }
+
+   RenderSystem->Create(glState.width, glState.height);
+   MainClient->OnCreate();
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
@@ -158,12 +179,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY	- 发送退出消息并返回
 //
 //
+
+namespace FancyTech
+{
+	// windows input
+	void DispatchWindowsEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
 	//PAINTSTRUCT ps;
 	//HDC hdc;
 
+	FancyTech::DispatchWindowsEvent(hWnd, message, wParam, lParam);
 	switch (message)
 	{
 	case WM_COMMAND:

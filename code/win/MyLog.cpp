@@ -1,62 +1,96 @@
 #include "MyLog.h"
+#include "Thread.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <time.h>
+#include "Platfrom.h"
 
-Log::Log() :pfLog(NULL){
-	const char* filename = "log.txt";
-	FILE* pf = fopen(filename, "w+");
-	if (pf == NULL) {
-		::exit(1);
+namespace FancyTech
+{
+
+	struct LogImpl
+	{
+		FILE*	pf;
+		Mutex	mutex;
+
+		LogImpl() :pf(NULL)
+		{
+		}
+	};
+
+	Log::Log()
+	{
+		impl_ = new LogImpl;
+
+		string filename = Platfrom::GetTempPath() + "/log.txt";
+		FILE* pf = fopen(filename.c_str(), "w+");
+		if (pf == NULL) {
+			::exit(1);
+		}
+
+		impl_->pf = pf;
 	}
 
-	pfLog = pf;
-}
+	Log::~Log() {
+		if (impl_->pf) {
+			fclose(impl_->pf);
+		}
 
-Log::~Log() {
-	if (pfLog) {
-		fclose(pfLog);
-		pfLog = NULL;
-	}
-}
-
-void Log::LogInfo(const char* str, ...) {
-
-	char buff[256];
-	int len = strlen(str);
-	if (len == 0) {
-		return;
+		delete impl_;
 	}
 
-	va_list argptr;
-	va_start(argptr, str);
-	vsnprintf(buff, sizeof(buff)-1, str, argptr);
-	va_end(argptr);
+	void WriteLog(LogImpl* impl, const char* prefix, const char* fmt, va_list argptr)
+	{
+		char s[1024];
 
-	fprintf(pfLog, "info : %s\n", buff);
-	fflush(pfLog);
-}
+		vsnprintf(s, sizeof(s)-1, fmt, argptr);
 
-void Log::LogError(const char* str, ...) {
+		time_t t;
+		struct tm *tmp;
+		char buff[16];
+		time(&t);
+		tmp = localtime(&t);
+		strftime(buff, sizeof(buff), "%H:%M:%S", tmp);
 
-	char buff[256];
-	int len = strlen(str);
-	if (len == 0) {
-		return;
+		AutoLock lock(&impl->mutex);
+		fprintf(impl->pf, "%s (%s) : %s\n", prefix, buff, s);
+		fflush(impl->pf);
 	}
 
-	va_list argptr;
-	va_start(argptr, str);
-	vsnprintf(buff, sizeof(buff)-1, str, argptr);
-	va_end(argptr);
+	void Log::LogInfo(const char* str, ...) {
 
-	fprintf(pfLog, "error : %s\n", buff);
-	fflush(pfLog);
+		int len = strlen(str);
+		if (len == 0) {
+			return;
+		}
+
+		va_list argptr;
+		va_start(argptr, str);
+
+		WriteLog(impl_, "info", str, argptr);
+		va_end(argptr);
+	}
+
+	void Log::LogError(const char* str, ...) {
+
+		int len = strlen(str);
+		if (len == 0) {
+			return;
+		}
+
+		va_list argptr;
+		va_start(argptr, str);
+
+		WriteLog(impl_, "error", str, argptr);
+		va_end(argptr);
+	}
+
+	void Log::LogConsole(const char* str, ...){
+		// todo
+
+	}
+
+	Log GLog;
+
 }
-
-void Log::LogConsole(const char* str, ...){
-	// todo
-
-}
-
-Log GLog;

@@ -14,6 +14,7 @@
 #include <jni.h>
 
 using namespace std;
+using namespace FancyTech;
 
 
 #define HIDIOCGRDESCSIZE	_IOR('H', 0x01, int)

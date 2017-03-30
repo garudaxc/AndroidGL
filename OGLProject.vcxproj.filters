@@ -18,6 +18,21 @@
     <Filter Include="源文件\thirdParty">
       <UniqueIdentifier>{060b1128-630c-4ae8-8bc7-a6ccb0746ec4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\thirdParty\zip">
+      <UniqueIdentifier>{142661a0-9411-48a3-ac25-d2099fbe975a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thirdParty\stb_image">
+      <UniqueIdentifier>{d35edbc5-97d8-4680-b2df-a21f397abba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thirdParty\rapidjson">
+      <UniqueIdentifier>{3df6a930-e2a1-4616-ace5-bb876cad9631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Framework">
+      <UniqueIdentifier>{5853f0cd-ce00-4c17-87b4-0cbd24baa49f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{5954ea40-a29c-482b-9139-af1d3382b810}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\win\AuroraGL.h">
@@ -29,19 +44,10 @@
     <ClInclude Include="code\win\stdafx.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="code\MyLog.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Model.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="code\glUtil.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="code\AurMath.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="code\ShaderManager.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="code\win\glew.h">
@@ -53,46 +59,166 @@
     <ClInclude Include="code\win\wglew.h">
       <Filter>源文件\win</Filter>
     </ClInclude>
-    <ClInclude Include="code\FileSystem.h">
+    <ClInclude Include="code\Thread.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Calibration.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="code\thirdParty\stb\stb_image.h">
-      <Filter>源文件\thirdParty</Filter>
+      <Filter>源文件\thirdParty\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="code\Texture.h">
-      <Filter>源文件</Filter>
+    <ClInclude Include="code\thirdParty\zip\zlib.h">
+      <Filter>源文件\thirdParty\zip</Filter>
     </ClInclude>
-    <ClInclude Include="code\Timer.h">
+    <ClInclude Include="code\thirdParty\zip\zutil.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\crc32.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\crypt.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\deflate.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\gzguts.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\inffast.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\inffixed.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\inflate.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\inftrees.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\ioapi.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\iowin32.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\mztools.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\trees.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\unzip.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\zconf.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\zip\zip.h">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="code\win\dirent.h">
+      <Filter>源文件\win</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\allocators.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\document.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\encodedstream.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\encodings.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\filereadstream.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\filewritestream.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\memorybuffer.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\memorystream.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\pointer.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\prettywriter.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\rapidjson.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\reader.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\stringbuffer.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\writer.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\msinttypes\inttypes.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\thirdParty\rapidjson\msinttypes\stdint.h">
+      <Filter>源文件\thirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Client.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="code\CommandSystem.h">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="code\GlobalVar.h">
-      <Filter>源文件</Filter>
+    <ClInclude Include="code\FileSystem.h">
+      <Filter>源文件\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="code\BitmapFont.h">
-      <Filter>源文件</Filter>
+    <ClInclude Include="code\Input.h">
+      <Filter>源文件\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\ShaderManager.h">
+      <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="code\SpriteBatch.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Texture.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Model.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\audio\WavFile.h">
+      <Filter>源文件\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\BitmapFont.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\GlobalVar.h">
+      <Filter>源文件\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Timer.h">
+      <Filter>源文件\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Rendering.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="code\MyLog.h">
+      <Filter>源文件\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="code\TextureFormat.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="code\win\MyLog.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Model.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="code\glUtil.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\ShaderManager.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\win\draw.cpp">
-      <Filter>源文件\win</Filter>
     </ClCompile>
     <ClCompile Include="code\win\GLInit.cpp">
       <Filter>源文件\win</Filter>
@@ -103,35 +229,134 @@
     <ClCompile Include="code\win\PlatformWin.cpp">
       <Filter>源文件\win</Filter>
     </ClCompile>
-    <ClCompile Include="code\FileSystem.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\thirdParty\stb\stb_image.c">
-      <Filter>源文件\thirdParty</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Texture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Timer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\CommandSystem.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\GlobalVar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="code\AurMath.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\BitmapFont.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="code\SpriteBatch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="code\win\UsbDevice.cpp">
       <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\Thread.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Calibration.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\stb\stb_image.c">
+      <Filter>源文件\thirdParty\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\zutil.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\adler32.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\compress.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\crc32.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\deflate.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\gzclose.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\gzlib.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\gzread.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\gzwrite.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\infback.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\inffast.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\inflate.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\inftrees.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\ioapi.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\iowin32.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\mztools.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\trees.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\uncompr.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\unzip.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\thirdParty\zip\zip.c">
+      <Filter>源文件\thirdParty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\dirent.c">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\InputWin.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Rendering.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Client.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="code\CommandSystem.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\FileSystem.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Input.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\ShaderManager.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\SpriteBatch.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Texture.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Model.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\audio\WavFile.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\BitmapFont.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\GlobalVar.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Timer.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\MyLog.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="code\win\WinClient.cpp">
+      <Filter>源文件\win</Filter>
+    </ClCompile>
+    <ClCompile Include="code\android\TextureFormat.cpp">
+      <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

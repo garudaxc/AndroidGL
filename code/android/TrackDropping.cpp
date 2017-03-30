@@ -3,7 +3,7 @@
 #include "AurMath.h"
 
 
-using namespace Aurora;
+using namespace FancyTech;
 
 enum State
 {

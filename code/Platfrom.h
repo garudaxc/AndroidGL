@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef WIN32
+#include <io.h>
 #include "win/glew.h"
 #include "win/wglew.h"
 
@@ -16,10 +17,14 @@ typedef unsigned long long uint64_t;
 #include <EGL/eglext.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <unistd.h>
 
 typedef unsigned char ubyte_t;
 
 #endif // WIN32
+
+#include <string>
+using namespace std;
 
 
 
@@ -46,14 +51,18 @@ typedef struct tagRect_t
 extern const char* vsInclude;
 extern const char* psInclude;
 
-void PlatfromInit();
-void PlatfromShutDown();
-
 void EnumGLConfig();
 
 uint64_t GetTicksNanos();
 uint32_t	GetTicksMS();
 
+class Platfrom
+{
+public:
+	static void	Init();
+	static void Shutdown();
 
+	static const string&	GetTempPath();
+};
 
 

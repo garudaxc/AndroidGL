@@ -117,6 +117,11 @@ void SpriteBatch::Draw(GLuint texture, const rect_t& uvRect, uint32_t texWidth, 
 	const Vector3f& pos, const Quaternionf& rot,
 	float scale, const Vector4f& color, bool is3d)
 {
+	if (spriteCount_ == sprites_.size()) {
+		GLog.LogInfo("sprite buffer is full");
+		return;
+	}
+
 	Sprite& sprite = sprites_[spriteCount_++];
 
 	float invTexW = 1.f / texWidth;
@@ -155,79 +160,83 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 {
 	Vector3f invViewPort(2.f / viewWidth, 2.f / viewHeight, 1.f);
 
-	vector<TextVert> vert(sprites_.size());
+	vector<TextVert> vert(sprites_.size() * 4);
 
 	TextVert* vertex = &vert[0];
 	// 2d text
-	for (auto it = sprites_.begin(); it != sprites_.begin() + spriteCount_; ++it) {
-		if (it->is3d) {
+	for (uint32_t i = 0; i < spriteCount_; i++) {
+		Sprite& it = sprites_[i];
+		if (it.is3d) {
 			continue;
 		}
 
-		Vector3f pos = Vector3f::Modulate(it->pos, invViewPort) - Vector3f(1.0f, 1.0f, 0.f);
-		float w = it->w * invViewPort.x;
-		float h = it->h * invViewPort.y;
+		Vector3f pos = Modulate(it.pos, invViewPort) - Vector3f(1.0f, 1.0f, 0.f);
+		float w = it.w * invViewPort.x;
+		float h = it.h * invViewPort.y;
 		
 		vertex->pos = pos;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvLeft, it->uvTop);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvLeft, it.uvTop);
 		vertex++;
 
 		vertex->pos = pos + Vector3f(w, 0.f, 0.f);
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvRight, it->uvTop);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvRight, it.uvTop);
 		vertex++;
 
 		vertex->pos = pos + Vector3f(w, h, 0.f);
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvRight, it->uvBottom);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvRight, it.uvBottom);
 		vertex++;
 
 		vertex->pos = pos + Vector3f(0.f, h, 0.f);
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvLeft, it->uvBottom);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvLeft, it.uvBottom);
 		vertex++;
 	}
 	int vertex2d = vertex - &vert[0];
 
 	// 3d text
-	for (auto it = sprites_.begin(); it != sprites_.begin() + spriteCount_; ++it) {
-		if (!it->is3d) {
+	for (uint32_t i = 0; i < spriteCount_; i++) {
+		Sprite& it = sprites_[i];
+		if (!it.is3d) {
 			continue;
 		}
 
-		Vector3f pos = it->pos;
+		Vector3f pos = it.pos;
 
-		Vector3f right = Vector3f::UNIT_X * it->rotation;
-		Vector3f up = Vector3f::UNIT_Y * it->rotation;
+		Vector3f right = Vector3f::UNIT_X * it.rotation;
+		Vector3f up = Vector3f::UNIT_Y * it.rotation;
 
-		float w = it->w * invViewPort.x;
-		float h = it->h * invViewPort.y;
+		float w = it.w * invViewPort.x;
+		float h = it.h * invViewPort.y;
 
 		vertex->pos = pos;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvLeft, it->uvTop);
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvLeft, it.uvTop);
 		vertex++;
 
-		vertex->pos = pos + right * it->w;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvRight, it->uvTop);
+		vertex->pos = pos + right * it.w;
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvRight, it.uvTop);
 		vertex++;
 
-		vertex->pos = pos + right * it->w + up * it->h;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvRight, it->uvBottom);
+		vertex->pos = pos + right * it.w + up * it.h;
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvRight, it.uvBottom);
 		vertex++;
 
-		vertex->pos = pos + up * it->h;
-		vertex->color = it->color;
-		vertex->uv = Vector2f(it->uvLeft, it->uvBottom);
+		vertex->pos = pos + up * it.h;
+		vertex->color = it.color;
+		vertex->uv = Vector2f(it.uvLeft, it.uvBottom);
 		vertex++;
 	}
 
 	int vertex3d = spriteCount_ * 4 - vertex2d;
 
 	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -240,12 +249,14 @@ void SpriteBatch::Commit(uint32_t viewWidth, uint32_t viewHeight, const Matrix4f
 	glBindTexture(GL_TEXTURE_2D, sprites_.front().texture);
 
 	GShaderManager.SetUnifrom(SU_VIEWPROJ, Matrix4f::IDENTITY);
-	geometry_->Draw(vertex2d / 2 * 3, 0);
-
+	geometry_->Draw((vertex2d / 2) * 3, 0);
+	
 	GShaderManager.SetUnifrom(SU_VIEWPROJ, ViewProj);
-	geometry_->Draw(vertex3d / 2 * 3, vertex2d / 2 * 3);
+	geometry_->Draw((vertex3d / 2) * 3, (vertex2d / 2) * 3);
 
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 
 	spriteCount_ = 0;

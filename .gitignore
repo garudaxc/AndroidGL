@@ -3,10 +3,12 @@
 *.user
 *.suo
 .DS_Store
+build/*
 bin/*
 obj/*
 libs/*
 gen/*
 resource/*
+intermediate/*
 !libs/win32
 local.properties

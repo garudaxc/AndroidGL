@@ -14,10 +14,7 @@ import android.hardware.usb.*;
 
 public class GL2JNILib {
 
-	static {
-		System.loadLibrary("aurora-native");
-	}
-
+	
 	static UsbDeviceConnection connection = null;
 	UsbInterface intf = null;
 	UsbEndpoint endpoint = null;
@@ -139,7 +136,7 @@ public class GL2JNILib {
 	 * @param height
 	 *            the current view height
 	 */
-	public static native void init(int width, int height);
+	public static native void init(int width, int height, Object surface);
 
 	public static native void step();
 

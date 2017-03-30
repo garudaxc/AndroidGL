@@ -2,7 +2,8 @@
 
 #include <stdio.h>
 
-class Mutex;
+namespace FancyTech
+{
 
 class Log
 {
@@ -13,10 +14,11 @@ public:
 	void LogConsole(const char* str, ...);
 	void LogInfo(const char* str, ...);
 	void LogError(const char* str, ...);
-private:
 
-	FILE* pfLog;
-	Mutex* mutex_;
+private:
+	struct LogImpl* impl_;
 };
 
 extern Log GLog;
+
+}

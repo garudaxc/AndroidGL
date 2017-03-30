@@ -14,9 +14,31 @@
 #include "GlobalVar.h"
 #include "BitmapFont.h"
 #include "SpriteBatch.h"
+#include "SensorDevice.h"
+#include "Calibration.h"
+#include "FileSystem.h"
+#include "Input.h"
 
 using namespace std;
-using namespace Aurora;
+using namespace FancyTech;
+
+
+//class MyReceiver : public EventReceiver
+//{
+//public:
+//
+//	bool	OnEvent(const Event& event)	{
+//		if (event.Type != Event::MouseMove)
+//		{
+//			GLog.LogInfo("%hd, %d %d", event.Type, event.xPos, event.yPos);
+//		}
+//		return true;
+//	}
+//
+//};
+//
+//MyReceiver a;
+
 
 
 GlobalVar EyeDistance("EyeDistance", "0.065f", GVFLAG_FLOAT, "");
@@ -56,34 +78,44 @@ ModelInstance*	CreateModel(const char* mesh, const char* texture)
 void LoadResource() {
 	GGlobalVarManager->Init();
 
+	GFileSys->SetRootPath("../../resource/", true);
+	
 	GShaderManager.LoadFromFile(ShaderDiffuse, "../../assets/shader330.glsl");
 	GShaderManager.LoadFromFile(ShaderUI, "../../assets/ShaderUI.glsl");
 	checkGlError("GShaderManager.LoadFromFile");
 
-	bitmapFont.LoadFromFile("../../resource/consolas.bitmapfont");
+	bitmapFont.LoadFromFile("consolas.bitmapfont");
 	spriteBatch.Init(128);
 
 	ModelInstance* model = NULL;
-	model = CreateModel("../../resource/build_tower003.mesh", "../../resource/2.png");
-	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 0.0f, 0.0f));
+	model = CreateModel("build_tower003.mesh", "2.png");
+	model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(-1.0f, 10.0f, 0.0f));
 	Models.push_back(model);
 
-	//model = CreateModel("build_tower003.mesh", "2.png");
-	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 0.0f, 0.0f));
+	//model = CreateModel("build_house008.mesh", "1.png");
+	//model->transform_ = Matrix4f::Transform(Quaternionf::IDENTITY, Vector3f(1.5f, 10.0f, 0.0f));
 	//Models.push_back(model);
 
 
 	//model = CreateModel("Box001.mesh", "2.png");
 	//MatrixTransform(model->transform_, Quaternionf::IDENTITY, Vector3f(0.0f, 0.0f, 0.0f));
 	//Models.push_back(model);
+
 }
 
+void UnloadResource()
+{
+	StopTrackerThread();
+}
 
-void DrawView(int x, int y, int w, int h, float eyeOffset)
+extern int sampleCount;
+
+
+void DrawOneEye(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
-	
-	Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -6.0f, 3.0f), Vector3f(0.8f, 0.0f, 1.5f), Vector3f::UNIT_Z);
+
+	Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
 	mView *= Matrix4f::Translate(Vector3f(eyeOffset, 0.f, 0.f));
 
 
@@ -120,18 +152,15 @@ void DrawView(int x, int y, int w, int h, float eyeOffset)
 		}
 	}
 
-	char buff[64];
-	sprintf(buff, "%.2f", Time.GetFPS());
-	bitmapFont.DrawString(&spriteBatch, buff, Vector3f(10.f, h - 10.f, 0.f));
-	Matrix4f vp = mView * mProj;
-	spriteBatch.Commit(w, h, vp);
-
 	glBindVertexArray(0);
 
 }
 
+namespace FancyTech{
 
-float time = 0.f;
+	void DrawCalibration(int w, int h, BitmapFont& bitmapFont, SpriteBatch& spriteBatch);
+}
+
 
 void DrawFrame() {
 	
@@ -139,22 +168,16 @@ void DrawFrame() {
 
 	glClearDepthf(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glViewport(0, 0, glState.width / 2, glState.height);
-
+	
 	//glDisable(GL_CULL_FACE);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	float eyeDistance = EyeDistance.GetFloat();
 
-	DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
-	DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
-
-	if (Time.GetTime()  - time > 1.f) {
-		GLog.LogInfo("%f %f %d", Time.GetFPS(), Time.GetTime(), timeGetTime());
-		time = Time.GetTime();
-	}
+	//DrawView(0, 0, glState.width / 2, glState.height, eyeDistance / 2.f);
+	//DrawView(glState.width / 2, 0, glState.width / 2, glState.height, -eyeDistance / 2.f);
+	DrawCalibration(glState.width, glState.height, bitmapFont, spriteBatch);
 
 	glFlush();
 	glFinish();

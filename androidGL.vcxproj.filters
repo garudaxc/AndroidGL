@@ -1,174 +1,79 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source files">
-      <UniqueIdentifier>{d0e2d5aa-d79f-4c8f-8ed8-933c064b0069}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Resource files">
-      <UniqueIdentifier>{ae9afa60-c754-47c5-948d-5b127b93b7e5}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
-    </Filter>
-    <Filter Include="Source files\android">
-      <UniqueIdentifier>{4a29086f-2231-4d23-a42d-3ad051007188}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="config">
-      <UniqueIdentifier>{2495b612-16d1-4b49-8314-819ccbb5ac9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source files\thirdParty">
-      <UniqueIdentifier>{4a31e3fa-e66a-4ae3-9858-b0a18ad41406}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source files\java">
-      <UniqueIdentifier>{998a92e1-cc1f-4a21-9ecc-aa62b16333b6}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="code\android\ClientAndroid.cpp" />
+    <ClCompile Include="code\android\device.cpp" />
+    <ClCompile Include="code\android\InputAndroid.cpp" />
+    <ClCompile Include="code\android\jniMain.cpp" />
+    <ClCompile Include="code\android\MessageQueue.cpp" />
+    <ClCompile Include="code\android\Sensor.cpp" />
+    <ClCompile Include="code\android\Thread.cpp" />
+    <ClCompile Include="code\android\TrackDropping.cpp" />
+    <ClCompile Include="code\android\MyLog.cpp" />
+    <ClCompile Include="code\android\PlatfromAndroid.cpp" />
+    <ClCompile Include="code\android\UsbDevice.cpp" />
+    <ClCompile Include="code\audio\audio.cpp" />
+    <ClCompile Include="code\audio\WavFile.cpp" />
+    <ClCompile Include="code\AurMath.cpp" />
+    <ClCompile Include="code\BitmapFont.cpp" />
+    <ClCompile Include="code\Calibration.cpp" />
+    <ClCompile Include="code\CommandSystem.cpp" />
+    <ClCompile Include="code\FileSystem.cpp" />
+    <ClCompile Include="code\GlobalVar.cpp" />
+    <ClCompile Include="code\glUtil.cpp" />
+    <ClCompile Include="code\Input.cpp" />
+    <ClCompile Include="code\Model.cpp" />
+    <ClCompile Include="code\Rendering.cpp" />
+    <ClCompile Include="code\ShaderManager.cpp" />
+    <ClCompile Include="code\SpriteBatch.cpp" />
+    <ClCompile Include="code\Texture.cpp" />
+    <ClCompile Include="code\thirdParty\etc1\etc1.cpp" />
+    <ClCompile Include="code\thirdParty\stb\stb_image.c" />
+    <ClCompile Include="code\thirdParty\zip\ioapi.c" />
+    <ClCompile Include="code\thirdParty\zip\unzip.c" />
+    <ClCompile Include="code\Timer.cpp" />
+    <ClCompile Include="code\android\TextureFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="jni\Android.mk">
-      <Filter>config</Filter>
-    </None>
-    <None Include="jni\Application.mk">
-      <Filter>config</Filter>
-    </None>
-    <None Include="src\com\xvr\aurora\GL2JNILib.java">
-      <Filter>Source files\java</Filter>
-    </None>
-    <None Include="src\com\xvr\aurora\GL2JNIView.java">
-      <Filter>Source files\java</Filter>
-    </None>
-    <None Include="src\com\xvr\aurora\XVRActivity.java">
-      <Filter>Source files\java</Filter>
-    </None>
+    <ClInclude Include="code\android\AuroraGL.h" />
+    <ClInclude Include="code\android\MessageQueue.h" />
+    <ClInclude Include="code\audio\audio.h" />
+    <ClInclude Include="code\audio\WavFile.h" />
+    <ClInclude Include="code\AurMath.h" />
+    <ClInclude Include="code\BitmapFont.h" />
+    <ClInclude Include="code\Calibration.h" />
+    <ClInclude Include="code\CommandSystem.h" />
+    <ClInclude Include="code\FileSystem.h" />
+    <ClInclude Include="code\GlobalVar.h" />
+    <ClInclude Include="code\glUtil.h" />
+    <ClInclude Include="code\Input.h" />
+    <ClInclude Include="code\MathFunction.h" />
+    <ClInclude Include="code\Model.h" />
+    <ClInclude Include="code\MyLog.h" />
+    <ClInclude Include="code\Platfrom.h" />
+    <ClInclude Include="code\Rendering.h" />
+    <ClInclude Include="code\RingBuffer.h" />
+    <ClInclude Include="code\SensorDevice.h" />
+    <ClInclude Include="code\ShaderManager.h" />
+    <ClInclude Include="code\SpriteBatch.h" />
+    <ClInclude Include="code\Texture.h" />
+    <ClInclude Include="code\TextureFormat.h" />
+    <ClInclude Include="code\thirdParty\etc1\etc1.h" />
+    <ClInclude Include="code\thirdParty\stb\stb_image.h" />
+    <ClInclude Include="code\thirdParty\zip\ioapi.h" />
+    <ClInclude Include="code\thirdParty\zip\unzip.h" />
+    <ClInclude Include="code\Thread.h" />
+    <ClInclude Include="code\Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="code\android\AuroraGL.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Platfrom.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\MyLog.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Model.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\glUtil.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\AurMath.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\MathFunction.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\ShaderManager.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\FileSystem.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Texture.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\thirdParty\stb\stb_image.h">
-      <Filter>Source files\thirdParty</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Timer.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\CommandSystem.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\GlobalVar.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\android\Thread.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\android\MessageQueue.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\BitmapFont.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\SpriteBatch.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
+    <Xml Include="AndroidManifest.xml" />
+    <Xml Include="build.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="code\Model.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\glUtil.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\ShaderManager.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\MyLog.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\PlatfromAndroid.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\draw.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\TrackDropping.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
-    <ClCompile Include="code\FileSystem.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Texture.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\thirdParty\stb\stb_image.c">
-      <Filter>Source files\thirdParty</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Timer.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\CommandSystem.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\GlobalVar.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\Sensor.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\Thread.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\AurMath.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\MessageQueue.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\BitmapFont.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\SpriteBatch.cpp">
-      <Filter>Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\device.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\jniMain.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
-    <ClCompile Include="code\android\UsbDevice.cpp">
-      <Filter>Source files\android</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="AndroidManifest.xml">
-      <Filter>config</Filter>
-    </Xml>
-    <Xml Include="build.xml">
-      <Filter>config</Filter>
-    </Xml>
+    <None Include="jni\Android.mk" />
+    <None Include="jni\Application.mk" />
+    <None Include="src\com\xvr\aurora\GL2JNILib.java" />
+    <None Include="src\com\xvr\aurora\GL2JNIView.java" />
+    <None Include="src\com\xvr\aurora\XVRActivity.java" />
   </ItemGroup>
 </Project>
