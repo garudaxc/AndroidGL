@@ -19,14 +19,26 @@
 		A8048ADC1E8961BE00BFFC75 /* MyLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048ADB1E8961BE00BFFC75 /* MyLog.cpp */; };
 		A8048AE81E89647F00BFFC75 /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AE41E89647F00BFFC75 /* CommandSystem.cpp */; };
 		A8048AE91E89647F00BFFC75 /* GlobalVar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AE61E89647F00BFFC75 /* GlobalVar.cpp */; };
-		A8048AEF1E89681500BFFC75 /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AEB1E89681500BFFC75 /* FileSystem.cpp */; };
 		A8048AF51E896DDC00BFFC75 /* PlatformIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AF41E896DDC00BFFC75 /* PlatformIOS.cpp */; };
 		A8048AF81E896FD400BFFC75 /* glUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AF61E896FD400BFFC75 /* glUtil.cpp */; };
 		A8048AFB1E8972DB00BFFC75 /* ShaderManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AF91E8972DB00BFFC75 /* ShaderManager.cpp */; };
-		A8048B001E89737000BFFC75 /* BitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AFC1E89737000BFFC75 /* BitmapFont.cpp */; };
-		A8048B011E89737000BFFC75 /* SpriteBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048AFE1E89737000BFFC75 /* SpriteBatch.cpp */; };
-		A8048B061E89740200BFFC75 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048B021E89740200BFFC75 /* Model.cpp */; };
 		A8048B071E89740200BFFC75 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8048B041E89740200BFFC75 /* Timer.cpp */; };
+		A8BA47761E93BE3F005304FF /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A8BA47751E93BE3F005304FF /* libz.tbd */; };
+		A8BA47801E93BE82005304FF /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47781E93BE82005304FF /* ioapi.c */; };
+		A8BA47811E93BE82005304FF /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA477A1E93BE82005304FF /* mztools.c */; };
+		A8BA47821E93BE82005304FF /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA477C1E93BE82005304FF /* unzip.c */; };
+		A8BA47831E93BE82005304FF /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA477E1E93BE82005304FF /* zip.c */; };
+		A8BA47991E93BE9D005304FF /* aescrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47861E93BE9D005304FF /* aescrypt.c */; };
+		A8BA479A1E93BE9D005304FF /* aeskey.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47871E93BE9D005304FF /* aeskey.c */; };
+		A8BA479B1E93BE9D005304FF /* aestab.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47891E93BE9D005304FF /* aestab.c */; };
+		A8BA479C1E93BE9D005304FF /* entropy.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA478D1E93BE9D005304FF /* entropy.c */; };
+		A8BA479D1E93BE9D005304FF /* fileenc.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA478F1E93BE9D005304FF /* fileenc.c */; };
+		A8BA479E1E93BE9D005304FF /* hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47911E93BE9D005304FF /* hmac.c */; };
+		A8BA479F1E93BE9D005304FF /* prng.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47931E93BE9D005304FF /* prng.c */; };
+		A8BA47A01E93BE9D005304FF /* pwd2key.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47951E93BE9D005304FF /* pwd2key.c */; };
+		A8BA47A11E93BE9D005304FF /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47971E93BE9D005304FF /* sha1.c */; };
+		A8BA47A31E93D5B7005304FF /* Shaders.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8BA47A21E93D5B7005304FF /* Shaders.zip */; };
+		A8BA47A71E93E053005304FF /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8BA47A51E93E053005304FF /* FileSystem.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,22 +63,49 @@
 		A8048AE51E89647F00BFFC75 /* CommandSystem.h */ = {isa = PBXFileReference; fileEncoding = 2147486000; lastKnownFileType = sourcecode.c.h; name = CommandSystem.h; path = ../../../code/CommandSystem.h; sourceTree = "<group>"; };
 		A8048AE61E89647F00BFFC75 /* GlobalVar.cpp */ = {isa = PBXFileReference; fileEncoding = 2147486000; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalVar.cpp; path = ../../../code/GlobalVar.cpp; sourceTree = "<group>"; };
 		A8048AEA1E8964D700BFFC75 /* GlobalVar.h */ = {isa = PBXFileReference; fileEncoding = 2147486000; lastKnownFileType = sourcecode.c.h; name = GlobalVar.h; path = ../../../code/GlobalVar.h; sourceTree = "<group>"; };
-		A8048AEB1E89681500BFFC75 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSystem.cpp; path = ../../../code/FileSystem.cpp; sourceTree = "<group>"; };
-		A8048AEC1E89681500BFFC75 /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystem.h; path = ../../../code/FileSystem.h; sourceTree = "<group>"; };
 		A8048AF11E896D1800BFFC75 /* Platfrom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platfrom.h; path = ../../../code/Platfrom.h; sourceTree = "<group>"; };
 		A8048AF41E896DDC00BFFC75 /* PlatformIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformIOS.cpp; path = ../../../code/ios/PlatformIOS.cpp; sourceTree = "<group>"; };
 		A8048AF61E896FD400BFFC75 /* glUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glUtil.cpp; path = ../../../code/glUtil.cpp; sourceTree = "<group>"; };
 		A8048AF71E896FD400BFFC75 /* glUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glUtil.h; path = ../../../code/glUtil.h; sourceTree = "<group>"; };
 		A8048AF91E8972DB00BFFC75 /* ShaderManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderManager.cpp; path = ../../../code/ShaderManager.cpp; sourceTree = "<group>"; };
 		A8048AFA1E8972DB00BFFC75 /* ShaderManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderManager.h; path = ../../../code/ShaderManager.h; sourceTree = "<group>"; };
-		A8048AFC1E89737000BFFC75 /* BitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapFont.cpp; path = ../../../code/BitmapFont.cpp; sourceTree = "<group>"; };
-		A8048AFD1E89737000BFFC75 /* BitmapFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BitmapFont.h; path = ../../../code/BitmapFont.h; sourceTree = "<group>"; };
-		A8048AFE1E89737000BFFC75 /* SpriteBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpriteBatch.cpp; path = ../../../code/SpriteBatch.cpp; sourceTree = "<group>"; };
-		A8048AFF1E89737000BFFC75 /* SpriteBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpriteBatch.h; path = ../../../code/SpriteBatch.h; sourceTree = "<group>"; };
-		A8048B021E89740200BFFC75 /* Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Model.cpp; path = ../../../code/Model.cpp; sourceTree = "<group>"; };
-		A8048B031E89740200BFFC75 /* Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Model.h; path = ../../../code/Model.h; sourceTree = "<group>"; };
 		A8048B041E89740200BFFC75 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Timer.cpp; path = ../../../code/Timer.cpp; sourceTree = "<group>"; };
 		A8048B051E89740200BFFC75 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Timer.h; path = ../../../code/Timer.h; sourceTree = "<group>"; };
+		A8BA47751E93BE3F005304FF /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		A8BA47771E93BE82005304FF /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crypt.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/crypt.h"; sourceTree = "<group>"; };
+		A8BA47781E93BE82005304FF /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ioapi.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/ioapi.c"; sourceTree = "<group>"; };
+		A8BA47791E93BE82005304FF /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ioapi.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/ioapi.h"; sourceTree = "<group>"; };
+		A8BA477A1E93BE82005304FF /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mztools.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/mztools.c"; sourceTree = "<group>"; };
+		A8BA477B1E93BE82005304FF /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mztools.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/mztools.h"; sourceTree = "<group>"; };
+		A8BA477C1E93BE82005304FF /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = unzip.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/unzip.c"; sourceTree = "<group>"; };
+		A8BA477D1E93BE82005304FF /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/unzip.h"; sourceTree = "<group>"; };
+		A8BA477E1E93BE82005304FF /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zip.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/zip.c"; sourceTree = "<group>"; };
+		A8BA477F1E93BE82005304FF /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zip.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/minizip/zip.h"; sourceTree = "<group>"; };
+		A8BA47841E93BE9D005304FF /* aes_via_ace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aes_via_ace.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/aes_via_ace.h"; sourceTree = "<group>"; };
+		A8BA47851E93BE9D005304FF /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aes.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/aes.h"; sourceTree = "<group>"; };
+		A8BA47861E93BE9D005304FF /* aescrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aescrypt.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/aescrypt.c"; sourceTree = "<group>"; };
+		A8BA47871E93BE9D005304FF /* aeskey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aeskey.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/aeskey.c"; sourceTree = "<group>"; };
+		A8BA47881E93BE9D005304FF /* aesopt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aesopt.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/aesopt.h"; sourceTree = "<group>"; };
+		A8BA47891E93BE9D005304FF /* aestab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aestab.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/aestab.c"; sourceTree = "<group>"; };
+		A8BA478A1E93BE9D005304FF /* aestab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aestab.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/aestab.h"; sourceTree = "<group>"; };
+		A8BA478B1E93BE9D005304FF /* brg_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = brg_endian.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/brg_endian.h"; sourceTree = "<group>"; };
+		A8BA478C1E93BE9D005304FF /* brg_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = brg_types.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/brg_types.h"; sourceTree = "<group>"; };
+		A8BA478D1E93BE9D005304FF /* entropy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = entropy.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/entropy.c"; sourceTree = "<group>"; };
+		A8BA478E1E93BE9D005304FF /* entropy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = entropy.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/entropy.h"; sourceTree = "<group>"; };
+		A8BA478F1E93BE9D005304FF /* fileenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fileenc.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/fileenc.c"; sourceTree = "<group>"; };
+		A8BA47901E93BE9D005304FF /* fileenc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fileenc.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/fileenc.h"; sourceTree = "<group>"; };
+		A8BA47911E93BE9D005304FF /* hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hmac.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/hmac.c"; sourceTree = "<group>"; };
+		A8BA47921E93BE9D005304FF /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hmac.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/hmac.h"; sourceTree = "<group>"; };
+		A8BA47931E93BE9D005304FF /* prng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = prng.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/prng.c"; sourceTree = "<group>"; };
+		A8BA47941E93BE9D005304FF /* prng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = prng.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/prng.h"; sourceTree = "<group>"; };
+		A8BA47951E93BE9D005304FF /* pwd2key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pwd2key.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/pwd2key.c"; sourceTree = "<group>"; };
+		A8BA47961E93BE9D005304FF /* pwd2key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pwd2key.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/pwd2key.h"; sourceTree = "<group>"; };
+		A8BA47971E93BE9D005304FF /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sha1.c; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/sha1.c"; sourceTree = "<group>"; };
+		A8BA47981E93BE9D005304FF /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/aes/sha1.h"; sourceTree = "<group>"; };
+		A8BA47A21E93D5B7005304FF /* Shaders.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; name = Shaders.zip; path = Shaders/Shaders.zip; sourceTree = "<group>"; };
+		A8BA47A41E93D74E005304FF /* SSZipCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSZipCommon.h; path = "../../../../../Downloads/ZipArchive-master/SSZipArchive/SSZipCommon.h"; sourceTree = "<group>"; };
+		A8BA47A51E93E053005304FF /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSystem.cpp; path = ../../../code/FileSystem.cpp; sourceTree = "<group>"; };
+		A8BA47A61E93E053005304FF /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystem.h; path = ../../../code/FileSystem.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8BA47761E93BE3F005304FF /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +125,7 @@
 			children = (
 				A8048AA91E88ADEB00BFFC75 /* Aurora */,
 				A8048AA81E88ADEB00BFFC75 /* Products */,
+				A8BA47741E93BE3F005304FF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,6 +140,8 @@
 		A8048AA91E88ADEB00BFFC75 /* Aurora */ = {
 			isa = PBXGroup;
 			children = (
+				A8BA47A21E93D5B7005304FF /* Shaders.zip */,
+				A8048B081E90C44300BFFC75 /* third */,
 				A8048AD01E88B82900BFFC75 /* code */,
 				A8048ACF1E88AF8B00BFFC75 /* platform */,
 				A8048AB01E88ADEB00BFFC75 /* Shader.fsh */,
@@ -128,21 +171,15 @@
 		A8048AD01E88B82900BFFC75 /* code */ = {
 			isa = PBXGroup;
 			children = (
-				A8048B021E89740200BFFC75 /* Model.cpp */,
-				A8048B031E89740200BFFC75 /* Model.h */,
+				A8BA47A51E93E053005304FF /* FileSystem.cpp */,
+				A8BA47A61E93E053005304FF /* FileSystem.h */,
 				A8048B041E89740200BFFC75 /* Timer.cpp */,
 				A8048B051E89740200BFFC75 /* Timer.h */,
-				A8048AFC1E89737000BFFC75 /* BitmapFont.cpp */,
-				A8048AFD1E89737000BFFC75 /* BitmapFont.h */,
-				A8048AFE1E89737000BFFC75 /* SpriteBatch.cpp */,
-				A8048AFF1E89737000BFFC75 /* SpriteBatch.h */,
 				A8048AF91E8972DB00BFFC75 /* ShaderManager.cpp */,
 				A8048AFA1E8972DB00BFFC75 /* ShaderManager.h */,
 				A8048AF61E896FD400BFFC75 /* glUtil.cpp */,
 				A8048AF71E896FD400BFFC75 /* glUtil.h */,
 				A8048AF11E896D1800BFFC75 /* Platfrom.h */,
-				A8048AEB1E89681500BFFC75 /* FileSystem.cpp */,
-				A8048AEC1E89681500BFFC75 /* FileSystem.h */,
 				A8048AEA1E8964D700BFFC75 /* GlobalVar.h */,
 				A8048AE61E89647F00BFFC75 /* GlobalVar.cpp */,
 				A8048AE41E89647F00BFFC75 /* CommandSystem.cpp */,
@@ -153,6 +190,60 @@
 				A8048AD21E88B88000BFFC75 /* AurMath.h */,
 			);
 			name = code;
+			sourceTree = "<group>";
+		};
+		A8048B081E90C44300BFFC75 /* third */ = {
+			isa = PBXGroup;
+			children = (
+				A8BA47431E932045005304FF /* zip */,
+			);
+			name = third;
+			sourceTree = "<group>";
+		};
+		A8BA47431E932045005304FF /* zip */ = {
+			isa = PBXGroup;
+			children = (
+				A8BA47A41E93D74E005304FF /* SSZipCommon.h */,
+				A8BA47841E93BE9D005304FF /* aes_via_ace.h */,
+				A8BA47851E93BE9D005304FF /* aes.h */,
+				A8BA47861E93BE9D005304FF /* aescrypt.c */,
+				A8BA47871E93BE9D005304FF /* aeskey.c */,
+				A8BA47881E93BE9D005304FF /* aesopt.h */,
+				A8BA47891E93BE9D005304FF /* aestab.c */,
+				A8BA478A1E93BE9D005304FF /* aestab.h */,
+				A8BA478B1E93BE9D005304FF /* brg_endian.h */,
+				A8BA478C1E93BE9D005304FF /* brg_types.h */,
+				A8BA478D1E93BE9D005304FF /* entropy.c */,
+				A8BA478E1E93BE9D005304FF /* entropy.h */,
+				A8BA478F1E93BE9D005304FF /* fileenc.c */,
+				A8BA47901E93BE9D005304FF /* fileenc.h */,
+				A8BA47911E93BE9D005304FF /* hmac.c */,
+				A8BA47921E93BE9D005304FF /* hmac.h */,
+				A8BA47931E93BE9D005304FF /* prng.c */,
+				A8BA47941E93BE9D005304FF /* prng.h */,
+				A8BA47951E93BE9D005304FF /* pwd2key.c */,
+				A8BA47961E93BE9D005304FF /* pwd2key.h */,
+				A8BA47971E93BE9D005304FF /* sha1.c */,
+				A8BA47981E93BE9D005304FF /* sha1.h */,
+				A8BA47771E93BE82005304FF /* crypt.h */,
+				A8BA47781E93BE82005304FF /* ioapi.c */,
+				A8BA47791E93BE82005304FF /* ioapi.h */,
+				A8BA477A1E93BE82005304FF /* mztools.c */,
+				A8BA477B1E93BE82005304FF /* mztools.h */,
+				A8BA477C1E93BE82005304FF /* unzip.c */,
+				A8BA477D1E93BE82005304FF /* unzip.h */,
+				A8BA477E1E93BE82005304FF /* zip.c */,
+				A8BA477F1E93BE82005304FF /* zip.h */,
+			);
+			name = zip;
+			sourceTree = "<group>";
+		};
+		A8BA47741E93BE3F005304FF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A8BA47751E93BE3F005304FF /* libz.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -213,6 +304,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8BA47A31E93D5B7005304FF /* Shaders.zip in Resources */,
 				A8048AB91E88ADEB00BFFC75 /* Main.storyboard in Resources */,
 				A8048AB31E88ADEB00BFFC75 /* Shader.vsh in Resources */,
 				A8048ABB1E88ADEB00BFFC75 /* Assets.xcassets in Resources */,
@@ -229,20 +321,30 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8048AFB1E8972DB00BFFC75 /* ShaderManager.cpp in Sources */,
+				A8BA47A71E93E053005304FF /* FileSystem.cpp in Sources */,
 				A8048ACB1E88AF1000BFFC75 /* AppDelegate.m in Sources */,
 				A8048ACE1E88AF7A00BFFC75 /* main.m in Sources */,
+				A8BA47A01E93BE9D005304FF /* pwd2key.c in Sources */,
+				A8BA479A1E93BE9D005304FF /* aeskey.c in Sources */,
+				A8BA479C1E93BE9D005304FF /* entropy.c in Sources */,
+				A8BA47831E93BE82005304FF /* zip.c in Sources */,
 				A8048B071E89740200BFFC75 /* Timer.cpp in Sources */,
 				A8048ADC1E8961BE00BFFC75 /* MyLog.cpp in Sources */,
+				A8BA479D1E93BE9D005304FF /* fileenc.c in Sources */,
+				A8BA47991E93BE9D005304FF /* aescrypt.c in Sources */,
+				A8BA479F1E93BE9D005304FF /* prng.c in Sources */,
+				A8BA47A11E93BE9D005304FF /* sha1.c in Sources */,
 				A8048AE91E89647F00BFFC75 /* GlobalVar.cpp in Sources */,
+				A8BA47801E93BE82005304FF /* ioapi.c in Sources */,
 				A8048AF81E896FD400BFFC75 /* glUtil.cpp in Sources */,
-				A8048AEF1E89681500BFFC75 /* FileSystem.cpp in Sources */,
+				A8BA47821E93BE82005304FF /* unzip.c in Sources */,
 				A8048AF51E896DDC00BFFC75 /* PlatformIOS.cpp in Sources */,
+				A8BA479E1E93BE9D005304FF /* hmac.c in Sources */,
+				A8BA479B1E93BE9D005304FF /* aestab.c in Sources */,
 				A8048AD31E88B88000BFFC75 /* AurMath.cpp in Sources */,
 				A8048AE81E89647F00BFFC75 /* CommandSystem.cpp in Sources */,
-				A8048B011E89737000BFFC75 /* SpriteBatch.cpp in Sources */,
-				A8048B061E89740200BFFC75 /* Model.cpp in Sources */,
 				A8048ACC1E88AF1000BFFC75 /* GameViewController.m in Sources */,
-				A8048B001E89737000BFFC75 /* BitmapFont.cpp in Sources */,
+				A8BA47811E93BE82005304FF /* mztools.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +398,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -343,6 +446,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -362,6 +466,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = Aurora/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = xc.Aurora;
@@ -373,6 +478,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = Aurora/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = xc.Aurora;

@@ -12,3 +12,5 @@
 @interface GameViewController : GLKViewController
 
 @end
+
+void TestUnzip(const char* path);

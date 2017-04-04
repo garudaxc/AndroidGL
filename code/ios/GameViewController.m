@@ -9,6 +9,7 @@
 #import "GameViewController.h"
 #import <OpenGLES/ES2/glext.h>
 
+
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 // Uniform index.
@@ -230,6 +231,8 @@ GLfloat gCubeVertexData[216] =
 
 #pragma mark -  OpenGL ES 2 shader compilation
 
+
+
 - (BOOL)loadShaders
 {
     GLuint vertShader, fragShader;
@@ -244,6 +247,10 @@ GLfloat gCubeVertexData[216] =
         NSLog(@"Failed to compile vertex shader");
         return NO;
     }
+    
+    NSString *path = [[NSBundle mainBundle] resourcePath];
+    
+    TestUnzip(path.UTF8String);
     
     // Create and compile fragment shader.
     fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"];
