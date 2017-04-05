@@ -32,7 +32,8 @@
     <ClCompile Include="code\thirdParty\zip\ioapi.c" />
     <ClCompile Include="code\thirdParty\zip\unzip.c" />
     <ClCompile Include="code\Timer.cpp" />
-    <ClCompile Include="code\android\TextureFormat.cpp" />
+    <ClCompile Include="code\android\CompressedTexture.cpp" />
+    <ClCompile Include="code\android\TextureETC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\android\AuroraGL.h" />
@@ -57,7 +58,6 @@
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
-    <ClInclude Include="code\TextureFormat.h" />
     <ClInclude Include="code\thirdParty\etc1\etc1.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
     <ClInclude Include="code\thirdParty\zip\ioapi.h" />

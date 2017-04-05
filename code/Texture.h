@@ -1,9 +1,18 @@
 #pragma once
 #include "Platfrom.h"
-#include "TextureFormat.h"
 
 namespace FancyTech
 {
+
+	enum TEXTURE_FORMAT
+	{
+		RGB8,
+		RGBA8,
+		ETC1,
+		ETC2,
+		DXT1,
+		DXT5,
+	};
 
 	class FrameBuffer;
 
@@ -28,8 +37,6 @@ namespace FancyTech
 		friend class FrameBuffer;
 	};
 
-
-
 	class FrameBuffer
 	{
 	public:
@@ -50,5 +57,11 @@ namespace FancyTech
 		GLuint		depthRenderbuffer;
 		Texture		tex_;
 	};
+	
+
+	GLuint CreateTextureETC1(const ubyte_t* data, uint32_t w, uint32_t h,
+		uint32_t pixelsize, uint32_t stride);
+
+	GLuint LoadPKM(const ubyte_t* fileData, uint32_t size);
 
 }

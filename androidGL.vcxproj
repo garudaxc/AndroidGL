@@ -99,7 +99,6 @@
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
-    <ClInclude Include="code\TextureFormat.h" />
     <ClInclude Include="code\thirdParty\etc1\etc1.h" />
     <ClInclude Include="code\thirdParty\stb\stb_image.h" />
     <ClInclude Include="code\thirdParty\zip\ioapi.h" />
@@ -109,12 +108,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\android\ClientAndroid.cpp" />
+    <ClCompile Include="code\android\CompressedTexture.cpp" />
     <ClCompile Include="code\android\device.cpp" />
     <ClCompile Include="code\android\InputAndroid.cpp" />
     <ClCompile Include="code\android\jniMain.cpp" />
     <ClCompile Include="code\android\MessageQueue.cpp" />
     <ClCompile Include="code\android\Sensor.cpp" />
-    <ClCompile Include="code\android\TextureFormat.cpp" />
+    <ClCompile Include="code\android\TextureETC.cpp" />
     <ClCompile Include="code\android\Thread.cpp" />
     <ClCompile Include="code\android\TrackDropping.cpp" />
     <ClCompile Include="code\android\MyLog.cpp" />

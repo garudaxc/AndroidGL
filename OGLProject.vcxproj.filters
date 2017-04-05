@@ -212,9 +212,6 @@
     <ClInclude Include="code\MyLog.h">
       <Filter>源文件\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="code\TextureFormat.h">
-      <Filter>Render</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\glUtil.cpp">
@@ -355,7 +352,7 @@
     <ClCompile Include="code\win\WinClient.cpp">
       <Filter>源文件\win</Filter>
     </ClCompile>
-    <ClCompile Include="code\android\TextureFormat.cpp">
+    <ClCompile Include="code\win\TextureCompress.cpp">
       <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,7 +4,6 @@
 #include "thirdParty/stb/stb_image.h"
 #include "FileSystem.h"
 #include <vector>
-#include "TextureFormat.h"
 
 using namespace std;
 
@@ -258,7 +257,7 @@ namespace FancyTech
 			format_ = RGBA8;
 		}
 
-		texId_ = CreateTexture(t, w, h, comp, comp * w);
+		texId_ = CreateTextureETC1(t, w, h, comp, comp * w);
 		if (texId_ != 0) {
 			stbi_image_free(t);
 			return true;

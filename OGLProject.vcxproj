@@ -27,7 +27,6 @@
     <ClInclude Include="code\ShaderManager.h" />
     <ClInclude Include="code\SpriteBatch.h" />
     <ClInclude Include="code\Texture.h" />
-    <ClInclude Include="code\TextureFormat.h" />
     <ClInclude Include="code\thirdParty\rapidjson\allocators.h" />
     <ClInclude Include="code\thirdParty\rapidjson\document.h" />
     <ClInclude Include="code\thirdParty\rapidjson\encodedstream.h" />
@@ -73,7 +72,6 @@
     <ClInclude Include="code\win\wglew.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="code\android\TextureFormat.cpp" />
     <ClCompile Include="code\audio\WavFile.cpp" />
     <ClCompile Include="code\BitmapFont.cpp" />
     <ClCompile Include="code\Calibration.cpp" />
@@ -117,6 +115,7 @@
     <ClCompile Include="code\win\MyLog.cpp" />
     <ClCompile Include="code\win\main.cpp" />
     <ClCompile Include="code\win\PlatformWin.cpp" />
+    <ClCompile Include="code\win\TextureCompress.cpp" />
     <ClCompile Include="code\win\Thread.cpp" />
     <ClCompile Include="code\win\UsbDevice.cpp" />
     <ClCompile Include="code\win\WinClient.cpp" />

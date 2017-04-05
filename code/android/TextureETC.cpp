@@ -1,12 +1,11 @@
 #include "thirdParty/etc1/etc1.h"
-#include "TextureFormat.h"
 #include "MyLog.h"
 #include "glUtil.h"
 
 namespace FancyTech
 {
 
-	GLuint CreateTexture(const ubyte_t* data, uint32_t w, uint32_t h,
+	GLuint CreateTextureETC1(const ubyte_t* data, uint32_t w, uint32_t h,
 		uint32_t pixelsize, uint32_t stride)
 	{
 		if (data == NULL || w == 0 || h == 0) {
