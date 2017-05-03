@@ -7,6 +7,10 @@
 //
 
 #import "AppDelegate.h"
+#include "MyLog.h"
+#include "FileSystem.h"
+
+using namespace FancyTech;
 
 @interface AppDelegate ()
 
@@ -17,6 +21,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    NSString *path = [[NSBundle mainBundle] resourcePath];
+    GFileSys->SetRootPath(path.UTF8String, false);
+    
+    
     return YES;
 }
 
@@ -49,3 +58,10 @@
 
 
 @end
+
+
+void Log_ObjectC(const char* msg)
+{
+    NSLog(@"%s", msg);
+}
+

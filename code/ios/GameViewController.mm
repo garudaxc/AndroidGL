@@ -8,9 +8,18 @@
 
 #import "GameViewController.h"
 #import <OpenGLES/ES2/glext.h>
+#include "MyLog.h"
+#include "Rendering.h"
+#include "ShaderManager.h"
 
+
+using namespace FancyTech;
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
+
+
+void TestUnzip(const char* path);
+
 
 // Uniform index.
 enum
@@ -114,6 +123,15 @@ GLfloat gCubeVertexData[216] =
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
     [self setupGL];
+    
+    
+    NSString *path = [[NSBundle mainBundle] resourcePath];
+    
+    NSString *shader = [path stringByAppendingString:@"/ShaderUI.glsl"];
+    NSLog(@"%@", shader);
+    
+    GShaderManager.LoadFromFile(ShaderUI, [shader UTF8String]);
+    
 }
 
 - (void)dealloc
@@ -227,6 +245,28 @@ GLfloat gCubeVertexData[216] =
     glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, _normalMatrix.m);
     
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    
+    
+}
+
+- (void)glkView:(GLKView *)view touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    NSLog(@"touchesBegan - touch count = %d", [touches count]);
+
+}
+
+- (void)glkView:(GLKView *)view touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    NSLog(@"touchesMoved - touch count = %d", [touches count]);
+    
+}
+
+- (void)glkView:(GLKView *)view touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    NSLog(@"touchesEnded - touch count = %d", [touches count]);
+    
+}
+
+- (void)glkView:(GLKView *)view touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    NSLog(@"touchesCancelled - touch count = %d", [touches count]);
+    
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
@@ -365,7 +405,7 @@ GLfloat gCubeVertexData[216] =
     
     return YES;
 }
-
+ 
 - (BOOL)validateProgram:(GLuint)prog
 {
     GLint logLength, status;
@@ -387,9 +427,9 @@ GLfloat gCubeVertexData[216] =
     return YES;
 }
 
+
 @end
 
-void Log_ObjectC(const char* msg)
-{
-    NSLog(@"%s", msg);
-}
+
+
+

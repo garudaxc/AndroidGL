@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Model.h"
 #include "Texture.h"
 #include "AurMath.h"

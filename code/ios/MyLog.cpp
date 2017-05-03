@@ -10,7 +10,7 @@
 #include <string>
 using namespace std;
 
-extern "C" void Log_ObjectC(const char* msg);
+void Log_ObjectC(const char* msg);
 
 namespace FancyTech {
     
@@ -44,14 +44,14 @@ namespace FancyTech {
         
         vsnprintf(s, sizeof(s)-1, fmt, argptr);
         
-        time_t t;
-        struct tm *tmp;
-        char buff[16];
-        time(&t);
-        tmp = localtime(&t);
-        strftime(buff, sizeof(buff), "%H:%M:%S", tmp);
+//        time_t t;
+//        struct tm *tmp;
+//        char buff[16];
+//        time(&t);
+//        tmp = localtime(&t);
+//        strftime(buff, sizeof(buff), "%H:%M:%S", tmp);
         
-        Log_ObjectC(buff);
+        Log_ObjectC(s);
         
     //    AutoLock lock(&impl->mutex);
         //fprintf(impl->pf, "%s (%s) : %s\n", prefix, buff, s);
@@ -97,9 +97,9 @@ namespace FancyTech {
 }
 
 extern "C"
-{
+{}
     void TestUnzip(const char* path);
-}
+
 
 
 void TestUnzip(const char* path)
