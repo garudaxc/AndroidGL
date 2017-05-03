@@ -8,7 +8,7 @@ bin/*
 obj/*
 libs/*
 gen/*
-resource/*
+# resource/*
 intermediate/*
 !libs/win32
 local.properties
