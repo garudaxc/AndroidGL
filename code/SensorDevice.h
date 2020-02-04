@@ -2,18 +2,16 @@
 #include "Platfrom.h"
 #include "AurMath.h"
 
-using namespace FancyTech;
-
-
-struct TrackerSample
+namespace FancyTech
 {
-	uint32_t	timestamp;
-	float		temperature;
-	
-	Vector3f	accelerate;
-	Vector3f	gyro;
-	Vector3f	magnet;
-};
+	struct TrackerSample
+	{
+		uint32_t	timestamp;
+		float		temperature;
 
-int libUsbTest();
-void StopTrackerThread();
+		Vector3f	accelerate;
+		Vector3f	gyro;
+		Vector3f	magnet;
+	};
+
+}

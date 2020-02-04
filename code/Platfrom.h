@@ -10,6 +10,12 @@ typedef unsigned short	uint16_t;
 typedef unsigned int	uint32_t;
 typedef unsigned long long uint64_t;
 
+#pragma warning(disable:4267)
+#pragma warning(disable:4244)
+#pragma warning(disable:6031)
+#pragma warning(disable:26495)
+#pragma warning(disable:26451)
+
 #endif
 
 #ifdef __ANDROID__

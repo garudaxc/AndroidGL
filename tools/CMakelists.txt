@@ -1,0 +1,52 @@
+cmake_minimum_required(VERSION 3.15)
+set(platform x86)
+set(PROJ_NAME AndroidGL)
+# set(PROJECT_BINARY_DIR ../Intermediate)
+
+project(${PROJ_NAME})
+
+message("MSVC15 " ${MSVC15})
+message("MSVC16 " ${MSVC16})
+message("MSVC17 " ${MSVC17})
+message("MSVC18 " ${MSVC18})
+message("CMAKE_HOST_WIN32 " ${CMAKE_HOST_WIN32})
+
+message("project name " ${CMAKE_PROJECT_NAME})
+message("project binary dir " ${PROJECT_BINARY_DIR})
+message("CMAKE_CURRENT_SOURCE_DIR " ${CMAKE_CURRENT_SOURCE_DIR})
+
+
+aux_source_directory(../code srcs)
+include_directories(../code)
+include_directories(. ../code/thirdParty)
+add_subdirectory(../code/thirdParty ../Build/thirdParty)
+
+# set(LIBRARY_OUTPUT_PATH ../Build/Libs) 
+# set(EXECUTABLE_OUTPUT_PATH ../Binaries)
+
+if(CMAKE_HOST_WIN32)
+	include_directories(../code/win)
+	aux_source_directory(../code/win srcs)
+	link_directories(../libs/win32)
+endif(CMAKE_HOST_WIN32)
+
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+add_executable(${PROJ_NAME} WIN32 ${srcs})
+
+target_link_libraries(${PROJ_NAME} third_party_lib winmm.lib)
+
+
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+
+set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/win)
+set_target_properties(${PROJ_NAME} PROPERTIES PDB_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/win)
+
+# set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/win)
+# set_target_properties(${PROJ_NAME} PROPERTIES PDB_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/win)
+
+
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/win)
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/win)

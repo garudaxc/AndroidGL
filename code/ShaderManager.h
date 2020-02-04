@@ -21,6 +21,7 @@ enum EShader
 	ShaderDiffuse = 0,
 	ShaderUI,
 	ShaderBump,
+	ShaderParticle,
 
 	ShaderCount
 };
@@ -53,6 +54,9 @@ public:
 
 	void	SetUnifrom(ShaderUniform u, const Matrix4f& matrix);
 	void	SetUnifrom(ShaderUniform u, int value);
+
+	void	TestComputeShader();
+	void	RunComputerShader(float time, const Matrix4f& matViewProj);
 	
 private:
 

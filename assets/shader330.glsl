@@ -47,7 +47,8 @@ void main() {
 
 	vec3 tex = tex0 * tex1;
 	
-	color = vec4(tex0, 1);
+	color = vec4(v_texcoord.xy, 0, 1);
+	//color = vec4(tex0, 1);
 	//color = vec4(tex * vLightColor * diffuse, 1);
 }
 

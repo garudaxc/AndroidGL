@@ -9,6 +9,7 @@
 #include "Rendering.h"
 #include "Input.h"
 #include "glUtil.h"
+#include "Timer.h"
 
 using namespace FancyTech;
 
@@ -42,8 +43,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	HACCEL hAccelTable;
 
 	// 初始化全局字符串
-	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_OGLPROJECT, szWindowClass, MAX_LOADSTRING);
+	//LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+	//LoadString(hInstance, IDC_OGLPROJECT, szWindowClass, MAX_LOADSTRING);
+	_tcscpy(szTitle, _T("androidGL"));
+	_tcscpy(szWindowClass, _T("androidGLMainWindow"));
+
 	MyRegisterClass(hInstance);
 
 	Platfrom::Init();
@@ -78,6 +82,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			RenderSystem->BeginFrame();
 			MainClient->OnRender();
 			RenderSystem->EndFrame();
+
+			Sleep(20);
 
 			SwapBuffers(glState.hdc);
 			checkGlError("SwapBuffers");
@@ -162,6 +168,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    RenderSystem->Create(glState.width, glState.height);
    MainClient->OnCreate();
+
+   Time.Reset();
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);

@@ -66,7 +66,6 @@ int PrintDeviceInfo(libusb_device_handle *handle)
 
 	libusb_device * dev;
 	uint8_t bus, port_path[8];
-	struct libusb_bos_descriptor *bos_desc;
 	struct libusb_config_descriptor *conf_desc;
 	const struct libusb_endpoint_descriptor *endpoint;
 	int i, j, k, r;

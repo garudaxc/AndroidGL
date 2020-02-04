@@ -8,6 +8,8 @@ public:
 	Time_t();
 	~Time_t();
 
+	void		Reset();
+
 	float		GetTime() const;
 	uint32_t	GetTimeMS() const;
 

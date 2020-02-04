@@ -14,13 +14,11 @@
 #include "GlobalVar.h"
 #include "BitmapFont.h"
 #include "SpriteBatch.h"
-#include "SensorDevice.h"
 #include "Calibration.h"
 #include "FileSystem.h"
 #include "Input.h"
 
 using namespace std;
-using namespace FancyTech;
 
 
 //class MyReceiver : public EventReceiver
@@ -105,7 +103,6 @@ void LoadResource() {
 
 void UnloadResource()
 {
-	StopTrackerThread();
 }
 
 extern int sampleCount;
@@ -115,13 +112,13 @@ void DrawOneEye(int x, int y, int w, int h, float eyeOffset)
 {
 	glViewport(x, y, w, h);
 
-	Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -3.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
+	Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -5.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
 	mView *= Matrix4f::Translate(Vector3f(eyeOffset, 0.f, 0.f));
 
 
 	Matrix4f mProj = Matrix4f::PerspectiveFovRH(Mathf::PI / 3.0f, w / (float)h, 0.1f);
-	mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
-	mProj._43 = mProj._43 * 2.f;
+	//mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
+	//mProj._43 = mProj._43 * 2.f;
 	
 	for (auto it = Models.begin(); it != Models.end(); ++it) {
 

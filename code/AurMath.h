@@ -45,6 +45,8 @@ public:
 	static inline real Max(real val1, real val2);
 	static inline real Clamp(real val, real min, real max);
 	static inline real GetLerp(real min, real max, real middle);
+	static inline real Random01();
+	static inline real Random(real minValue, real maxValue);
 
 	static inline bool IsZero(real value);
 
@@ -175,6 +177,22 @@ inline float Math<float>::GetLerp(float min, float max, float middle)
 {
 	return (middle - min) / (max - min);
 }
+
+
+template<>
+inline float Math<float>::Random01()
+{
+	float v = (float)rand() / (float)RAND_MAX;
+	return v;
+}
+
+template<>
+inline float Math<float>::Random(float minValue, float maxValue)
+{
+	float v = Math<float>::Random01() * (maxValue - minValue) + minValue;
+	return v;
+}
+
 //--------------------------------------------------------
 //template<>
 //inline bool Math<float>::IsZero(float value)

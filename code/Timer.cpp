@@ -20,6 +20,14 @@ Time_t::~Time_t()
 {
 }
 
+void Time_t::Reset()
+{
+	LastUpdateTime = GetTicksMS();
+	FrameCount = 0;
+	LastFpsTime = LastUpdateTime;
+	LastFpsFrame = 0;
+}
+
 float Time_t::GetTime() const
 {
 	return GetTicksMS() / 1000.f;

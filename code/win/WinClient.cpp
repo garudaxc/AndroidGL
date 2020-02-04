@@ -6,6 +6,7 @@
 #include "FileSystem.h"
 #include "glUtil.h"
 #include "input.h"
+#include "MyLog.h"
 
 using namespace FancyTech;
 
@@ -65,6 +66,8 @@ public:
 	{
 		GShaderManager.LoadFromFile(ShaderDiffuse, "../../assets/shader330.glsl");
 		GShaderManager.LoadFromFile(ShaderUI, "../../assets/ShaderUI.glsl");
+		GShaderManager.TestComputeShader();
+
 		checkGlError("GShaderManager.LoadFromFile");
 
 		ModelInstance* model = NULL;
@@ -81,9 +84,7 @@ public:
 
 		//renderTexture_.Create(RenderSystem->GetCurrentWindow().width,
 		//	RenderSystem->GetCurrentWindow().height, RGBA8);
-
 		//Models[0]->texture_ = renderTexture_;
-
 
 		frameBuffer_.Create(1024, 1024, RGB8, 0);
 	}
@@ -101,11 +102,11 @@ public:
 		//	RenderSystem->GetCurrentWindow().height, 0);
 		//checkGlError("glCopyTexImage2D");
 
-		Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -1.5f, 0.3f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
-
+		Matrix4f mView = Matrix4f::LookAtRH(Vector3f(0.f, -5.f, 0.3f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f::UNIT_Z);
 		Matrix4f mProj = Matrix4f::PerspectiveFovRH(Mathf::PI / 3.0f, glState.width / (float)glState.height, 0.1f);
-		mProj._33 = mProj._33 * 2.f + mProj._34 * -1.f;
-		mProj._43 = mProj._43 * 2.f;
+
+		Matrix4f mViewProj = mView * mProj;
+
 
 		viewParam_.ViewMatrix = mView;
 		viewParam_.ProjMatrix = mProj;
@@ -140,6 +141,7 @@ public:
 
 		glBindVertexArray(0);
 
+		GShaderManager.RunComputerShader(Time.GetDeltaTimeMS() * 0.001f, mViewProj);
 	}
 
 	virtual void OnDestroy() override

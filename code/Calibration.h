@@ -29,7 +29,7 @@ public:
 		return calibrated_;
 	}
 
-	size_t	GetNumSamples() const {
+	int	GetNumSamples() const {
 		return samples_.size();
 	}
 

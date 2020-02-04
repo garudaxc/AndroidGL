@@ -302,7 +302,7 @@ namespace FancyTech
 		string name, fullname;
 		NormalizeName(fullname, name, pathname);
 
-		if (access(fullname.c_str(), 0) != -1) {
+		if (_access(fullname.c_str(), 0) != -1) {
 			return true;
 		}
 

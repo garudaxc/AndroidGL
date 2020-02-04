@@ -170,7 +170,7 @@ namespace FancyTech
 		for (int i = 0; i < 3; i++)	{
 			pos.y += lineHeight;
 			Vector3f axis = gyroTransfrom_[i].axis;
-			sprintf(buff, "gyro transform axis %d samples %d %+.4f %+.4f %+.4f", i, gyroTransfrom_[i].samples.size(), axis.x, axis.y, axis.z);
+			sprintf(buff, "gyro transform axis %d samples %d %+.4f %+.4f %+.4f", i, (int)gyroTransfrom_[i].samples.size(), axis.x, axis.y, axis.z);
 			bitmapFont.DrawString(&spriteBatch, buff, pos);
 			spriteBatch.Commit(w, h);
 		}
