@@ -1,0 +1,10 @@
+{
+    "server":"garuda server",
+    "server_port":8542,
+    "local_address": "127.0.0.1",
+    "local_port":1080,
+    "password":"NmRmY2I3Zj",
+    "timeout":300,
+    "method":"rc4-md5",
+    "fast_open": false
+}
